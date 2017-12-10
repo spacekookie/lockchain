@@ -12,6 +12,7 @@ mod management;
 mod version;
 mod record;
 mod user;
+pub mod crypto;
 
 
 use std::collections::BTreeMap;

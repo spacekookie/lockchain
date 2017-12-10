@@ -32,4 +32,9 @@ impl Record {
             body: BTreeMap::new(),
         };
     }
+
+    /// Add a new tag to this record head. Checks that tags don't already exists
+    pub fn add_tag(tag: &str) {
+        
+    }
 }
