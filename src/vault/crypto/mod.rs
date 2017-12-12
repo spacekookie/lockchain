@@ -11,9 +11,6 @@ use rand::{thread_rng, Rng};
 pub mod hashing;
 pub mod encoding;
 
-use base64;
-
-
 const KEYLENGTH: usize = 16;
 
 

@@ -18,7 +18,6 @@ use crypto::CryptoEngine;
 
 use std::collections::{HashMap, BTreeMap};
 use std::path::PathBuf;
-use std::error::Error;
 use chrono::{DateTime, Local};
 
 use std::fs;
@@ -30,11 +29,12 @@ use serde_json;
 
 /// This should be made pretty with actual Errors at some point
 #[derive(Debug)]
+#[allow(unused)]
 pub enum ErrorType {
-    VAULT_ALREADY_EXISTS,
-    DIRECTORY_ALREADY_EXISTS,
-    FAILED_TO_INITIALISE,
-    SUCCESS,
+    VaultAlreadyExists,
+    DirectoryAlreadyExists,
+    FailedToInitialise,
+    Success,
 }
 
 /// A generic payload for a record
@@ -67,6 +67,7 @@ pub struct Record {
 /// A vault can have multiple users which allows login-information to be
 /// shared between multiple people. By default only one (root) user
 /// is enabled though.
+#[allow(unused)]
 pub struct Vault {
     name: String,
     path: PathBuf,
@@ -90,7 +91,7 @@ impl Vault {
 
         /* Create relevant files */
         match me.create_dirs() {
-            ErrorType::SUCCESS => {}
+            ErrorType::Success => {}
             val => return Err(val),
         }
 
@@ -212,19 +213,19 @@ impl Vault {
 
         /* Check if the directories already exist */
         if self.path.as_path().exists() {
-            return ErrorType::DIRECTORY_ALREADY_EXISTS;
+            return ErrorType::DirectoryAlreadyExists;
         }
 
         /* Create the directory */
         match fs::create_dir_all(self.path.as_path()) {
-            Err(_) => return ErrorType::FAILED_TO_INITIALISE,
+            Err(_) => return ErrorType::FailedToInitialise,
             _ => {}
         };
 
         /* Create configs */
         let key = match self.crypto.dump_encrypted_key() {
             Some(k) => k,
-            None => return ErrorType::FAILED_TO_INITIALISE,
+            None => return ErrorType::FailedToInitialise,
         };
 
         /* Write encrypted key to disk */
@@ -244,6 +245,6 @@ impl Vault {
             self.path.pop();
         }
 
-        return ErrorType::SUCCESS;
+        return ErrorType::Success;
     }
 }
