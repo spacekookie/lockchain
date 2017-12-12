@@ -17,7 +17,6 @@ const KEYLENGTH: usize = 16;
 /// The crypto engine which holds the key and AES context
 ///
 pub struct CryptoEngine {
-    key: [u8; KEYLENGTH],
     encrypted_key: Option<String>,
     aes: Aes128,
     iv: String,
@@ -25,7 +24,7 @@ pub struct CryptoEngine {
 
 
 impl CryptoEngine {
-    
+
     /// Generate a new random key which is encrypted with the password
     pub fn new(password: &str, _: &str) -> CryptoEngine {
 
@@ -42,7 +41,6 @@ impl CryptoEngine {
         /* Encrypt secret_key with password */
         let k = hashing::blake2_16(password, "");
         let tmp = CryptoEngine {
-            key: k,
             encrypted_key: None,
             aes: Aes128::new_varkey(&k).unwrap(),
             iv: String::from("unused"),
@@ -55,7 +53,6 @@ impl CryptoEngine {
 
         /* Then actually create an engine and return it */
         let me = CryptoEngine {
-            key: secret_key,
             encrypted_key: Some(encrypted_key_encoded),
             aes: Aes128::new_varkey(&secret_key).unwrap(),
             iv: String::from("unused"),
@@ -65,7 +62,34 @@ impl CryptoEngine {
     }
 
     /// Load an existing vault with it's encrypted key and password
-    pub fn load_existing(encrypted_key: &str, password: &str) {}
+    pub fn load_existing(encrypted_key: &str, password: &str) -> CryptoEngine {
+        
+        /* Decrypt key with password */
+        let k = hashing::blake2_16(password, "");
+        let tmp = CryptoEngine {
+            encrypted_key: Some(String::from(encrypted_key)),
+            aes: Aes128::new_varkey(&k).unwrap(),
+            iv: String::from("unused"),
+        };
+
+        let floobar = tmp.encrypted_key.clone().unwrap();
+        let key_as_bytes = floobar.as_bytes();
+
+        let mut key_vector: Vec<u8> = Vec::new();
+        for byte in key_as_bytes {
+            key_vector.push(*byte);
+        }
+        let decrypted = tmp.decrypt(&key_vector);
+        
+        /* Then initialise a new crypto engine with the newly decrypted key */
+        let me = CryptoEngine {
+            encrypted_key: Some(String::from(encrypted_key)),
+            aes: Aes128::new_varkey(&decrypted.as_bytes()).unwrap(),
+            iv: String::from("unused")
+        };
+
+        return me;
+    }
 
     /// Get the encrypted key that was used for a vault
     pub fn dump_encrypted_key(&self) -> Option<String> {
