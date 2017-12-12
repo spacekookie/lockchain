@@ -5,7 +5,8 @@
 extern crate chrono;
 extern crate serde;
 extern crate serde_json;
-#[macro_use] extern crate serde_derive;
+#[macro_use]
+extern crate serde_derive;
 extern crate base64;
 extern crate rand;
 extern crate aesni;
@@ -16,28 +17,36 @@ extern crate generic_array;
 mod vault;
 use vault::*;
 
+use vault::Payload::Text;
+
+/// This is a small example on how to use the lockchain API
+///
+/// This is by no means stable :')
 fn main() {
 
-    let vault = vault::Vault::new("default", "/home/spacekookie/Desktop", "my password is cheese");
+    /* Create a new vault at a path, name and primary password */
+    let mut vault = Vault::new(
+        "Personal",
+        "/home/spacekookie/Desktop",
+        "my password is cheese",
+    ).unwrap();
 
-    // let record = Record::new("facebook", "web");
-    // let j = serde_json::to_string(&record).unwrap();
+    /* Add a record with some tags */
+    vault.add_record("mastodon", "web", vec!["social", "network"]);
 
-    // /* Encrypt the data */
-    // let crypto = crypto::CryptoEngine::new("My password is cheese with honey", "");
-    // let encrypted = crypto.encrypt(&j);
+    /* Add a few data fields to the body */
+    vault.add_data(
+        "mastodon",
+        "url",
+        Text(String::from("https://mastodon.social")),
+    );
+    vault.add_data("mastodon", "user", Text(String::from("spacekookie")));
+    vault.add_data(
+        "mastodon",
+        "password",
+        Text(String::from("My password is molten cheese")),
+    );
 
-    // /* Encode it as base64 */
-    // let mut encoded = String::new();
-    // let string = unsafe { String::from_utf8_unchecked(encrypted.clone()) };
-    // base64::encode_config_buf(string.as_bytes(), base64::STANDARD, &mut encoded);
-
-    // /* Then decode it and compare */
-    // let decoded = base64::decode(&encoded).unwrap();
-    // println!("Decoded == Encrypted: {}", decoded == encrypted);
-
-    // /* Then decrypt it and compare */
-    // let decrypted = crypto.decrypt(&decoded);
-    // let recovered: Record = serde_json::from_str(&decrypted).unwrap();
-    // println!("Recovered == Record: {:?}", recovered == record);
+    /* Sync the changes to disk */
+    vault.sync();
 }
