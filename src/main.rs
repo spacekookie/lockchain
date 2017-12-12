@@ -24,12 +24,33 @@ use vault::Payload::Text;
 /// This is by no means stable :')
 fn main() {
 
-    /* Create a new vault at a path, name and primary password */
-    let mut vault = Vault::new(
+    create_and_populate();
+    load();
+}
+
+fn load() {
+
+    let vault = Vault::load(
         "Personal",
         "/home/spacekookie/Desktop",
         "my password is cheese",
-    ).unwrap();
+    );
+    println!("{:?}", vault.records);
+
+}
+
+
+fn create_and_populate() {
+
+    /* Create a new vault at a path, name and primary password */
+    let mut vault = match Vault::new(
+        "Personal",
+        "/home/spacekookie/Desktop",
+        "my password is cheese",
+    ) {
+        Ok(s) => s,
+        Err(e) => panic!("Somehow failed to create the vault because {:?}", e),
+    };
 
     /* Add a record with some tags */
     vault.add_record("mastodon", "web", vec!["social", "network"]);
