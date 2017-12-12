@@ -22,7 +22,6 @@ const KEYLENGTH: usize = 16;
 pub struct CryptoEngine {
     encrypted_key: Option<String>,
     aes: Aes128,
-    iv: String,
 }
 
 
@@ -45,7 +44,6 @@ impl CryptoEngine {
         let tmp = CryptoEngine {
             encrypted_key: None,
             aes: Aes128::new_varkey(&k).unwrap(),
-            iv: String::from("unused"),
         };
 
         /* Encrypt and encode the secret key */
@@ -57,7 +55,6 @@ impl CryptoEngine {
         let me = CryptoEngine {
             encrypted_key: Some(encoded),
             aes: Aes128::new_varkey(&secret_key).unwrap(),
-            iv: String::from("unused"),
         };
 
         return me;
@@ -71,7 +68,6 @@ impl CryptoEngine {
         let tmp = CryptoEngine {
             encrypted_key: Some(String::from(encrypted_key)),
             aes: Aes128::new_varkey(&k).unwrap(),
-            iv: String::from("unused"),
         };
 
         /* Decode and decrypt key */
@@ -82,7 +78,6 @@ impl CryptoEngine {
         let me = CryptoEngine {
             encrypted_key: Some(String::from(encrypted_key)),
             aes: Aes128::new_varkey(&decrypted.as_bytes()).unwrap(),
-            iv: String::from("unused"),
         };
 
         return me;
