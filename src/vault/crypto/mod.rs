@@ -4,6 +4,7 @@
 
 use aesni::{Aes128, BlockCipher};
 use generic_array::GenericArray;
+use std;
 
 pub mod hashing;
 pub mod encoding;
@@ -38,17 +39,18 @@ impl CryptoEngine {
         return me;
     }
 
-    pub fn encrypt(&self, data: &str) -> {
+    pub fn encrypt(&self, data: &str) -> Vec<u8> {
         let to_encrypt = self.pad_data(data);
 
         let mut encrypted: Vec<u8> = Vec::new();
         let mut start: usize = 0;
         let mut stop: usize = KEYLENGTH;
+
         loop {
             let slice = to_encrypt[start..stop].as_bytes();
 
             /* Encrypt the slice in place */
-            let mut block = GenericArray::clone_from_slice(&slice);
+            let mut block = GenericArray::clone_from_slice(slice);
             self.aes.encrypt_block(&mut block);
 
             for byte in block {
@@ -62,10 +64,35 @@ impl CryptoEngine {
             }
         }
 
-        
+        return encrypted;
     }
 
-    pub fn decrypt(&self, data: &str) {}
+    pub fn decrypt(&self, data: &Vec<u8>) -> String {
+        let mut decryted = String::new();
+        let sliced = data.as_slice();
+
+        let mut start: usize = 0;
+        let mut stop: usize = KEYLENGTH;
+
+        loop {
+            let slice = &sliced[start..stop];
+            let mut block = GenericArray::clone_from_slice(slice);
+            self.aes.decrypt_block(&mut block);
+
+            match std::str::from_utf8(&block) {
+                Ok(string) => decryted.push_str(string),
+                Err(err) => panic!("Failed to decode: {}", err),
+            }
+
+            start = stop;
+            stop += KEYLENGTH;
+            if sliced.len() < stop {
+                break;
+            }
+        }
+
+        return decryted;
+    }
 
     /// Pad a string to the block-size of the cipher
     ///
