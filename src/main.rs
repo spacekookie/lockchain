@@ -7,6 +7,7 @@ extern crate serde;
 extern crate serde_json;
 #[macro_use] extern crate serde_derive;
 extern crate base64;
+extern crate rand;
 extern crate aesni;
 extern crate blake2;
 extern crate generic_array;
