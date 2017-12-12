@@ -40,7 +40,7 @@ impl Record {
     }
 
     /// Add a new tag to this record head. Checks that tags don't already exists
-    pub fn add_tag(tag: &str) {
+    pub fn add_tag(&mut self, tag: &str) {
         
     }
 }
