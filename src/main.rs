@@ -15,27 +15,28 @@ extern crate generic_array;
 mod vault;
 use vault::*;
 
-
 fn main() {
 
-    let record = Record::new("facebook", "web");
-    let j = serde_json::to_string(&record).unwrap();
+    let vault = vault::Vault::new("default", "~", "my password is cheese");
 
-    /* Encrypt the data */
-    let crypto = crypto::CryptoEngine::new("My password is cheese with honey", "");
-    let encrypted = crypto.encrypt(&j);
+    // let record = Record::new("facebook", "web");
+    // let j = serde_json::to_string(&record).unwrap();
 
-    /* Encode it as base64 */
-    let mut encoded = String::new();
-    let string = unsafe { String::from_utf8_unchecked(encrypted.clone()) };
-    base64::encode_config_buf(string.as_bytes(), base64::STANDARD, &mut encoded);
+    // /* Encrypt the data */
+    // let crypto = crypto::CryptoEngine::new("My password is cheese with honey", "");
+    // let encrypted = crypto.encrypt(&j);
 
-    /* Then decode it and compare */
-    let decoded = base64::decode(&encoded).unwrap();
-    println!("Decoded == Encrypted: {}", decoded == encrypted);
+    // /* Encode it as base64 */
+    // let mut encoded = String::new();
+    // let string = unsafe { String::from_utf8_unchecked(encrypted.clone()) };
+    // base64::encode_config_buf(string.as_bytes(), base64::STANDARD, &mut encoded);
 
-    /* Then decrypt it and compare */
-    let decrypted = crypto.decrypt(&decoded);
-    let recovered: Record = serde_json::from_str(&decrypted).unwrap();
-    println!("Recovered == Record: {:?}", recovered == record);
+    // /* Then decode it and compare */
+    // let decoded = base64::decode(&encoded).unwrap();
+    // println!("Decoded == Encrypted: {}", decoded == encrypted);
+
+    // /* Then decrypt it and compare */
+    // let decrypted = crypto.decrypt(&decoded);
+    // let recovered: Record = serde_json::from_str(&decrypted).unwrap();
+    // println!("Recovered == Record: {:?}", recovered == record);
 }

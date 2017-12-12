@@ -16,7 +16,8 @@ mod user;
 pub mod crypto;
 use crypto::CryptoEngine;
 
-use std::collections::BTreeMap;
+use std::collections::{HashMap, BTreeMap};
+use std::path::PathBuf;
 use chrono::{DateTime, Local};
 
 
@@ -52,8 +53,26 @@ pub struct Record {
 /// shared between multiple people. By default only one (root) user
 /// is enabled though.
 pub struct Vault {
+    name: String,
+    path: PathBuf,
     crypto: CryptoEngine,
+    records: HashMap<String, Record>,
+}
 
+impl Vault {
 
-    
+    pub fn new(name: &str, path: &str, password: &str) -> Vault {
+        let mut me = Vault {
+            name: String::from(name),
+            path: PathBuf::new(),
+            crypto: CryptoEngine::new(password, ""),
+            records: HashMap::new()
+        };
+
+        me.path.push(path);
+        me.path.push(format!("{}.vault", name));
+
+        println!("{:?}", me.path);
+        return me;
+    }
 }
