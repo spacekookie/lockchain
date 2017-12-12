@@ -14,76 +14,30 @@ use vault::*;
 
 extern crate base64;
 extern crate aesni;
+extern crate blake2;
 extern crate generic_array;
-use generic_array::GenericArray;
+
 
 fn main() {
 
     let record = Record::new("facebook", "web");
-    let mut j = serde_json::to_string(&record).unwrap();
-    println!("{}", j);
+    let j = serde_json::to_string(&record).unwrap();
 
-    // This needs to be a 16byte hash
-    let password = "1234567890123456";
-    let salt = "lockchain_spacekookie".as_bytes();
+    /* Encrypt the data */
+    let crypto = crypto::CryptoEngine::new("My password is cheese with honey", "");
+    let encrypted = crypto.encrypt(&j);
 
-    use aesni::{Aes128, BlockCipher};
+    /* Encode it as base64 */
+    let mut encoded = String::new();
+    let string = unsafe { String::from_utf8_unchecked(encrypted.clone()) };
+    base64::encode_config_buf(string.as_bytes(), base64::STANDARD, &mut encoded);
 
-    let mut start = 0;
-    let mut stop = 16;
+    /* Then decode it and compare */
+    let decoded = base64::decode(&encoded).unwrap();
+    println!("Decoded == Encrypted: {}", decoded == encrypted);
 
-    let key = GenericArray::from_slice(password.as_bytes()); // [0u8; 16]
-    let cipher = Aes128::new(&key);
-
-    let mut recovered = String::from("");
-
-    let mut padded = false;
-    loop {
-
-        if j.len() < stop as usize {
-            let mut diff = stop - j.len();  
-            padded = true;
-            for _ in 0..diff {
-                j.push(' ');
-            }
-        }
-
-
-        let slice = &j[start..stop].as_bytes();
-        let mut block = GenericArray::clone_from_slice(&slice);
-        cipher.encrypt_block(&mut block);
-
-        cipher.decrypt_block(&mut block);
-        recovered.push_str(std::str::from_utf8(&block).unwrap());
-
-        start = stop;
-        stop += 16;
-
-        if padded {
-            break;
-        }
-    }
-
-    println!("Are equals? {}", recovered == j);
-
-    let after_record: Record = serde_json::from_str(&recovered).unwrap();
-    println!("{:?}", serde_json::to_string(&after_record).unwrap());
-
-    // let mut block = GenericArray::clone_from_slice(&[0u8; 16]);
-    // let mut block8 = GenericArray::clone_from_slice(&[block; 8]);
-
-    // Initialize cipher
-
-    // let block_copy = block.clone();
-    // // Encrypt block in-place
-    // cipher.encrypt_block(&mut block);
-    // // And decrypt it back
-    // cipher.decrypt_block(&mut block);
-    // assert_eq!(block, block_copy);
-
-    // // We can encrypt 8 blocks simultaneously using
-    // // instruction-level parallelism
-    // let block8_copy = block8.clone();
-    // cipher.encrypt_blocks(&mut block8);
-    // cipher.decrypt_blocks(&mut block8);
+    /* Then decrypt it and compare */
+    let decrypted = crypto.decrypt(&decoded);
+    let recovered: Record = serde_json::from_str(&decrypted).unwrap();
+    println!("Recovered == Record: {:?}", recovered == record);
 }
