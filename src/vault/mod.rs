@@ -12,8 +12,9 @@ mod management;
 mod version;
 mod record;
 mod user;
-pub mod crypto;
 
+pub mod crypto;
+use crypto::CryptoEngine;
 
 use std::collections::BTreeMap;
 use chrono::{DateTime, Local};
@@ -51,6 +52,8 @@ pub struct Record {
 /// shared between multiple people. By default only one (root) user
 /// is enabled though.
 pub struct Vault {
+    crypto: CryptoEngine,
+
 
     
 }

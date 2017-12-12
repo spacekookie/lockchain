@@ -111,21 +111,3 @@ impl CryptoEngine {
         );
     }
 }
-
-
-pub fn aes256_encrypt() {
-    let password = "1234567890123456";
-    // GenericArray::from_slice(password.as_bytes()); // [0u8; 16]
-
-}
-
-// pub fn aes256_decrypt(bh: &mut test::Bencher) {
-//     let cipher = Aes256::new(&Default::default());
-//     let mut input = Default::default();
-
-//     bh.iter(|| {
-//         cipher.decrypt_block(&mut input);
-//         test::black_box(&input);
-//     });
-//     bh.bytes = input.len() as u64;
-// }
