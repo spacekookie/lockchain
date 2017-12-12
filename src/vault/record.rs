@@ -4,7 +4,7 @@
 
 use std::collections::BTreeMap;
 use vault::{Header, Record};
-use chrono::{DateTime, Local};
+use chrono::{Local};
 
 
 impl Header {
@@ -20,6 +20,12 @@ impl Header {
         };
 
         return me;
+    }
+}
+
+impl PartialEq for Record {
+    fn eq(&self, other: &Record) -> bool {
+        self.header == other.header
     }
 }
 

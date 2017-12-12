@@ -17,7 +17,6 @@ pub mod crypto;
 
 use std::collections::BTreeMap;
 use chrono::{DateTime, Local};
-use serde::Serialize;
 
 
 /// A generic payload for a record
@@ -29,7 +28,7 @@ pub enum Payload {
     BTreeMap,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq)]
 pub struct Header {
     pub name: String,
     pub category: String,
