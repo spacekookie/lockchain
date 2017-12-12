@@ -3,19 +3,17 @@
 //! For now it's a hybrid between a library and a Gtk+ UI
 
 extern crate chrono;
-
 extern crate serde;
 extern crate serde_json;
-#[macro_use]
-extern crate serde_derive;
-
-mod vault;
-use vault::*;
-
+#[macro_use] extern crate serde_derive;
 extern crate base64;
 extern crate aesni;
 extern crate blake2;
 extern crate generic_array;
+
+
+mod vault;
+use vault::*;
 
 
 fn main() {
