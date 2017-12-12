@@ -18,8 +18,17 @@ use crypto::CryptoEngine;
 
 use std::collections::{HashMap, BTreeMap};
 use std::path::PathBuf;
+use std::error::Error;
 use chrono::{DateTime, Local};
+use std::fs;
 
+/// This should be made pretty with actual Errors at some point
+pub enum ErrorType {
+    VAULT_ALREADY_EXISTS,
+    DIRECTORY_ALREADY_EXISTS,
+    FAILED_TO_INITIALISE,
+    SUCCESS,
+}
 
 /// A generic payload for a record
 #[derive(Debug, Serialize, Deserialize)]
@@ -45,7 +54,6 @@ pub struct Record {
     body: BTreeMap<String, Payload>
 }
 
-
 /// A vault that represents a collection of records of sensitive data.
 /// Each record is encrypted before being written to disk.
 /// 
@@ -61,7 +69,7 @@ pub struct Vault {
 
 impl Vault {
 
-    pub fn new(name: &str, path: &str, password: &str) -> Vault {
+    pub fn new(name: &str, path: &str, password: &str) -> Result<Vault, ErrorType> {
         let mut me = Vault {
             name: String::from(name),
             path: PathBuf::new(),
@@ -72,7 +80,35 @@ impl Vault {
         me.path.push(path);
         me.path.push(format!("{}.vault", name));
 
+        /* Create relevant files */
+        match me.create_dirs() {
+            ErrorType::SUCCESS => {},
+            val => return Err(val),
+        }
+
         println!("{:?}", me.path);
-        return me;
+        return Ok(me);
+    }
+
+    /**************************/
+
+    /// Create all relevant directories
+    fn create_dirs(&self) -> ErrorType {
+
+        /* Check if the directories already exist */
+        if self.path.as_path().exists() {
+            return ErrorType::DIRECTORY_ALREADY_EXISTS;
+        }
+
+        /* Create the directory */
+        match fs::create_dir_all(self.path.as_path()) {
+            Err(err) => return ErrorType::FAILED_TO_INITIALISE,
+            _ => {}
+        };
+
+        /* Create configs */
+        
+
+        return ErrorType::SUCCESS;
     }
 }
