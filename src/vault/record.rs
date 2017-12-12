@@ -3,7 +3,7 @@
 
 
 use std::collections::BTreeMap;
-use vault::{Header, Record};
+use vault::{Header, Record, Payload};
 use chrono::{Local};
 
 
@@ -39,8 +39,13 @@ impl Record {
         };
     }
 
+    /// Set a simple key-value pair
+    pub fn set_data(&mut self, key: &str, val: Payload) {
+        self.body.insert(String::from(key), val);
+    }
+
     /// Add a new tag to this record head. Checks that tags don't already exists
     pub fn add_tag(&mut self, tag: &str) {
-        
+        self.header.tags.push(String::from(tag));
     }
 }

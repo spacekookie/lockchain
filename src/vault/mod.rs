@@ -26,8 +26,10 @@ use std::fs::File;
 use std::io::prelude::*;
 
 use serde_json;
+use base64;
 
 /// This should be made pretty with actual Errors at some point
+#[derive(Debug)]
 pub enum ErrorType {
     VAULT_ALREADY_EXISTS,
     DIRECTORY_ALREADY_EXISTS,
@@ -38,10 +40,10 @@ pub enum ErrorType {
 /// A generic payload for a record
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Payload {
-    String,
-    bool,
-    i64,
-    BTreeMap,
+    Text(String),
+    Boolean(bool),
+    Number(i64),
+    BTreeMap(BTreeMap<String, Payload>),
 }
 
 #[derive(Debug, Serialize, Deserialize, Eq, PartialEq)]
@@ -56,7 +58,7 @@ pub struct Header {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Record {
     pub header: Header,
-    body: BTreeMap<String, Payload>,
+    pub body: BTreeMap<String, Payload>,
 }
 
 /// A vault that represents a collection of records of sensitive data.
@@ -90,7 +92,6 @@ impl Vault {
             val => return Err(val),
         }
 
-        println!("{:?}", me.path);
         return Ok(me);
     }
 
@@ -119,6 +120,7 @@ impl Vault {
         pathbuf.push("records");
         let records = fs::read_dir(pathbuf.as_path()).unwrap();
         let mut record_map: HashMap<String, Record> = HashMap::new();
+        pathbuf.pop();
 
         /* Decrypt and map all existing records */
         for entry in records {
@@ -146,6 +148,69 @@ impl Vault {
             crypto: crypto,
             records: record_map,
         };
+    }
+
+    /// Adds a new record to the vault
+    pub fn add_record(&mut self, name: &str, category: &str, tags: Vec<&str>) {
+        let mut record = Record::new(name, category);
+        for tag in tags {
+            record.add_tag(&tag);
+        }
+
+        self.records.insert(String::from(name), record);
+    }
+
+    pub fn add_data(&mut self, record: &str, key: &str, data: Payload) {
+        let r: &mut Record = self.records.get_mut(record).unwrap();
+        r.set_data(key, data);
+    }
+
+    /// Sync current records to disk, overwriting existing files
+    pub fn sync(&self) {
+
+        let mut path = self.path.clone();
+        path.push("records");
+        println!("Syncing records in: {:?}", path.as_os_str());
+
+        for (name, record) in &self.records {
+            let serialised = serde_json::to_string(&record).unwrap();
+            let encrypted = self.crypto.encrypt(&serialised);
+
+            /* Encode it as base64 */
+            let mut encoded = String::new();
+            let string = unsafe { String::from_utf8_unchecked(encrypted.clone()) };
+            base64::encode_config_buf(string.as_bytes(), base64::STANDARD, &mut encoded);
+
+            /* <vault>/records/<name>.data */
+            {
+                path.push(format!("{}.data", name));
+                let file = path.as_path();
+                println!("File exists: {}", file.exists());
+
+                let mut handle = match file.exists() {
+                    true => {
+                        match File::open(file.as_os_str()) {
+                            Ok(k) => k,
+                            Err(e) => panic!("Failed to open file: {}", e),
+                        }
+                    }
+                    false => {
+                        match File::create(file.as_os_str()) {
+                            Ok(k) => k,
+                            Err(e) => panic!("Failed to create file ({:?}): {}", file.as_os_str(), e),
+                        }
+                    }
+                };
+
+                /* Write to disk */
+                match handle.write_all(encoded.as_bytes()) {
+                    Err(e) => println!("An error was encountered while writing '{}': {}", name, e),
+                    _ => {}
+                }
+            }
+
+            path.pop();
+        }
     }
 
     /**************************/
@@ -184,6 +249,7 @@ impl Vault {
             self.path.pop();
             self.path.push("records");
             fs::create_dir_all(self.path.as_path()).unwrap();
+            self.path.pop();
         }
 
         return ErrorType::SUCCESS;
