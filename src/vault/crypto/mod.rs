@@ -6,8 +6,7 @@ use aesni::{Aes128, BlockCipher};
 use generic_array::GenericArray;
 use std;
 
-use rand::Rng;
-use rand::os::OsRng;
+use rand::{thread_rng, Rng};
 
 pub mod hashing;
 pub mod encoding;
@@ -26,18 +25,17 @@ pub struct CryptoEngine {
 
 
 impl CryptoEngine {
-
+    
     /// Generate a new random key which is encrypted with the password
     pub fn new(password: &str, _: &str) -> CryptoEngine {
 
         /* Generate some random key */
-        let mut r = OsRng::new().unwrap();
-        let mut random_data = vec![0u8, 255];
-        r.fill_bytes(&mut random_data);
+        let mut random_data = [0u8; 13579];
+        thread_rng().fill_bytes(&mut random_data);
 
         /* Move key around */
         let mut secret_key = [0u8; KEYLENGTH];
-        for i in 0..secret_key.len() {
+        for i in 0..KEYLENGTH {
             secret_key[i] = random_data[i];
         }
 
@@ -47,9 +45,10 @@ impl CryptoEngine {
             key: k,
             encrypted_key: None,
             aes: Aes128::new_varkey(&k).unwrap(),
-            iv: String::from("unused")
+            iv: String::from("unused"),
         };
-        let encryted_key_formatted = std::str::from_utf8(&secret_key).unwrap();
+
+        let encryted_key_formatted = unsafe { std::str::from_utf8_unchecked(&secret_key) };
         let encrypted_key = tmp.encrypt(encryted_key_formatted);
         let string = unsafe { String::from_utf8_unchecked(encrypted_key.clone()) };
         let encrypted_key_encoded = encoding::hex(&string);
@@ -59,16 +58,14 @@ impl CryptoEngine {
             key: secret_key,
             encrypted_key: Some(encrypted_key_encoded),
             aes: Aes128::new_varkey(&secret_key).unwrap(),
-            iv: String::from("unused")
+            iv: String::from("unused"),
         };
 
         return me;
     }
 
     /// Load an existing vault with it's encrypted key and password
-    pub fn load_existing(encrypted_key: &str, password: &str) {
-
-    }
+    pub fn load_existing(encrypted_key: &str, password: &str) {}
 
     /// Get the encrypted key that was used for a vault
     pub fn dump_encrypted_key(&self) -> Option<String> {

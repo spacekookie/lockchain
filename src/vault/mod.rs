@@ -1,12 +1,12 @@
 //! Vault data module
-//! 
+//!
 //! A vault represents a collection of records of sensitive data. Each record
 //! is encrypted before being written to disk.
-//! 
+//!
 //! A vault can have multiple users which allows login-information to be
 //! shared between multiple people. By default only one (root) user
 //! is enabled though.
-//! 
+//!
 
 mod management;
 mod version;
@@ -20,7 +20,10 @@ use std::collections::{HashMap, BTreeMap};
 use std::path::PathBuf;
 use std::error::Error;
 use chrono::{DateTime, Local};
+
 use std::fs;
+use std::fs::File;
+use std::io::prelude::*;
 
 /// This should be made pretty with actual Errors at some point
 pub enum ErrorType {
@@ -51,12 +54,12 @@ pub struct Header {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Record {
     pub header: Header,
-    body: BTreeMap<String, Payload>
+    body: BTreeMap<String, Payload>,
 }
 
 /// A vault that represents a collection of records of sensitive data.
 /// Each record is encrypted before being written to disk.
-/// 
+///
 /// A vault can have multiple users which allows login-information to be
 /// shared between multiple people. By default only one (root) user
 /// is enabled though.
@@ -68,13 +71,12 @@ pub struct Vault {
 }
 
 impl Vault {
-
     pub fn new(name: &str, path: &str, password: &str) -> Result<Vault, ErrorType> {
         let mut me = Vault {
             name: String::from(name),
             path: PathBuf::new(),
             crypto: CryptoEngine::new(password, ""),
-            records: HashMap::new()
+            records: HashMap::new(),
         };
 
         me.path.push(path);
@@ -82,7 +84,7 @@ impl Vault {
 
         /* Create relevant files */
         match me.create_dirs() {
-            ErrorType::SUCCESS => {},
+            ErrorType::SUCCESS => {}
             val => return Err(val),
         }
 
@@ -93,7 +95,7 @@ impl Vault {
     /**************************/
 
     /// Create all relevant directories
-    fn create_dirs(&self) -> ErrorType {
+    fn create_dirs(&mut self) -> ErrorType {
 
         /* Check if the directories already exist */
         if self.path.as_path().exists() {
@@ -102,12 +104,31 @@ impl Vault {
 
         /* Create the directory */
         match fs::create_dir_all(self.path.as_path()) {
-            Err(err) => return ErrorType::FAILED_TO_INITIALISE,
+            Err(_) => return ErrorType::FAILED_TO_INITIALISE,
             _ => {}
         };
 
         /* Create configs */
-        
+        let key = match self.crypto.dump_encrypted_key() {
+            Some(k) => k,
+            None => return ErrorType::FAILED_TO_INITIALISE,
+        };
+
+        /* Write encrypted key to disk */
+        {
+            self.path.push("primary.key");
+            let key_path = self.path.as_os_str();
+            let mut key_file = File::create(key_path).unwrap();
+            println!("Creating key file at {:?}", key_file);
+            key_file.write_all(key.as_bytes()).unwrap();
+        }
+
+        /* Create a few other directories */
+        {
+            self.path.pop();
+            self.path.push("records");
+            fs::create_dir_all(self.path.as_path()).unwrap();
+        }
 
         return ErrorType::SUCCESS;
     }

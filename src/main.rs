@@ -18,7 +18,7 @@ use vault::*;
 
 fn main() {
 
-    let vault = vault::Vault::new("default", "~", "my password is cheese");
+    let vault = vault::Vault::new("default", "/home/spacekookie/Desktop", "my password is cheese");
 
     // let record = Record::new("facebook", "web");
     // let j = serde_json::to_string(&record).unwrap();
