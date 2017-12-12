@@ -25,6 +25,8 @@ use std::fs;
 use std::fs::File;
 use std::io::prelude::*;
 
+use serde_json;
+
 /// This should be made pretty with actual Errors at some point
 pub enum ErrorType {
     VAULT_ALREADY_EXISTS,
@@ -90,6 +92,60 @@ impl Vault {
 
         println!("{:?}", me.path);
         return Ok(me);
+    }
+
+    pub fn load(name: &str, path: &str, password: &str) -> Vault {
+
+        /* Construct the base path */
+        let mut pathbuf = PathBuf::new();
+        pathbuf.push(path);
+        pathbuf.push(format!("{}.vault", name));
+
+        /* Load the secret key */
+        let mut key = String::new();
+        {
+            pathbuf.push("primary.key");
+            let key_path = pathbuf.as_os_str();
+            let mut key_file = File::open(key_path).unwrap();
+            key_file.read_to_string(&mut key).expect(
+                "Failed to load primary key file!",
+            );
+        };
+
+        let crypto = CryptoEngine::load_existing(&key, password);
+
+        /* Load all existing records */
+        pathbuf.pop();
+        pathbuf.push("records");
+        let records = fs::read_dir(pathbuf.as_path()).unwrap();
+        let mut record_map: HashMap<String, Record> = HashMap::new();
+
+        /* Decrypt and map all existing records */
+        for entry in records {
+            let mut encrypted = String::new();
+            let record = entry.unwrap();
+            let mut file = File::open(record.path().as_os_str()).unwrap();
+            file.read_to_string(&mut encrypted).unwrap();
+
+            /* Make the encrypted data a vector */
+            let record_bytes = encrypted.as_bytes();
+            let mut record_vector: Vec<u8> = Vec::new();
+            for byte in record_bytes {
+                record_vector.push(*byte);
+            }
+            let decrypted = crypto.decrypt(&record_vector);
+            let a_record: Record = serde_json::from_str(&decrypted).unwrap();
+
+            let name = a_record.header.name.clone();
+            record_map.insert(name, a_record);
+        }
+
+        return Vault {
+            name: String::from(name),
+            path: PathBuf::new(),
+            crypto: crypto,
+            records: record_map,
+        };
     }
 
     /**************************/
