@@ -2,10 +2,14 @@
 //! 
 
 use std::fmt::Write;
+use base64;
 
 /// Encode a byte string as base64 symbols
-pub fn base64(data: &str) -> String {
-    return String::new();
+pub fn base64(data: &Vec<u8>) -> String {
+    let mut encoded = String::new();
+    let string = unsafe { String::from_utf8_unchecked(data.clone()) };
+    base64::encode_config_buf(string.as_bytes(), base64::STANDARD, &mut encoded);
+    return encoded;
 }
 
 /// Simply encode a byte-string as hexadecimal symbols
