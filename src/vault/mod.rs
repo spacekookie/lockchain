@@ -71,10 +71,12 @@ pub struct Vault {
     name: String,
     path: PathBuf,
     crypto: CryptoEngine,
-    records: HashMap<String, Record>,
+    pub records: HashMap<String, Record>,
 }
 
 impl Vault {
+
+    /// Attempt to create a new vault
     pub fn new(name: &str, path: &str, password: &str) -> Result<Vault, ErrorType> {
         let mut me = Vault {
             name: String::from(name),
@@ -129,13 +131,10 @@ impl Vault {
             let mut file = File::open(record.path().as_os_str()).unwrap();
             file.read_to_string(&mut encrypted).unwrap();
 
-            /* Make the encrypted data a vector */
-            let record_bytes = encrypted.as_bytes();
-            let mut record_vector: Vec<u8> = Vec::new();
-            for byte in record_bytes {
-                record_vector.push(*byte);
-            }
-            let decrypted = crypto.decrypt(&record_vector);
+            /* Base64 decode */
+            let decoded = base64::decode(&encrypted).unwrap();
+
+            let decrypted = crypto.decrypt(&decoded);
             let a_record: Record = serde_json::from_str(&decrypted).unwrap();
 
             let name = a_record.header.name.clone();

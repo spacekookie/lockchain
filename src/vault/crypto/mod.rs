@@ -11,6 +11,9 @@ use rand::{thread_rng, Rng};
 pub mod hashing;
 pub mod encoding;
 
+use base64;
+
+
 const KEYLENGTH: usize = 16;
 
 
@@ -48,8 +51,10 @@ impl CryptoEngine {
 
         let encryted_key_formatted = unsafe { std::str::from_utf8_unchecked(&secret_key) };
         let encrypted_key = tmp.encrypt(encryted_key_formatted);
-        let string = unsafe { String::from_utf8_unchecked(encrypted_key.clone()) };
-        let encrypted_key_encoded = encoding::hex(&string);
+        // let string: String = unsafe { String::from_utf8_unchecked(encrypted_key.clone()) };
+        let encrypted_key_encoded = encoding::base64(&encrypted_key);
+        println!("Before | Raw: {}", encrypted_key.len());
+        println!("Before | Encoded: {}", encrypted_key_encoded.len());
 
         /* Then actually create an engine and return it */
         let me = CryptoEngine {
@@ -72,12 +77,14 @@ impl CryptoEngine {
             iv: String::from("unused"),
         };
 
-        let floobar = tmp.encrypted_key.clone().unwrap();
-        let key_as_bytes = floobar.as_bytes();
+        
+        let decoded = base64::decode(&encrypted_key).unwrap();
+        println!("After | Raw: {}", decoded.len());
+        println!("After | Encoded: {}", encrypted_key.len());
 
         let mut key_vector: Vec<u8> = Vec::new();
-        for byte in key_as_bytes {
-            key_vector.push(*byte);
+        for byte in decoded {
+            key_vector.push(byte);
         }
         let decrypted = tmp.decrypt(&key_vector);
         
@@ -136,10 +143,13 @@ impl CryptoEngine {
             let mut block = GenericArray::clone_from_slice(slice);
             self.aes.decrypt_block(&mut block);
 
-            match std::str::from_utf8(&block) {
-                Ok(string) => decryted.push_str(string),
-                Err(err) => panic!("Failed to decode: {}", err),
-            }
+            let val = unsafe { std::str::from_utf8_unchecked(&block) };
+            decryted.push_str(val);
+
+            // match std::str::from_utf8(&block) {
+            //     Ok(string) =>  decryted.push_str(string),
+            //     Err(err) => panic!("Failed to decode: {}", err),
+            // }
 
             start = stop;
             stop += KEYLENGTH;
