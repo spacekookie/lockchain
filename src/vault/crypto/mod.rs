@@ -27,7 +27,6 @@ pub struct CryptoEngine {
 
 
 impl CryptoEngine {
-
     /// Generate a new random key which is encrypted with the password
     pub fn new(password: &str, _: &str) -> CryptoEngine {
 
@@ -49,16 +48,14 @@ impl CryptoEngine {
             iv: String::from("unused"),
         };
 
-        let encryted_key_formatted = unsafe { std::str::from_utf8_unchecked(&secret_key) };
-        let encrypted_key = tmp.encrypt(encryted_key_formatted);
-        // let string: String = unsafe { String::from_utf8_unchecked(encrypted_key.clone()) };
-        let encrypted_key_encoded = encoding::base64(&encrypted_key);
-        println!("Before | Raw: {}", encrypted_key.len());
-        println!("Before | Encoded: {}", encrypted_key_encoded.len());
+        /* Encrypt and encode the secret key */
+        let string = CryptoEngine::vec_to_str(&secret_key);
+        let encrypted = tmp.encrypt(&string);
+        let encoded = encoding::encode_base64(&encrypted);
 
         /* Then actually create an engine and return it */
         let me = CryptoEngine {
-            encrypted_key: Some(encrypted_key_encoded),
+            encrypted_key: Some(encoded),
             aes: Aes128::new_varkey(&secret_key).unwrap(),
             iv: String::from("unused"),
         };
@@ -68,7 +65,7 @@ impl CryptoEngine {
 
     /// Load an existing vault with it's encrypted key and password
     pub fn load_existing(encrypted_key: &str, password: &str) -> CryptoEngine {
-        
+
         /* Decrypt key with password */
         let k = hashing::blake2_16(password, "");
         let tmp = CryptoEngine {
@@ -77,22 +74,15 @@ impl CryptoEngine {
             iv: String::from("unused"),
         };
 
-        
-        let decoded = base64::decode(&encrypted_key).unwrap();
-        println!("After | Raw: {}", decoded.len());
-        println!("After | Encoded: {}", encrypted_key.len());
+        /* Decode and decrypt key */
+        let decoded = encoding::decode_base64(&encrypted_key);
+        let decrypted = tmp.decrypt(&decoded);
 
-        let mut key_vector: Vec<u8> = Vec::new();
-        for byte in decoded {
-            key_vector.push(byte);
-        }
-        let decrypted = tmp.decrypt(&key_vector);
-        
         /* Then initialise a new crypto engine with the newly decrypted key */
         let me = CryptoEngine {
             encrypted_key: Some(String::from(encrypted_key)),
             aes: Aes128::new_varkey(&decrypted.as_bytes()).unwrap(),
-            iv: String::from("unused")
+            iv: String::from("unused"),
         };
 
         return me;
@@ -103,8 +93,11 @@ impl CryptoEngine {
         return self.encrypted_key.clone();
     }
 
-    pub fn encrypt(&self, data: &str) -> Vec<u8> {
-        let to_encrypt = self.pad_data(data);
+    /// Takes a simple utf-8 encoded string and encrypts it
+    ///
+    /// Outputs a base64 encoded string
+    pub fn encrypt(&self, utf_8: &str) -> String {
+        let to_encrypt = self.pad_data(&utf_8);
 
         let mut encrypted: Vec<u8> = Vec::new();
         let mut start: usize = 0;
@@ -128,12 +121,17 @@ impl CryptoEngine {
             }
         }
 
-        return encrypted;
+        return encoding::encode_base64(&CryptoEngine::vec_to_str(&encrypted));
     }
 
-    pub fn decrypt(&self, data: &Vec<u8>) -> String {
+
+    /// Takes a base64 encoded, encrypted string and decrypts it
+    ///
+    /// Outputs a simple utf-8 string
+    pub fn decrypt(&self, base64: &str) -> String {
         let mut decryted = String::new();
-        let sliced = data.as_slice();
+        let data = encoding::decode_base64(base64);
+        let sliced = CryptoEngine::str_to_vec(&data);
 
         let mut start: usize = 0;
         let mut stop: usize = KEYLENGTH;
@@ -141,15 +139,10 @@ impl CryptoEngine {
         loop {
             let slice = &sliced[start..stop];
             let mut block = GenericArray::clone_from_slice(slice);
+
+            /* Encrypt block and push to collection */
             self.aes.decrypt_block(&mut block);
-
-            let val = unsafe { std::str::from_utf8_unchecked(&block) };
-            decryted.push_str(val);
-
-            // match std::str::from_utf8(&block) {
-            //     Ok(string) =>  decryted.push_str(string),
-            //     Err(err) => panic!("Failed to decode: {}", err),
-            // }
+            decryted.push_str(&CryptoEngine::vec_to_str(&block));
 
             start = stop;
             stop += KEYLENGTH;
@@ -159,6 +152,20 @@ impl CryptoEngine {
         }
 
         return decryted;
+    }
+
+    /// Convert a vector of u8 into a utf-8 string
+    fn vec_to_str(vec: &[u8]) -> String {
+        return unsafe { String::from(std::str::from_utf8_unchecked(vec)) };
+    }
+
+    /// Convert a utf-8 string to a vector of u8
+    fn str_to_vec(string: &str) -> Vec<u8> {
+        let mut vec: Vec<u8> = Vec::new();
+        for b in string.as_bytes() {
+            vec.push(*b);
+        }
+        return vec;
     }
 
     /// Pad a string to the block-size of the cipher

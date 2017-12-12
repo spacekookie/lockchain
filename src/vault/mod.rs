@@ -26,7 +26,7 @@ use std::fs::File;
 use std::io::prelude::*;
 
 use serde_json;
-use base64;
+
 
 /// This should be made pretty with actual Errors at some point
 #[derive(Debug)]
@@ -131,10 +131,8 @@ impl Vault {
             let mut file = File::open(record.path().as_os_str()).unwrap();
             file.read_to_string(&mut encrypted).unwrap();
 
-            /* Base64 decode */
-            let decoded = base64::decode(&encrypted).unwrap();
-
-            let decrypted = crypto.decrypt(&decoded);
+            /* Decrypt and decode the data */
+            let decrypted = crypto.decrypt(&encrypted);
             let a_record: Record = serde_json::from_str(&decrypted).unwrap();
 
             let name = a_record.header.name.clone();
@@ -175,11 +173,6 @@ impl Vault {
             let serialised = serde_json::to_string(&record).unwrap();
             let encrypted = self.crypto.encrypt(&serialised);
 
-            /* Encode it as base64 */
-            let mut encoded = String::new();
-            let string = unsafe { String::from_utf8_unchecked(encrypted.clone()) };
-            base64::encode_config_buf(string.as_bytes(), base64::STANDARD, &mut encoded);
-
             /* <vault>/records/<name>.data */
             {
                 path.push(format!("{}.data", name));
@@ -202,7 +195,7 @@ impl Vault {
                 };
 
                 /* Write to disk */
-                match handle.write_all(encoded.as_bytes()) {
+                match handle.write_all(encrypted.as_bytes()) {
                     Err(e) => println!("An error was encountered while writing '{}': {}", name, e),
                     _ => {}
                 }
