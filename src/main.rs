@@ -13,20 +13,21 @@ extern crate aesni;
 extern crate blake2;
 extern crate generic_array;
 
-
 mod vault;
-use vault::*;
+mod crypto;
 
+use vault::*;
 use vault::Payload::Text;
 
-/// This is a small example on how to use the lockchain API
-///
-/// This is by no means stable :')
+
+
+
 fn main() {
 
     create_and_populate();
     load();
 }
+
 
 fn load() {
 
@@ -38,7 +39,6 @@ fn load() {
     println!("{:?}", vault.records);
 
 }
-
 
 fn create_and_populate() {
 

@@ -2,7 +2,7 @@
 //! 
 
 use std::fmt::Write;
-use std;
+use std::str::from_utf8_unchecked;
 use base64;
 
 
@@ -14,7 +14,7 @@ pub fn encode_base64(data: &str) -> String {
 /// Takes a base64 string and converts it to raw binary data
 pub fn decode_base64(base64: &str) -> String {
     let vec = base64::decode(base64).unwrap();
-    let decoded = unsafe { std::str::from_utf8_unchecked(&vec) };
+    let decoded = unsafe { from_utf8_unchecked(&vec) };
     return String::from(decoded);
 }
 

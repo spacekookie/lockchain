@@ -1,18 +1,15 @@
-//! Crypto module for lockchain
-//!
-//!
+//! Crypto engine implementation
+//! 
+//! 
+
+use super::DEFAULT_KEYLENGTH;
+use super::encoding;
+use super::random;
+use super::hash;
 
 use aesni::{Aes128, BlockCipher};
 use generic_array::GenericArray;
-use std;
-
-use rand::{thread_rng, Rng};
-
-pub mod hashing;
-pub mod encoding;
-
-const KEYLENGTH: usize = 16;
-
+use std::str::from_utf8_unchecked;
 
 /// The crypto engine which holds the key and AES context
 ///
@@ -23,21 +20,15 @@ pub struct CryptoEngine {
 
 
 impl CryptoEngine {
+
     /// Generate a new random key which is encrypted with the password
     pub fn new(password: &str, _: &str) -> CryptoEngine {
 
-        /* Generate some random key */
-        let mut random_data = [0u8; 13579];
-        thread_rng().fill_bytes(&mut random_data);
-
-        /* Move key around */
-        let mut secret_key = [0u8; KEYLENGTH];
-        for i in 0..KEYLENGTH {
-            secret_key[i] = random_data[i];
-        }
+        /* Generate a random key */
+        let secret_key = random::bytes(DEFAULT_KEYLENGTH);
 
         /* Encrypt secret_key with password */
-        let k = hashing::blake2_16(password, "");
+        let k = hash::blake2_16(password, "");
         let tmp = CryptoEngine {
             encrypted_key: None,
             aes: Aes128::new_varkey(&k).unwrap(),
@@ -61,7 +52,7 @@ impl CryptoEngine {
     pub fn load_existing(encrypted_key: &str, password: &str) -> CryptoEngine {
 
         /* Decrypt key with password */
-        let k = hashing::blake2_16(password, "");
+        let k = hash::blake2_16(password, "");
         let tmp = CryptoEngine {
             encrypted_key: Some(String::from(encrypted_key)),
             aes: Aes128::new_varkey(&k).unwrap(),
@@ -93,7 +84,7 @@ impl CryptoEngine {
 
         let mut encrypted: Vec<u8> = Vec::new();
         let mut start: usize = 0;
-        let mut stop: usize = KEYLENGTH;
+        let mut stop: usize = DEFAULT_KEYLENGTH;
 
         loop {
             let slice = to_encrypt[start..stop].as_bytes();
@@ -107,7 +98,7 @@ impl CryptoEngine {
             }
 
             start = stop;
-            stop += KEYLENGTH;
+            stop += DEFAULT_KEYLENGTH;
             if to_encrypt.len() < stop {
                 break;
             }
@@ -126,7 +117,7 @@ impl CryptoEngine {
         let sliced = CryptoEngine::str_to_vec(&data);
 
         let mut start: usize = 0;
-        let mut stop: usize = KEYLENGTH;
+        let mut stop: usize = DEFAULT_KEYLENGTH;
 
         loop {
             let slice = &sliced[start..stop];
@@ -137,7 +128,7 @@ impl CryptoEngine {
             decryted.push_str(&CryptoEngine::vec_to_str(&block));
 
             start = stop;
-            stop += KEYLENGTH;
+            stop += DEFAULT_KEYLENGTH;
             if sliced.len() < stop {
                 break;
             }
@@ -148,7 +139,7 @@ impl CryptoEngine {
 
     /// Convert a vector of u8 into a utf-8 string
     fn vec_to_str(vec: &[u8]) -> String {
-        return unsafe { String::from(std::str::from_utf8_unchecked(vec)) };
+        return unsafe { String::from(from_utf8_unchecked(vec)) };
     }
 
     /// Convert a utf-8 string to a vector of u8
@@ -166,14 +157,14 @@ impl CryptoEngine {
     /// data padding soon. But it works for now, I guess
     fn pad_data(&self, data: &str) -> String {
 
-        if data.len() % KEYLENGTH == 0 {
+        if data.len() % DEFAULT_KEYLENGTH == 0 {
             return String::from(data);
         }
 
         return format!(
             "{: <width$}",
             data,
-            width = data.len() + (data.len() % KEYLENGTH)
+            width = data.len() + (data.len() % DEFAULT_KEYLENGTH)
         );
     }
 }

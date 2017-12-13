@@ -13,17 +13,15 @@ mod version;
 mod record;
 mod user;
 
-pub mod crypto;
-use crypto::CryptoEngine;
-
 use std::collections::{HashMap, BTreeMap};
-use std::path::PathBuf;
-use chrono::{DateTime, Local};
-
-use std::fs;
-use std::fs::File;
 use std::io::prelude::*;
+use std::path::PathBuf;
+use std::fs::File;
+use std::fs;
 
+use crypto::engine::CryptoEngine;
+
+use chrono::{DateTime, Local};
 use serde_json;
 
 
