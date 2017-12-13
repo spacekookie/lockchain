@@ -24,7 +24,8 @@ use serde_json;
 #[derive(Debug)]
 pub enum ErrorType {
     DirectoryAlreadyExists,
-    FailedToInitialise,
+    VaultDoesNotExist,
+    GenericError(String),
     Success,
 }
 
@@ -43,7 +44,6 @@ pub struct Vault {
 }
 
 impl Vault {
-
     /// Attempt to create a new vault
     pub fn new(name: &str, path: &str, password: &str) -> Result<Vault, ErrorType> {
         let mut me = Vault {
@@ -65,7 +65,7 @@ impl Vault {
         return Ok(me);
     }
 
-    pub fn load(name: &str, path: &str, password: &str) -> Vault {
+    pub fn load(name: &str, path: &str, password: &str) -> Result<Vault, ErrorType> {
 
         /* Construct the base path */
         let mut pathbuf = PathBuf::new();
@@ -77,10 +77,15 @@ impl Vault {
         {
             pathbuf.push("primary.key");
             let key_path = pathbuf.as_os_str();
-            let mut key_file = File::open(key_path).unwrap();
-            key_file.read_to_string(&mut key).expect(
-                "Failed to load primary key file!",
-            );
+            let mut key_file = match File::open(key_path) {
+                Ok(k) => k,
+                Err(e) => return Err(ErrorType::VaultDoesNotExist),
+            };
+
+            match key_file.read_to_string(&mut key) {
+                Ok(_) => {}
+                Err(_) => return Err(ErrorType::VaultDoesNotExist),
+            }
         };
 
         let crypto = CryptoEngine::load_existing(&key, password);
@@ -88,7 +93,10 @@ impl Vault {
         /* Load all existing records */
         pathbuf.pop();
         pathbuf.push("records");
-        let records = fs::read_dir(pathbuf.as_path()).unwrap();
+        let records = match fs::read_dir(pathbuf.as_path()) {
+            Ok(f) => f,
+            Err(_) => return Err(ErrorType::VaultDoesNotExist),
+        };
         let mut record_map: HashMap<String, Record> = HashMap::new();
         pathbuf.pop();
 
@@ -96,23 +104,31 @@ impl Vault {
         for entry in records {
             let mut encrypted = String::new();
             let record = entry.unwrap();
-            let mut file = File::open(record.path().as_os_str()).unwrap();
+            let mut file = match File::open(record.path().as_os_str()) {
+                Ok(f) => f,
+                Err(_) => return Err(ErrorType::VaultDoesNotExist),
+            };
             file.read_to_string(&mut encrypted).unwrap();
 
             /* Decrypt and decode the data */
             let decrypted = crypto.decrypt(&encrypted);
-            let a_record: Record = serde_json::from_str(&decrypted).unwrap();
+            let a_record: Record = match serde_json::from_str(&decrypted) {
+                Ok(obj) => obj,
+                Err(_) => return Err(ErrorType::VaultDoesNotExist),
+            };
 
             let name = a_record.header.name.clone();
             record_map.insert(name, a_record);
         }
 
-        return Vault {
+        /* Create vault and return it */
+        let me = Vault {
             name: String::from(name),
             path: PathBuf::new(),
             crypto: crypto,
             records: record_map,
         };
+        return Ok(me);
     }
 
     /// Adds a new record to the vault
@@ -157,7 +173,9 @@ impl Vault {
                     false => {
                         match File::create(file.as_os_str()) {
                             Ok(k) => k,
-                            Err(e) => panic!("Failed to create file ({:?}): {}", file.as_os_str(), e),
+                            Err(e) => {
+                                panic!("Failed to create file ({:?}): {}", file.as_os_str(), e)
+                            }
                         }
                     }
                 };
@@ -185,14 +203,16 @@ impl Vault {
 
         /* Create the directory */
         match fs::create_dir_all(self.path.as_path()) {
-            Err(_) => return ErrorType::FailedToInitialise,
+            Err(_) => {
+                return ErrorType::GenericError("Failed to create vault directory group".to_string())
+            }
             _ => {}
         };
 
         /* Create configs */
         let key = match self.crypto.dump_encrypted_key() {
             Some(k) => k,
-            None => return ErrorType::FailedToInitialise,
+            None => return ErrorType::GenericError("Failed to load encryption key!".to_string()),
         };
 
         /* Write encrypted key to disk */
