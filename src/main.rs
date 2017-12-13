@@ -32,13 +32,15 @@ fn main() {
 
 fn load() {
 
-    let vault = Vault::load(
+    let vault = match Vault::load(
         "Personal",
         "/home/spacekookie/Desktop",
         "my password is cheese",
-    );
+    ) {
+        Ok(v) => v,
+        Err(e) => panic!("Failed to load existing vault: {}", e),
+    };
     println!("{:?}", vault.records);
-
 }
 
 fn create_and_populate() {
