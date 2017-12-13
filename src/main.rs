@@ -38,7 +38,7 @@ fn load() {
         "my password is cheese",
     ) {
         Ok(v) => v,
-        Err(e) => panic!("Failed to load existing vault: {}", e),
+        Err(e) => panic!("Failed to load existing vault: {:?}", e),
     };
     println!("{:?}", vault.records);
 }
