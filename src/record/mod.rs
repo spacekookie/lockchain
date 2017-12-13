@@ -4,13 +4,14 @@
 //! 
 
 mod version;
+use self::version::{Version, Operation};
 
 use std::collections::BTreeMap;
 use chrono::{DateTime, Local};
 
 
 /// A generic payload for a record
-#[derive(Debug, Serialize, Deserialize, PartialEq, Eq)]
+#[derive(Debug, Serialize, Deserialize, PartialEq, Eq, Clone)]
 pub enum Payload {
     Text(String),
     Boolean(bool),
@@ -57,7 +58,7 @@ pub struct Record {
     pub header: Header,
 
     /// The versioned record body
-    pub body: BTreeMap<String, Payload>,
+    pub body: Vec<Version>,
 }
 
 impl Header {
@@ -89,13 +90,24 @@ impl Record {
     pub fn new(name: &str, category: &str) -> Record {
         return Record {
             header: Header::new(String::from(name), String::from(category)),
-            body: BTreeMap::new(),
+            body: Vec::new(),
         };
+    }
+
+    /// Return a new version to work on externally
+    pub fn start_version(&self) -> Version {
+        let num = self.body.len(); // Versions are continually numbered
+        return Version::new(num as u64);
+    }
+
+    /// Apply a version to the current record
+    pub fn apply_version(&mut self, ver: Version) {
+
     }
 
     /// Set a simple key-value pair
     pub fn set_data(&mut self, key: &str, val: Payload) {
-        self.body.insert(String::from(key), val);
+        // self.body.insert(String::from(key), val);
     }
 
     /// Add a new tag to this record head. Checks that tags don't already exists

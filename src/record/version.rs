@@ -22,6 +22,8 @@ pub enum Operation {
 
 use self::Operation::{Insert, Delete};
 
+/// Represents a series of operations done in sequence
+/// that are applied to a record to preserve history of state
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Version {
     version: u64,
@@ -29,6 +31,8 @@ pub struct Version {
 }
 
 impl Version {
+
+    /// Create a simple new version
     pub fn new(ver: u64) -> Version {
         return Version {
             version: ver,
@@ -69,5 +73,14 @@ impl Version {
 
         /* Return the map */
         return map;
+    }
+
+    /// A utility function which merges two versions onto &self
+    /// 
+    /// - If a key is present in `other`, `self.key` is overwritten
+    /// - If a key is missing in `other`, `self.key` is deleted
+    /// 
+    pub fn merge(&mut self, other: &Version) {
+
     }
 }
