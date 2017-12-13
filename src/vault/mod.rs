@@ -8,56 +8,26 @@
 //! is enabled though.
 //!
 
-mod management;
-mod version;
-mod record;
-mod user;
-
-use std::collections::{HashMap, BTreeMap};
+use std::collections::HashMap;
 use std::io::prelude::*;
 use std::path::PathBuf;
 use std::fs::File;
 use std::fs;
 
 use crypto::engine::CryptoEngine;
+use record::{Record, Payload};
 
-use chrono::{DateTime, Local};
 use serde_json;
 
 
 /// This should be made pretty with actual Errors at some point
 #[derive(Debug)]
-#[allow(unused)]
 pub enum ErrorType {
-    VaultAlreadyExists,
     DirectoryAlreadyExists,
     FailedToInitialise,
     Success,
 }
 
-/// A generic payload for a record
-#[derive(Debug, Serialize, Deserialize)]
-pub enum Payload {
-    Text(String),
-    Boolean(bool),
-    Number(i64),
-    BTreeMap(BTreeMap<String, Payload>),
-}
-
-#[derive(Debug, Serialize, Deserialize, Eq, PartialEq)]
-pub struct Header {
-    pub name: String,
-    pub category: String,
-    pub tags: Vec<String>,
-    pub date_created: DateTime<Local>,
-    pub date_updated: DateTime<Local>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Record {
-    pub header: Header,
-    pub body: BTreeMap<String, Payload>,
-}
 
 /// A vault that represents a collection of records of sensitive data.
 /// Each record is encrypted before being written to disk.
@@ -65,7 +35,6 @@ pub struct Record {
 /// A vault can have multiple users which allows login-information to be
 /// shared between multiple people. By default only one (root) user
 /// is enabled though.
-#[allow(unused)]
 pub struct Vault {
     name: String,
     path: PathBuf,

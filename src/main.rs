@@ -13,13 +13,14 @@ extern crate aesni;
 extern crate blake2;
 extern crate generic_array;
 
+/* Include required submodules */
 mod vault;
 mod crypto;
-
-use vault::*;
-use vault::Payload::Text;
+mod record;
 
 
+use vault::Vault;
+use record::Payload::Text;
 
 
 fn main() {
