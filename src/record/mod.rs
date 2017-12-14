@@ -1,7 +1,7 @@
 //! Lockchain record handling module
-//! 
+//!
 //! A record is a set of key-value store values with a header
-//! 
+//!
 
 mod version;
 use self::version::{Version, Operation};
@@ -20,12 +20,11 @@ pub enum Payload {
 }
 
 /// Describes the header of a record file
-/// 
+///
 /// This part of the record should not be considered safe as it is
 /// serialised and cached multiple times.
 #[derive(Debug, Serialize, Deserialize, Eq, PartialEq)]
 pub struct Header {
-
     /// The name of this record
     pub name: String,
 
@@ -47,13 +46,12 @@ pub struct Header {
 }
 
 /// Represents a record inside lockchain
-/// 
+///
 /// A record consists of a header and a body. The body has built-in
 /// versioning. The different versions are then flattened to create the
 /// latest stage of a record which is exposed to the outside.
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Record {
-
     /// The header for this record
     pub header: Header,
 
@@ -62,7 +60,6 @@ pub struct Record {
 }
 
 impl Header {
-
     /// Create a new header with a name of a category
     pub fn new(name: String, category: String) -> Header {
         let me = Header {
@@ -85,7 +82,6 @@ impl PartialEq for Record {
 }
 
 impl Record {
-
     /// Create a new record
     pub fn new(name: &str, category: &str) -> Record {
         return Record {
@@ -102,7 +98,21 @@ impl Record {
 
     /// Apply a version to the current record
     pub fn apply_version(&mut self, ver: Version) {
+        self.body.push(ver);
+    }
 
+    /// Flatten all versions down and return a map of *current* data
+    /// stored in this record.
+    /// 
+    /// Note: currently the data presented in this map is not sorted
+    /// in the way that the developer intended (insertion-order)
+    pub fn get_data(&self) -> BTreeMap<String, Payload> {
+        let mut first: Version = self.body[0].clone();
+        for version in &self.body[1..] {
+            first.merge(version);
+        }
+
+        return first.flatten();
     }
 
     /// Set a simple key-value pair

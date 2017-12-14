@@ -5,6 +5,7 @@
 
 use super::Payload;
 use std::collections::BTreeMap;
+use std::ops;
 
 /// An operation that was applied to a version
 ///
@@ -24,14 +25,14 @@ use self::Operation::{Insert, Delete};
 
 /// Represents a series of operations done in sequence
 /// that are applied to a record to preserve history of state
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Version {
     version: u64,
     ops: Vec<Operation>,
 }
 
 impl Version {
-
+    
     /// Create a simple new version
     pub fn new(ver: u64) -> Version {
         return Version {
@@ -53,20 +54,10 @@ impl Version {
             /* Match the operation */
             match op {
                 &Insert(ref key, ref payload) => {
-
-                    /* Match the return to log errors */
-                    match map.insert(key.clone(), payload.clone()) {
-                        None => {}
-                        _ => println!("Overriding value {}", key),
-                    }
+                    map.insert(key.clone(), payload.clone()).unwrap();
                 }
                 &Delete(ref key) => {
-
-                    /* Match the return to log errors */
-                    match map.remove(key) {
-                        None => println!("Failed to apply deletion: key doesn't exists!"),
-                        _ => {}
-                    }
+                    map.remove(key).unwrap();
                 }
             }
         }
@@ -76,11 +67,26 @@ impl Version {
     }
 
     /// A utility function which merges two versions onto &self
-    /// 
+    ///
     /// - If a key is present in `other`, `self.key` is overwritten
     /// - If a key is missing in `other`, `self.key` is deleted
-    /// 
+    ///
     pub fn merge(&mut self, other: &Version) {
+        for op in &other.ops {
+            self.ops.push(op.clone());
+        }
+    }
+}
 
+
+impl ops::Add<Version> for Version {
+    type Output = Version;
+
+    /// A rather nice short-hand for calling version.merge(other_version)
+    /// to allow you to call `version += other_version`
+    fn add(self, other: Version) -> Version {
+        let mut s = self.clone();
+        s.merge(&other);
+        return s;
     }
 }
