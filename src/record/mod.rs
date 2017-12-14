@@ -3,8 +3,8 @@
 //! A record is a set of key-value store values with a header
 //!
 
-mod version;
-use self::version::{Version, Operation};
+pub mod version;
+pub use self::version::Version;
 
 use std::collections::BTreeMap;
 use chrono::{DateTime, Local};
@@ -113,11 +113,6 @@ impl Record {
         }
 
         return first.flatten();
-    }
-
-    /// Set a simple key-value pair
-    pub fn set_data(&mut self, key: &str, val: Payload) {
-        // self.body.insert(String::from(key), val);
     }
 
     /// Add a new tag to this record head. Checks that tags don't already exists

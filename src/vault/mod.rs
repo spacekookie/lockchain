@@ -15,7 +15,7 @@ use std::fs::File;
 use std::fs;
 
 use crypto::engine::CryptoEngine;
-use record::{Record, Payload};
+use record::{Record, Version};
 
 use serde_json;
 
@@ -141,9 +141,15 @@ impl Vault {
         self.records.insert(String::from(name), record);
     }
 
-    pub fn add_data(&mut self, record: &str, key: &str, data: Payload) {
-        let r: &mut Record = self.records.get_mut(record).unwrap();
-        r.set_data(key, data);
+    /// Get an immutable reference to a particular record
+    pub fn get_record(&self, name: &str) -> &Record {
+        return self.records.get(name).unwrap();
+    }
+
+    /// Update a specific record with a version that was created 
+    pub fn update(&mut self, name: &str, version: Version) {
+        let rec: &mut Record = self.records.get_mut(name).unwrap();
+        rec.apply_version(version);
     }
 
     /// Sync current records to disk, overwriting existing files

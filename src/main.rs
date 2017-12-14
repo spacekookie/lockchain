@@ -21,12 +21,13 @@ mod record;
 
 use vault::Vault;
 use record::Payload::Text;
+use record::{Version, Record};
 
 
 fn main() {
 
     create_and_populate();
-    load();
+    // load();
 }
 
 
@@ -58,18 +59,26 @@ fn create_and_populate() {
     /* Add a record with some tags */
     vault.add_record("mastodon", "web", vec!["social", "network"]);
 
+    let mut version: Version = vault.get_record("mastodon").start_version();
+    version.insert("username", Text("spacekookie".to_string()));
+    version.insert("password", Text("my other password is bacon".to_string()));
+    version.insert("url", Text("https://mastodon.social/".to_string()));
+    vault.update("mastodon", version);
+
+    println!("{:?}", vault.get_record("mastodon").get_data());
+
     /* Add a few data fields to the body */
-    vault.add_data(
-        "mastodon",
-        "url",
-        Text(String::from("https://mastodon.social")),
-    );
-    vault.add_data("mastodon", "user", Text(String::from("spacekookie")));
-    vault.add_data(
-        "mastodon",
-        "password",
-        Text(String::from("My password is molten cheese")),
-    );
+    // vault.add_data(
+    //     "mastodon",
+    //     "url",
+    //     Text(String::from("https://mastodon.social")),
+    // );
+    // vault.add_data("mastodon", "user", Text(String::from("spacekookie")));
+    // vault.add_data(
+    //     "mastodon",
+    //     "password",
+    //     Text(String::from("My password is molten cheese")),
+    // );
 
     /* Sync the changes to disk */
     vault.sync();
