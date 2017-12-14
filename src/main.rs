@@ -27,7 +27,7 @@ use record::{Version, Record};
 fn main() {
 
     create_and_populate();
-    // load();
+    load();
 }
 
 
@@ -36,12 +36,16 @@ fn load() {
     let vault = match Vault::load(
         "Personal",
         "/home/spacekookie/Desktop",
-        "my password is cheese",
+        "my password is bacon?",
     ) {
         Ok(v) => v,
-        Err(e) => panic!("Failed to load existing vault: {:?}", e),
+        Err(e) => {
+            println!("Failed to load existing vault: {:?}", e);
+            std::process::exit(5);
+        }
     };
-    println!("{:?}", vault.records);
+
+    println!("{:?}", vault.get_record("mastodon").get_data());
 }
 
 fn create_and_populate() {
