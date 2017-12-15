@@ -8,6 +8,3 @@ pub mod random;
 pub mod engine;
 pub mod hash;
 pub mod key;
-
-#[deprecated]
-const DEFAULT_KEYLENGTH: usize = 16;
