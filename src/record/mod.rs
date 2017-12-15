@@ -24,6 +24,7 @@ pub struct Header {
     pub name: String,
     pub category: String,
     pub tags: Vec<String>,
+    // pub fields: BTreeMap<String, Payload>,
     pub date_created: DateTime<Local>,
     pub date_updated: DateTime<Local>,
 }
@@ -31,6 +32,7 @@ pub struct Header {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Record {
     pub header: Header,
+    pub fields: BTreeMap<String, Payload>,
     pub body: BTreeMap<String, Payload>,
 }
 
@@ -43,6 +45,7 @@ impl Header {
             name: name,
             category: category,
             tags: Vec::new(),
+            // fields: BTreeMap::new(),
             date_created: Local::now(),
             date_updated: Local::now(),
         };
@@ -63,6 +66,7 @@ impl Record {
     pub fn new(name: &str, category: &str) -> Record {
         return Record {
             header: Header::new(String::from(name), String::from(category)),
+            fields: BTreeMap::new(),
             body: BTreeMap::new(),
         };
     }
