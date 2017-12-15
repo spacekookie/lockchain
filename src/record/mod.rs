@@ -3,13 +3,14 @@
 //! A record is a set of key-value store values with a header
 //! 
 
+pub mod version;
 
 use std::collections::BTreeMap;
 use chrono::{Local, DateTime};
 
 
 /// A generic payload for a record
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone)]
 pub enum Payload {
     Text(String),
     Boolean(bool),
