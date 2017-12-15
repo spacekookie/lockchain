@@ -7,7 +7,7 @@ use super::encoding;
 use super::random;
 use super::hash;
 
-use aesni::{Aes128, BlockCipher};
+use aesni::{Aes256, BlockCipher};
 use generic_array::GenericArray;
 use std::str::from_utf8_unchecked;
 
@@ -15,7 +15,7 @@ use std::str::from_utf8_unchecked;
 ///
 pub struct CryptoEngine {
     encrypted_key: Option<String>,
-    aes: Aes128,
+    aes: Aes256,
 }
 
 
@@ -31,7 +31,7 @@ impl CryptoEngine {
         let k = hash::blake2_16(password, "");
         let tmp = CryptoEngine {
             encrypted_key: None,
-            aes: Aes128::new_varkey(&k).unwrap(),
+            aes: Aes256::new_varkey(&k).unwrap(),
         };
 
         /* Encrypt and encode the secret key */
@@ -42,7 +42,7 @@ impl CryptoEngine {
         /* Then actually create an engine and return it */
         let me = CryptoEngine {
             encrypted_key: Some(encoded),
-            aes: Aes128::new_varkey(&secret_key).unwrap(),
+            aes: Aes256::new_varkey(&secret_key).unwrap(),
         };
 
         return me;
@@ -55,7 +55,7 @@ impl CryptoEngine {
         let k = hash::blake2_16(password, "");
         let tmp = CryptoEngine {
             encrypted_key: Some(String::from(encrypted_key)),
-            aes: Aes128::new_varkey(&k).unwrap(),
+            aes: Aes256::new_varkey(&k).unwrap(),
         };
 
         /* Decode and decrypt key */
@@ -65,7 +65,7 @@ impl CryptoEngine {
         /* Then initialise a new crypto engine with the newly decrypted key */
         let me = CryptoEngine {
             encrypted_key: Some(String::from(encrypted_key)),
-            aes: Aes128::new_varkey(&decrypted.as_bytes()).unwrap(),
+            aes: Aes256::new_varkey(&decrypted.as_bytes()).unwrap(),
         };
 
         return me;

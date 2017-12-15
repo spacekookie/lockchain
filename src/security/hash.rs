@@ -5,7 +5,7 @@ use blake2::Blake2s;
 use blake2::digest::{Input, VariableOutput};
 
 /* To make sure I don't typo all over this */
-const BLAKE_16_LENGTH: usize = 16;
+const BLAKE_16_LENGTH: usize = 32;
 
 pub fn blake2_16(data: &str, salt: &str) -> [u8; BLAKE_16_LENGTH] {
     
