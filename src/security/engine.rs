@@ -84,7 +84,7 @@ impl CryptoEngine {
 
         let mut encrypted: Vec<u8> = Vec::new();
         let mut start: usize = 0;
-        let mut stop: usize = DEFAULT_KEYLENGTH;
+        let mut stop: usize = 16;
 
         loop {
             let slice = to_encrypt[start..stop].as_bytes();
@@ -98,7 +98,7 @@ impl CryptoEngine {
             }
 
             start = stop;
-            stop += DEFAULT_KEYLENGTH;
+            stop += 16;
             if to_encrypt.len() < stop {
                 break;
             }
@@ -117,7 +117,7 @@ impl CryptoEngine {
         let sliced = CryptoEngine::str_to_vec(&data);
 
         let mut start: usize = 0;
-        let mut stop: usize = DEFAULT_KEYLENGTH;
+        let mut stop: usize = 16;
 
         loop {
             let slice = &sliced[start..stop];
@@ -128,7 +128,7 @@ impl CryptoEngine {
             decryted.push_str(&CryptoEngine::vec_to_str(&block));
 
             start = stop;
-            stop += DEFAULT_KEYLENGTH;
+            stop += 16;
             if sliced.len() < stop {
                 break;
             }
