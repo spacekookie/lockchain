@@ -17,6 +17,7 @@ extern crate generic_array;
 pub mod record;
 pub mod vault;
 mod crypto;
+mod test;
 
 use vault::*;
 use record::Payload::Text;
