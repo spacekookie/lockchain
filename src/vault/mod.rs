@@ -10,7 +10,6 @@
 
 mod management;
 mod version;
-mod record;
 mod user;
 
 use std::collections::{HashMap, BTreeMap};
@@ -20,8 +19,8 @@ use std::fs::File;
 use std::fs;
 
 use crypto::engine::CryptoEngine;
+use record::{Record, Payload};
 
-use chrono::{DateTime, Local};
 use serde_json;
 
 
@@ -33,30 +32,6 @@ pub enum ErrorType {
     DirectoryAlreadyExists,
     FailedToInitialise,
     Success,
-}
-
-/// A generic payload for a record
-#[derive(Debug, Serialize, Deserialize)]
-pub enum Payload {
-    Text(String),
-    Boolean(bool),
-    Number(i64),
-    BTreeMap(BTreeMap<String, Payload>),
-}
-
-#[derive(Debug, Serialize, Deserialize, Eq, PartialEq)]
-pub struct Header {
-    pub name: String,
-    pub category: String,
-    pub tags: Vec<String>,
-    pub date_created: DateTime<Local>,
-    pub date_updated: DateTime<Local>,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
-pub struct Record {
-    pub header: Header,
-    pub body: BTreeMap<String, Payload>,
 }
 
 /// A vault that represents a collection of records of sensitive data.

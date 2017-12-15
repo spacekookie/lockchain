@@ -13,11 +13,13 @@ extern crate aesni;
 extern crate blake2;
 extern crate generic_array;
 
-mod vault;
+
+pub mod record;
+pub mod vault;
 mod crypto;
 
 use vault::*;
-use vault::Payload::Text;
+use record::Payload::Text;
 
 
 
