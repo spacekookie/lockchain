@@ -3,6 +3,7 @@
 //! Purpose of this module is to properly test all the functions involved 
 //! in lockchain, since even a small bug can completely break crypto
 //! 
+#![allow(unused)]
 
 use record::Record;
 use serde_json;
