@@ -6,9 +6,12 @@
 #![allow(unused)]
 
 use record::{Record, Payload, Version, Header};
-use crypto::engine::CryptoEngine;
+use security::engine::CryptoEngine;
 use vault::Vault;
 use serde_json;
+
+use std::fs;
+use std::path::Path;
 
 #[test]
 fn serialise_record_simple() {
@@ -101,5 +104,7 @@ fn storage_lifecycle() {
     v.sync();
 
     let v2: Vault = Vault::load("lockchain_testing", "/tmp/", "password");
+
+    fs::remove_dir_all(Path::new("/tmp/lockchain_testing.vault/")).unwrap();
     assert_eq!(v.records, v2.records);
 }

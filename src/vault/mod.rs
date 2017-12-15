@@ -18,8 +18,8 @@ use std::path::PathBuf;
 use std::fs::File;
 use std::fs;
 
-use crypto::engine::CryptoEngine;
-use crypto::key;
+use security::engine::CryptoEngine;
+use security::key;
 use record::{Record, Payload};
 
 use serde_json;
