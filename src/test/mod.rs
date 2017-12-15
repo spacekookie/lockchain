@@ -5,8 +5,9 @@
 //! 
 #![allow(unused)]
 
-use crypto::engine::CryptoEngine;
 use record::{Record, Payload, Version, Header};
+use crypto::engine::CryptoEngine;
+use vault::Vault;
 use serde_json;
 
 #[test]
@@ -90,4 +91,15 @@ fn encrypt_record() {
     let deserial: Record = serde_json::from_str(&decrypted).unwrap();
 
     assert_eq!(r, deserial);
+}
+
+#[test]
+fn vault_lifecycle() {
+    let mut v: Vault = Vault::new("lockchain_testing", "/tmp/", "password").unwrap();
+    v.add_record("name", "category", vec!["test"]);
+    v.add_data("name", "key", Payload::Text("value".to_owned()));
+    v.sync();
+
+    let v2: Vault = Vault::load("lockchain_testing", "/tmp/", "password");
+    assert_eq!(v.records, v2.records);
 }
