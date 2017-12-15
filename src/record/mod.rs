@@ -3,7 +3,8 @@
 //! A record is a set of key-value store values with a header
 //! 
 
-pub mod version;
+mod version;
+pub use self::version::*;
 
 use std::collections::BTreeMap;
 use chrono::{Local, DateTime};

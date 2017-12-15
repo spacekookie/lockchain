@@ -5,7 +5,7 @@
 
 use super::Payload;
 use std::collections::BTreeMap;
-use std::ops;
+
 
 /// An operation that was applied to a version
 ///
@@ -25,7 +25,7 @@ use self::Operation::{Insert, Delete};
 
 /// Represents a series of operations done in sequence
 /// that are applied to a record to preserve history of state
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub struct Version {
     version: u64,
     ops: Vec<Operation>,
