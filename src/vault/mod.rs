@@ -19,6 +19,7 @@ use std::fs::File;
 use std::fs;
 
 use crypto::engine::CryptoEngine;
+use crypto::key;
 use record::{Record, Payload};
 
 use serde_json;
@@ -79,17 +80,16 @@ impl Vault {
         pathbuf.push(format!("{}.vault", name));
 
         /* Load the secret key */
-        let mut key = String::new();
+        // let mut key = String::new();
+        let k: String;
         {
             pathbuf.push("primary.key");
             let key_path = pathbuf.as_os_str();
-            let mut key_file = File::open(key_path).unwrap();
-            key_file.read_to_string(&mut key).expect(
-                "Failed to load primary key file!",
-            );
-        };
+            k = key::load_key(key_path);
+        }
 
-        let crypto = CryptoEngine::load_existing(&key, password);
+        println!("Existing key: {}", k);
+        let crypto = CryptoEngine::load_existing(&k, password);
 
         /* Load all existing records */
         pathbuf.pop();
@@ -200,6 +200,8 @@ impl Vault {
             Some(k) => k,
             None => return ErrorType::FailedToInitialise,
         };
+
+        println!("Primary key: {}", key);
 
         /* Write encrypted key to disk */
         {

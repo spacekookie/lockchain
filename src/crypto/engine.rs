@@ -2,10 +2,12 @@
 //! 
 //! 
 
-use super::DEFAULT_KEYLENGTH;
+// use super::DEFAULT_KEYLENGTH;
 use super::encoding;
 use super::random;
 use super::hash;
+
+use super::key::KEY_LENGTH;
 
 use aesni::{Aes128, BlockCipher};
 use generic_array::GenericArray;
@@ -25,7 +27,8 @@ impl CryptoEngine {
     pub fn new(password: &str, _: &str) -> CryptoEngine {
 
         /* Generate a random key */
-        let secret_key = random::bytes(DEFAULT_KEYLENGTH);
+        let secret_key = random::bytes(KEY_LENGTH);
+        println!("RAW KEY key: {}", encoding::encode_base64(&CryptoEngine::vec_to_str(&secret_key)));
 
         /* Encrypt secret_key with password */
         let k = hash::blake2_16(password, "");
@@ -84,7 +87,7 @@ impl CryptoEngine {
 
         let mut encrypted: Vec<u8> = Vec::new();
         let mut start: usize = 0;
-        let mut stop: usize = DEFAULT_KEYLENGTH;
+        let mut stop: usize = KEY_LENGTH;
 
         loop {
             let slice = to_encrypt[start..stop].as_bytes();
@@ -98,7 +101,7 @@ impl CryptoEngine {
             }
 
             start = stop;
-            stop += DEFAULT_KEYLENGTH;
+            stop += KEY_LENGTH;
             if to_encrypt.len() < stop {
                 break;
             }
@@ -117,7 +120,7 @@ impl CryptoEngine {
         let sliced = CryptoEngine::str_to_vec(&data);
 
         let mut start: usize = 0;
-        let mut stop: usize = DEFAULT_KEYLENGTH;
+        let mut stop: usize = KEY_LENGTH;
 
         loop {
             let slice = &sliced[start..stop];
@@ -128,7 +131,7 @@ impl CryptoEngine {
             decryted.push_str(&CryptoEngine::vec_to_str(&block));
 
             start = stop;
-            stop += DEFAULT_KEYLENGTH;
+            stop += KEY_LENGTH;
             if sliced.len() < stop {
                 break;
             }
@@ -157,14 +160,14 @@ impl CryptoEngine {
     /// data padding soon. But it works for now, I guess
     fn pad_data(&self, data: &str) -> String {
 
-        if data.len() % DEFAULT_KEYLENGTH == 0 {
+        if data.len() % KEY_LENGTH == 0 {
             return String::from(data);
         }
 
         return format!(
             "{: <width$}",
             data,
-            width = data.len() + (data.len() % DEFAULT_KEYLENGTH)
+            width = data.len() + (data.len() % KEY_LENGTH)
         );
     }
 }
