@@ -94,7 +94,7 @@ fn encrypt_record() {
 }
 
 #[test]
-fn vault_lifecycle() {
+fn storage_lifecycle() {
     let mut v: Vault = Vault::new("lockchain_testing", "/tmp/", "password").unwrap();
     v.add_record("name", "category", vec!["test"]);
     v.add_data("name", "key", Payload::Text("value".to_owned()));
