@@ -19,7 +19,7 @@ use std::fs::File;
 use std::fs;
 
 use security::engine::CryptoEngine;
-use security::key;
+use security::keys;
 use record::{Record, Payload};
 
 use serde_json;
