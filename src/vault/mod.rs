@@ -18,8 +18,11 @@ use std::path::PathBuf;
 use std::fs::File;
 use std::fs;
 
-use security::engine::CryptoEngine;
+
 use security::keys;
+use security::keys::Key;
+use security::aes::AES;
+
 use record::{Record, Payload};
 
 use serde_json;
@@ -27,7 +30,6 @@ use serde_json;
 
 /// This should be made pretty with actual Errors at some point
 #[derive(Debug)]
-#[allow(unused)]
 pub enum ErrorType {
     VaultAlreadyExists,
     DirectoryAlreadyExists,
@@ -35,33 +37,27 @@ pub enum ErrorType {
     Success,
 }
 
-/// A vault that represents a collection of records of sensitive data.
-/// Each record is encrypted before being written to disk.
-///
-/// A vault can have multiple users which allows login-information to be
-/// shared between multiple people. By default only one (root) user
-/// is enabled though.
-#[allow(unused)]
 pub struct Vault {
     name: String,
-    path: PathBuf,
-    crypto: CryptoEngine,
+    path: String,
+    primary_key: Key,
     pub records: HashMap<String, Record>,
 }
 
 impl Vault {
-
     /// Attempt to create a new vault
     pub fn new(name: &str, path: &str, password: &str) -> Result<Vault, ErrorType> {
+
+        let mut buffer = PathBuf::new();
+        buffer.push(path);
+        buffer.push(format!("{}.vault", name));
+
         let mut me = Vault {
             name: String::from(name),
-            path: PathBuf::new(),
-            crypto: CryptoEngine::new(password, ""),
+            path: buffer.to_str().unwrap().to_owned(),
+            primary_key: keys::generate_key(),
             records: HashMap::new(),
         };
-
-        me.path.push(path);
-        me.path.push(format!("{}.vault", name));
 
         /* Create relevant files */
         match me.create_dirs() {
@@ -79,17 +75,16 @@ impl Vault {
         pathbuf.push(path);
         pathbuf.push(format!("{}.vault", name));
 
-        /* Load the secret key */
-        // let mut key = String::new();
-        let k: String;
-        {
-            pathbuf.push("primary.key");
-            let key_path = pathbuf.as_os_str();
-            k = key::load_key(key_path);
-        }
+        /* Load the primary key */
+        pathbuf.push("primary.key");
+        let loaded_key: Key = keys::load_key(pathbuf.as_os_str());
+        pathbuf.pop();
 
-        println!("Existing key: {}", k);
-        let crypto = CryptoEngine::load_existing(&k, password);
+        /* Decrypt the primary key */
+        let password_key = keys::password_to_key(password);
+        let decrypted_key = AES::decrypt(&loaded_key, &password_key);
+
+
 
         /* Load all existing records */
         pathbuf.pop();
@@ -163,7 +158,9 @@ impl Vault {
                     false => {
                         match File::create(file.as_os_str()) {
                             Ok(k) => k,
-                            Err(e) => panic!("Failed to create file ({:?}): {}", file.as_os_str(), e),
+                            Err(e) => {
+                                panic!("Failed to create file ({:?}): {}", file.as_os_str(), e)
+                            }
                         }
                     }
                 };

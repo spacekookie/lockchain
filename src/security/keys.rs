@@ -9,6 +9,7 @@ use std::io::prelude::*;
 
 use super::random;
 use super::encoding;
+use super::hash;
 
 pub const KEY_LENGTH: usize = 16;
 
@@ -35,6 +36,11 @@ pub fn load_key(path: &OsStr) -> Key {
     return Key { data: k };
 }
 
+
+pub fn password_to_key(password: &str) -> Key {
+    let hashed = hash::blake2_16(password, "");
+    return Key { data: hashed };
+}
 
 pub fn generate_key() -> Key {
     let key = random::bytes(KEY_LENGTH);
