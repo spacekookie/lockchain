@@ -7,7 +7,7 @@ use super::encoding;
 use super::random;
 use super::hash;
 
-use super::key::KEY_LENGTH;
+use super::keys::KEY_LENGTH;
 
 use aesni::{Aes128, BlockCipher};
 use generic_array::GenericArray;
@@ -15,6 +15,7 @@ use std::str::from_utf8_unchecked;
 
 /// The crypto engine which holds the key and AES context
 ///
+#[deprecated]
 pub struct CryptoEngine {
     encrypted_key: Option<String>,
     aes: Aes128,
