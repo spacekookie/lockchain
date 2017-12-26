@@ -6,7 +6,6 @@
 use std::fs::File;
 use std::ffi::OsStr;
 use std::io::prelude::*;
-use serde::{Serialize, Deserialize};
 
 use super::random;
 use super::encoding;
