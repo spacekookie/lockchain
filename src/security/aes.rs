@@ -12,6 +12,7 @@ use serde_json;
 use super::keys::{KEY_LENGTH, Key};
 use super::encoding;
 
+
 /// Low-level wrapper around the AES block encrypt functions
 pub struct AES {
     ctx: Aes128,
