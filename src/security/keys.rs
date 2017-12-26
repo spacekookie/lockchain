@@ -6,6 +6,7 @@
 use std::fs::File;
 use std::ffi::OsStr;
 use std::io::prelude::*;
+use serde::{Serialize, Deserialize};
 
 use super::random;
 use super::encoding;
@@ -15,6 +16,7 @@ pub const KEY_LENGTH: usize = 16;
 
 
 /// A wrapper to represent a key for encryption
+#[derive(Clone, Serialize, Deserialize)]
 pub struct Key {
     pub data: [u8; KEY_LENGTH],
 }

@@ -1,13 +1,19 @@
-//! Simple AES module to do encryption
-//!
-//! Handles a lot of convertion automagically
+//! Primitive AES encryption module
+//! 
+//! This module has no concept of higher-level types. It only deals with vectors of raw data
+//! and strings. It pads data wherever neccessary with symbols that are stripped out when 
+//! converting it to higher level types.
+//! 
+//! This module is by no means perfect and shouldn't be considered incredibly secure.
+//! The API can remain the same as features underneath are exchanged and hardnened.
+//! 
+
 
 use aesni::{Aes128, BlockCipher};
 use generic_array::GenericArray;
 use std::str::from_utf8_unchecked;
 
 use super::keys::{KEY_LENGTH, Key};
-
 
 /// Low-level wrapper around the AES block encrypt functions
 pub struct AES {

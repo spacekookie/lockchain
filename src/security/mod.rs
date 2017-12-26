@@ -15,3 +15,4 @@ pub mod keys;
 // Core cryptography
 pub mod aes;
 pub mod encryption;
+pub use self::encryption::*;
