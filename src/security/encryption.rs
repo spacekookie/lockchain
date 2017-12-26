@@ -3,7 +3,7 @@
 
 use super::aes::AES;
 use super::encoding;
-use super::keys::{Key, generate_key};
+use super::keys::Key;
 
 use serde_json;
 use serde::Serialize;
@@ -17,11 +17,11 @@ pub trait Encryptor<'a, T: Serialize + DeserializeOwned> {
 
 
 /// Wraps high-level utilities
-pub struct CryptoHandler {
+pub struct CryptoCtx {
     core: AES,
 }
 
-impl<'a, T: Serialize + DeserializeOwned> Encryptor<'a, T> for CryptoHandler {
+impl<'a, T: Serialize + DeserializeOwned> Encryptor<'a, T> for CryptoCtx {
 
     /// Generic encryption function for any higher level type that can be Serialised
     /// 
@@ -48,17 +48,17 @@ impl<'a, T: Serialize + DeserializeOwned> Encryptor<'a, T> for CryptoHandler {
     }
 }
 
-impl CryptoHandler {
+impl CryptoCtx {
 
     /// Create a new key and crypto context from scratch
-    pub fn new() -> CryptoHandler {
-        let k = generate_key();
-        return CryptoHandler { core: AES::new(&k) };
+    pub fn new() -> CryptoCtx {
+        let k = Key::new();
+        return CryptoCtx { core: AES::new(&k) };
     }
 
     /// Create a new context with an existing key
-    pub fn existing(key: &Key) -> CryptoHandler {
-        return CryptoHandler { core: AES::new(key) };
+    pub fn existing(key: &Key) -> CryptoCtx {
+        return CryptoCtx { core: AES::new(key) };
     }
 
     /// Get the currently in-use key
