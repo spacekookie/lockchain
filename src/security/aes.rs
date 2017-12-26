@@ -6,23 +6,22 @@ use aesni::{Aes128, BlockCipher};
 use generic_array::GenericArray;
 use std::str::from_utf8_unchecked;
 
-use record::Record;
-use serde_json;
-
 use super::keys::{KEY_LENGTH, Key};
-use super::encoding;
 
 
 /// Low-level wrapper around the AES block encrypt functions
 pub struct AES {
     ctx: Aes128,
+    pub key: Key,
 }
 
 impl AES {
-    
     /// Create a new AES context from a key context
     pub fn new(key: &Key) -> AES {
-        return AES { ctx: Aes128::new_varkey(&key.data).unwrap() };
+        return AES {
+            ctx: Aes128::new_varkey(&key.data).unwrap(),
+            key: key.clone(),
+        };
     }
 
     /// Encrypt a generic vector of data into another vector
@@ -30,6 +29,8 @@ impl AES {
         let mut encrypted: Vec<u8> = Vec::new();
         let mut start: usize = 0;
         let mut stop: usize = KEY_LENGTH;
+
+        println!("Data length {}", data.len());
 
         let data_slice = data.as_slice();
 
@@ -46,7 +47,8 @@ impl AES {
 
             start = stop;
             stop += KEY_LENGTH;
-            if encrypted.len() < stop {
+            println!("Encrypted length: {}", encrypted.len());
+            if data.len() > stop {
                 break;
             }
         }
@@ -54,8 +56,8 @@ impl AES {
         return encrypted;
     }
 
-    pub fn decrypt(&self, vec: &Vec<u8>) -> String {
-        let mut decrypted = String::new();
+    pub fn decrypt(&self, vec: &Vec<u8>) -> Vec<u8> {
+        let mut decrypted = Vec::new();
         let mut start: usize = 0;
         let mut stop: usize = KEY_LENGTH;
 
@@ -65,7 +67,11 @@ impl AES {
 
             /* Encrypt block and push to collection */
             self.ctx.decrypt_block(&mut block);
-            decrypted.push_str(&AES::vec_to_str(&block));
+            for byte in block.as_slice() {
+                decrypted.push(byte.clone());
+            }
+            
+            println!("Decrypted so far: {:?}", decrypted);
 
             start = stop;
             stop += KEY_LENGTH;
