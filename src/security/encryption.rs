@@ -53,11 +53,6 @@ impl CryptoHandler {
 }
 
 
-/// Convert a vector of u8 into a utf-8 string
-fn vec_to_str(vec: &[u8]) -> String {
-    return unsafe { String::from(from_utf8_unchecked(vec)) };
-}
-
 /// Convert a utf-8 string to a vector of u8
 fn str_to_vec(string: &str) -> Vec<u8> {
     let mut vec: Vec<u8> = Vec::new();

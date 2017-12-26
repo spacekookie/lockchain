@@ -19,6 +19,7 @@ pub struct AES {
 }
 
 impl AES {
+    
     /// Create a new AES context from a key context
     pub fn new(key: &Key) -> AES {
         return AES { ctx: Aes128::new_varkey(&key.data).unwrap() };
