@@ -9,45 +9,58 @@ use std::io::prelude::*;
 
 use super::random;
 use super::encoding;
+use super::encryption::{CryptoCtx, Encryptor};
 use super::hash;
 
 pub const KEY_LENGTH: usize = 16;
 
 
 /// A wrapper to represent a key for encryption
-#[derive(Clone, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone)]
 pub struct Key {
-    pub data: [u8; KEY_LENGTH],
+    pub data: Vec<u8>,
 }
 
+impl Key {
+    /// Create a new key from scratch
+    pub fn new() -> Key {
+        let data = random::bytes(KEY_LENGTH);
+        return Key { data: data };
+    }
 
-/// A helper function to easily load a key into memory
-pub fn load_key(path: &OsStr) -> Key {
+    /// Use a password as a key
+    pub fn from_password(password: &str) -> Key {
+        let hashed = hash::blake2_16(password, ""); // FIXME: Use some sort of salt here
+        let vec: Vec<u8> = Vec::new();
+        for b in &hashed {
+            vec.push(b.clone());
+        }
+        return Key { data: vec };
+    }
 
-    let mut key = String::new();
-    let mut key_file = File::open(path).unwrap();
-    key_file.read_to_string(&mut key).expect(
-        "Failed to load primary key file!",
-    );
+    /// Load an encrypted key from disk
+    pub fn load(path: &String, password: &str) -> Key {
+        let tmp_key = Key::from_password(password);
+        let ctx = CryptoCtx::existing(&tmp_key);
 
-    let vec = encoding::base64_decode(&key);
-    let mut k: [u8; 16] = [0; 16];
-    k.clone_from_slice(&vec);
+        /* Load encrypted from disk */
+        let mut key = String::new();
+        let mut key_file = File::open(path).unwrap();
+        key_file.read_to_string(&mut key).expect(
+            "Failed to load key file!",
+        );
 
-    return Key { data: k };
-}
+        let decrypted: Key = ctx.decrypt(key);
+        return decrypted;
+    }
 
+    /// Save the current key, encrypted to disk
+    pub fn save(&self, path: &String, password: &str) {
+        let tmp_key = Key::from_password(password);
+        let ctx = CryptoCtx::existing(&tmp_key);
 
-pub fn password_to_key(password: &str) -> Key {
-    let hashed = hash::blake2_16(password, "");
-    return Key { data: hashed };
-}
-
-pub fn generate_key() -> Key {
-    let key = random::bytes(KEY_LENGTH);
-
-    let mut k: [u8; KEY_LENGTH] = [0; KEY_LENGTH];
-    k.clone_from_slice(&key);
-
-    return Key { data: k };
+        let encrypted = ctx.encrypt(&self.clone());
+        let key_file = File::create(path).unwrap();
+        key_file.write_all(encrypted.as_bytes()).unwrap();
+    }
 }
