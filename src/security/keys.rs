@@ -63,4 +63,11 @@ impl Key {
         let key_file = File::create(path).unwrap();
         key_file.write_all(encrypted.as_bytes()).unwrap();
     }
+
+    /// Used to get the raw data from this key, as a slice copy
+    pub fn copy_slice(&self) -> [u8; KEY_LENGTH] {
+        let mut slice: [u8; KEY_LENGTH] = [0; KEY_LENGTH];
+        slice.clone_from_slice(&self.data);
+        return slice;
+    }
 }
