@@ -7,11 +7,21 @@ use base64;
 
 
 /// Takes a utf-8 string of raw binary data and converts itto base64 encoded form
+#[deprecated]
 pub fn encode_base64(data: &str) -> String {
     return base64::encode(data.as_bytes());
 }
 
+pub fn base64_encode(data: &Vec<u8>) -> String {
+    return base64::encode(data);
+}
+
+pub fn base64_decode(data: &String) -> Vec<u8> {
+    return base64::decode(data).unwrap();
+}
+
 /// Takes a base64 string and converts it to raw binary data
+#[deprecated]
 pub fn decode_base64(base64: &str) -> String {
     let vec = base64::decode(base64).unwrap();
     let decoded = unsafe { from_utf8_unchecked(&vec) };

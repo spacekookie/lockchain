@@ -2,20 +2,23 @@
 //! 
 //! 
 
-use super::DEFAULT_KEYLENGTH;
+// use super::DEFAULT_KEYLENGTH;
 use super::encoding;
 use super::random;
 use super::hash;
 
-use aesni::{Aes256, BlockCipher};
+use super::keys::KEY_LENGTH;
+
+use aesni::{Aes128, BlockCipher};
 use generic_array::GenericArray;
 use std::str::from_utf8_unchecked;
 
 /// The crypto engine which holds the key and AES context
 ///
+#[deprecated]
 pub struct CryptoEngine {
     encrypted_key: Option<String>,
-    aes: Aes256,
+    aes: Aes128,
 }
 
 
@@ -25,13 +28,14 @@ impl CryptoEngine {
     pub fn new(password: &str, _: &str) -> CryptoEngine {
 
         /* Generate a random key */
-        let secret_key = random::bytes(DEFAULT_KEYLENGTH);
+        let secret_key = random::bytes(KEY_LENGTH);
+        println!("RAW KEY key: {}", encoding::encode_base64(&CryptoEngine::vec_to_str(&secret_key)));
 
         /* Encrypt secret_key with password */
         let k = hash::blake2_16(password, "");
         let tmp = CryptoEngine {
             encrypted_key: None,
-            aes: Aes256::new_varkey(&k).unwrap(),
+            aes: Aes128::new_varkey(&k).unwrap(),
         };
 
         /* Encrypt and encode the secret key */
@@ -42,7 +46,7 @@ impl CryptoEngine {
         /* Then actually create an engine and return it */
         let me = CryptoEngine {
             encrypted_key: Some(encoded),
-            aes: Aes256::new_varkey(&secret_key).unwrap(),
+            aes: Aes128::new_varkey(&secret_key).unwrap(),
         };
 
         return me;
@@ -55,7 +59,7 @@ impl CryptoEngine {
         let k = hash::blake2_16(password, "");
         let tmp = CryptoEngine {
             encrypted_key: Some(String::from(encrypted_key)),
-            aes: Aes256::new_varkey(&k).unwrap(),
+            aes: Aes128::new_varkey(&k).unwrap(),
         };
 
         /* Decode and decrypt key */
@@ -65,7 +69,7 @@ impl CryptoEngine {
         /* Then initialise a new crypto engine with the newly decrypted key */
         let me = CryptoEngine {
             encrypted_key: Some(String::from(encrypted_key)),
-            aes: Aes256::new_varkey(&decrypted.as_bytes()).unwrap(),
+            aes: Aes128::new_varkey(&decrypted.as_bytes()).unwrap(),
         };
 
         return me;
@@ -84,7 +88,7 @@ impl CryptoEngine {
 
         let mut encrypted: Vec<u8> = Vec::new();
         let mut start: usize = 0;
-        let mut stop: usize = 16;
+        let mut stop: usize = KEY_LENGTH;
 
         loop {
             let slice = to_encrypt[start..stop].as_bytes();
@@ -98,7 +102,7 @@ impl CryptoEngine {
             }
 
             start = stop;
-            stop += 16;
+            stop += KEY_LENGTH;
             if to_encrypt.len() < stop {
                 break;
             }
@@ -117,7 +121,7 @@ impl CryptoEngine {
         let sliced = CryptoEngine::str_to_vec(&data);
 
         let mut start: usize = 0;
-        let mut stop: usize = 16;
+        let mut stop: usize = KEY_LENGTH;
 
         loop {
             let slice = &sliced[start..stop];
@@ -128,7 +132,7 @@ impl CryptoEngine {
             decryted.push_str(&CryptoEngine::vec_to_str(&block));
 
             start = stop;
-            stop += 16;
+            stop += KEY_LENGTH;
             if sliced.len() < stop {
                 break;
             }
@@ -157,14 +161,14 @@ impl CryptoEngine {
     /// data padding soon. But it works for now, I guess
     fn pad_data(&self, data: &str) -> String {
 
-        if data.len() % DEFAULT_KEYLENGTH == 0 {
+        if data.len() % KEY_LENGTH == 0 {
             return String::from(data);
         }
 
         return format!(
             "{: <width$}",
             data,
-            width = data.len() + (data.len() % DEFAULT_KEYLENGTH)
+            width = data.len() + (data.len() % KEY_LENGTH)
         );
     }
 }
