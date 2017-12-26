@@ -8,10 +8,6 @@
 //! is enabled though.
 //!
 
-mod management;
-mod version;
-mod user;
-
 use std::collections::{HashMap, BTreeMap};
 use std::io::prelude::*;
 use std::path::{PathBuf, Path};
@@ -19,10 +15,8 @@ use std::fs::File;
 use std::fs;
 
 
-use security::keys;
 use security::keys::Key;
-use security::aes::AES;
-
+use security::{CryptoCtx, Encryptor};
 use record::{Record, Payload};
 
 use serde_json;
@@ -55,7 +49,7 @@ impl Vault {
         let mut me = Vault {
             name: String::from(name),
             path: buffer.to_str().unwrap().to_owned(),
-            primary_key: keys::generate_key(),
+            primary_key: Key::new(),
             records: HashMap::new(),
         };
 
@@ -77,6 +71,8 @@ impl Vault {
 
         /* Load the primary key */
         pathbuf.push("primary.key");
+        let loaded_key: Key = Key::load(pathbuf.to_str().unwrap(), password);
+
         let loaded_key: Key = keys::load_key(pathbuf.as_os_str());
         pathbuf.pop();
 
