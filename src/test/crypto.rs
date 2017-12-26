@@ -3,7 +3,7 @@
 use record::{Record, Payload, Version, Header};
 use serde_json;
 
-use security::{CryptoHandler, Encryptor};
+use security::{CryptoCtx, Encryptor};
 use security::keys;
 
 
