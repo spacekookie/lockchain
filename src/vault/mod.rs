@@ -11,12 +11,11 @@
 use std::collections::{HashMap, BTreeMap};
 use std::io::prelude::*;
 use std::path::{PathBuf, Path};
-use std::fs::File;
 use std::fs;
 
 
-use security::keys::Key;
-use security::{CryptoCtx, Encryptor};
+use security::keys::{self, Key};
+// use security::{CryptoCtx, Encryptor};
 use record::{Record, Payload};
 
 use serde_json;
@@ -71,13 +70,13 @@ impl Vault {
 
         /* Load the primary key */
         pathbuf.push("primary.key");
-        let loaded_key: Key = Key::load(pathbuf.to_str().unwrap(), password);
+        // let loaded_key: Key = Key::load(pathbuf.to_str().unwrap(), password);
 
-        let loaded_key: Key = keys::load_key(pathbuf.as_os_str());
+        // let loaded_key: Key = keys::load_key(pathbuf.as_os_str());
         pathbuf.pop();
 
         /* Decrypt the primary key */
-        let password_key = keys::password_to_key(password);
+        // let password_key = keys::password_to_key(password);
         // let decrypted_key = AES::decrypt(loaded_key, &password_key);
 
 
@@ -107,7 +106,7 @@ impl Vault {
         return Vault {
             name: String::from(name),
             path: "".to_owned(),
-            primary_key: keys::generate_key(),
+            primary_key: Key::new(),
             // crypto: crypto,
             records: record_map,
         };

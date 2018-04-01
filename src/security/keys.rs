@@ -9,7 +9,7 @@ use std::io::prelude::*;
 use super::random;
 use super::hash;
 
-pub const KEY_LENGTH: usize = 16;
+pub const KEY_LENGTH: usize = 64;
 
 
 /// A wrapper to represent a key for encryption
@@ -28,7 +28,7 @@ impl Key {
     /// Use a password as a key
     pub fn from_password(password: &str, salt: &str) -> Key {
         let hashed = hash::blake2_16(password, salt);
-        let vec: Vec<u8> = Vec::new();
+        let mut vec: Vec<u8> = Vec::new();
         for b in &hashed {
             vec.push(b.clone());
         }
@@ -38,31 +38,22 @@ impl Key {
     /// Load an encrypted key from disk
     pub fn load(path: &String, password: &str) -> Key {
         let tmp_key = Key::from_password(password, "REPLACE WITH SALT");
-        let ctx = CryptoCtx::existing(&tmp_key);
-
-        /* Load encrypted from disk */
-        let mut key = String::new();
-        let mut key_file = File::open(path).unwrap();
-        key_file.read_to_string(&mut key).expect(
-            "Failed to load key file!",
-        );
-
-        let decrypted: Key = ctx.decrypt(key);
-        return decrypted;
+        
+        return Key::new();
     }
 
     /// Save the current key, encrypted to disk
     pub fn save(&self, path: &String, password: &str) {
         let tmp_key = Key::from_password(password, "REPLACE WITH SALT");
-        let ctx = CryptoCtx::existing(&tmp_key);
+        // let ctx = CryptoCtx::existing(&tmp_key);
 
-        let encrypted = ctx.encrypt(&self.clone());
-        let key_file = File::create(path).unwrap();
-        key_file.write_all(encrypted.as_bytes()).unwrap();
+        // let encrypted = ctx.encrypt(&self.clone());
+        // let key_file = File::create(path).unwrap();
+        // key_file.write_all(encrypted.as_bytes()).unwrap();
     }
 
     /// Used to get the raw data from this key, as a slice copy
-    pub fn copy_slice(&self) -> [u8; KEY_LENGTH] {
+    pub fn to_slice(&self) -> [u8; KEY_LENGTH] {
         let mut slice: [u8; KEY_LENGTH] = [0; KEY_LENGTH];
         slice.clone_from_slice(&self.data);
         return slice;

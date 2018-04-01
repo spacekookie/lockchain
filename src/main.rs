@@ -9,9 +9,8 @@ extern crate serde_json;
 extern crate serde_derive;
 extern crate base64;
 extern crate rand;
-extern crate aesni;
 extern crate blake2;
-extern crate generic_array;
+extern crate miscreant;
 
 
 pub mod record;
@@ -23,9 +22,12 @@ use vault::*;
 use record::Payload::Text;
 
 
-
-
 fn main() {
+
+    let rec = record::Record::new("name", "category");
+
+    let encrypted = security::crypto::encrypt(&rec);
+    println!("Encrypted: {}", encrypted);
 
     // security::bla();
 

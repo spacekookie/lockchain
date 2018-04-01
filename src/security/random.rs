@@ -6,7 +6,6 @@ use rand::{thread_rng, Rng};
 
 
 /// Generate a random number with an upper bound
-#[allow(unused)]
 pub fn number(bound: u64) -> u64 {
     return thread_rng().next_u64() % bound;
 }

@@ -2,7 +2,6 @@
 //! 
 
 use std::fmt::Write;
-use std::str::from_utf8_unchecked;
 use base64;
 
 /// Encode a piece of arbitary data into a bse64 string
@@ -16,7 +15,6 @@ pub fn base64_decode(data: &String) -> Vec<u8> {
 }
 
 /// Simply encode a byte-string as hexadecimal symbols
-#[allow(unused)]
 pub fn encode_hex(data: &str) -> String {
     let mut s = String::new();
     for &byte in data.as_bytes() {
