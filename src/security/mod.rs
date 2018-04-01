@@ -8,8 +8,3 @@ pub mod encoding;
 pub mod random;
 pub mod hash;
 pub mod keys;
-
-// Core cryptography
-pub mod aes;
-pub mod encryption;
-pub use self::encryption::*;

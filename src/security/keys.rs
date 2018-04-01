@@ -4,12 +4,9 @@
 
 
 use std::fs::File;
-use std::ffi::OsStr;
 use std::io::prelude::*;
 
 use super::random;
-use super::encoding;
-use super::encryption::{CryptoCtx, Encryptor};
 use super::hash;
 
 pub const KEY_LENGTH: usize = 16;
@@ -29,8 +26,8 @@ impl Key {
     }
 
     /// Use a password as a key
-    pub fn from_password(password: &str) -> Key {
-        let hashed = hash::blake2_16(password, ""); // FIXME: Use some sort of salt here
+    pub fn from_password(password: &str, salt: &str) -> Key {
+        let hashed = hash::blake2_16(password, salt);
         let vec: Vec<u8> = Vec::new();
         for b in &hashed {
             vec.push(b.clone());
@@ -40,7 +37,7 @@ impl Key {
 
     /// Load an encrypted key from disk
     pub fn load(path: &String, password: &str) -> Key {
-        let tmp_key = Key::from_password(password);
+        let tmp_key = Key::from_password(password, "REPLACE WITH SALT");
         let ctx = CryptoCtx::existing(&tmp_key);
 
         /* Load encrypted from disk */
@@ -56,7 +53,7 @@ impl Key {
 
     /// Save the current key, encrypted to disk
     pub fn save(&self, path: &String, password: &str) {
-        let tmp_key = Key::from_password(password);
+        let tmp_key = Key::from_password(password, "REPLACE WITH SALT");
         let ctx = CryptoCtx::existing(&tmp_key);
 
         let encrypted = ctx.encrypt(&self.clone());
