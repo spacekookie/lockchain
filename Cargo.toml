@@ -17,7 +17,3 @@ base64 = "0.8.0"
 blake2 = "0.7"
 pwhash = "0.1"
 rand = "0.3.0"
-
-# Deprecated crates -- remove with time --
-aesni = "0.2.1"
-ring = "0.12.1"

@@ -15,6 +15,7 @@ pub fn number(bound: u64) -> u64 {
 /// as a vector.
 /// 
 /// Can at most allocate 2048 bytes at a time
+/// FIXME: That shouldn't have a limit!
 pub fn bytes(length: usize) -> Vec<u8> {
     let mut vec: Vec<u8> = Vec::new();
 
