@@ -4,8 +4,6 @@
 //! and high-level encryption and decryption functions.
 
 // Utility modules
-pub mod encoding;
-pub mod random;
+pub mod utils;
 pub mod crypto;
-pub mod hash;
 pub mod keys;

@@ -6,9 +6,7 @@
 use std::fs::File;
 use std::io::prelude::*;
 
-use super::random;
-use super::hash;
-
+use super::utils::{Hashing, Encoding, Random};
 pub const KEY_LENGTH: usize = 64;
 
 
@@ -21,13 +19,13 @@ pub struct Key {
 impl Key {
     /// Create a new key from scratch
     pub fn new() -> Key {
-        let data = random::bytes(KEY_LENGTH);
+        let data = Random::bytes(KEY_LENGTH);
         return Key { data: data };
     }
 
     /// Use a password as a key
     pub fn from_password(password: &str, salt: &str) -> Key {
-        let hashed = hash::blake2_16(password, salt);
+        let hashed = Hashing::blake2(password, salt);
         let mut vec: Vec<u8> = Vec::new();
         for b in &hashed {
             vec.push(b.clone());
