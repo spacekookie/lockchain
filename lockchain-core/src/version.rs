@@ -3,8 +3,8 @@
 //! A set of version can be flattened to represent the latest set
 //! of changes of a record
 
-use super::Payload;
 use std::collections::BTreeMap;
+use record::Payload;
 
 
 /// An operation that was applied to a version

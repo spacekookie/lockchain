@@ -1,23 +1,5 @@
-[package]
-name = "lockchain-core"
-description = "The core library that handles lockchain vaults and records"
-docs = "https://docs.rs/lockchain-core"
-readme = "README.md"
-version = "0.1.0"
-authors = ["Katharina Fey <kookie@spacekookie.de>"]
-
-[dependencies]
-chrono = { version = "0.4", features = ["serde", "rustc-serialize"] }
-ordermap = "0.3.2"
-
-# Cryptography
-miscreant = "0.3.0"
-base64 = "0.8.0"
-blake2 = "0.7"
-pwhash = "0.1"
-rand = "0.3.0"
-
-# Serialisation
-serde = "1.0"
-serde_json = "1.0"
-serde_derive = "1.0"
+[workspace]
+members = [
+    "lockchain-core",
+    "lockchain-gtk"
+]

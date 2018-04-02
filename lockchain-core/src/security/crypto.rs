@@ -1,7 +1,7 @@
 //!
 
 use miscreant::aead::{Aes256Siv, Algorithm};
-use security::{encoding, random, keys::{Key, KEY_LENGTH}};
+use security::{keys::{Key, KEY_LENGTH}, utils::{Encoding, Hashing, Random}};
 use serde::{Serialize, de::DeserializeOwned};
 use serde_json;
 use std::error::Error;
@@ -26,7 +26,7 @@ impl CryptoEngine {
         return CryptoEngine {
             ctx: Aes256Siv::new(&key.to_slice()),
             key: key,
-            iv: random::bytes(KEY_LENGTH),
+            iv: Random::bytes(KEY_LENGTH),
         };
     }
 
@@ -42,7 +42,7 @@ impl CryptoEngine {
     /// Encrypt a piece of data, returns a packed and encoded string
     pub fn encrypt<T: Serialize>(&mut self, data: &T) -> Result<String, Box<Error>> {
         let serial = serde_json::to_string(&data)?;
-        let nonce = random::bytes(64);
+        let nonce = Random::bytes(64);
         let iv = &self.iv.as_slice();
         let data = &serial.as_bytes();
 
@@ -53,12 +53,12 @@ impl CryptoEngine {
         };
 
         let enc_packed = serde_json::to_string(&packed)?;
-        return Ok(encoding::base64_encode(&enc_packed.into_bytes()));
+        return Ok(Encoding::base64_encode(&enc_packed.into_bytes()));
     }
 
     /// Decrypt a ciphertext string into a type object
     pub fn decrypt<T: DeserializeOwned>(&mut self, cipher: String) -> Result<T, Box<Error>> {
-        let dec_packed = String::from_utf8(encoding::base64_decode(&cipher))?;
+        let dec_packed = String::from_utf8(Encoding::base64_decode(&cipher))?;
         let p: PackedData = serde_json::from_str(&dec_packed)?;
 
         let iv = &self.iv.as_slice();

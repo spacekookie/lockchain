@@ -1,4 +1,4 @@
-//! Core lockchain
+//! Lockchain library core
 
 extern crate chrono;
 extern crate serde;
@@ -10,7 +10,10 @@ extern crate blake2;
 extern crate miscreant;
 extern crate rand;
 
+pub mod version;
 pub mod record;
-mod security;
-mod test;
 pub mod vault;
+mod security;
+
+
+mod test;

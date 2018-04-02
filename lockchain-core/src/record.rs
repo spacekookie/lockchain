@@ -3,11 +3,10 @@
 //! A record is a set of key-value store values with a header
 //! 
 
-mod version;
-pub use self::version::*;
 
 use std::collections::BTreeMap;
 use chrono::{Local, DateTime};
+use version::*;
 
 
 /// A generic payload for a record
