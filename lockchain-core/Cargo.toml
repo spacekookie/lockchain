@@ -3,6 +3,7 @@ name = "lockchain-core"
 description = "The core library that handles lockchain vaults and records"
 docs = "https://docs.rs/lockchain-core"
 readme = "README.md"
+license = "MIT/X11 OR APACHE-2"
 version = "0.1.0"
 authors = ["Katharina Fey <kookie@spacekookie.de>"]
 
