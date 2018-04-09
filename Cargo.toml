@@ -1,5 +1,6 @@
 [workspace]
 members = [
     "lockchain-core",
-    "lockchain-gtk"
+    "lockchain-gtk",
+    "lockchain-cli"
 ]

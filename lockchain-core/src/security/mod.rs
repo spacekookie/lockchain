@@ -1,9 +1,9 @@
 //! Cryptography module for lockchain
-//!
-//! A crypto engine is attached to a vault and provides easy to use
-//! and high-level encryption and decryption functions.
 
-// Utility modules
-pub mod utils;
-pub mod crypto;
-pub mod keys;
+pub(crate) mod utils;
+pub(crate) mod crypto;
+pub(crate) mod keys;
+
+pub(crate) use self::utils::{encoding, hashing, random};
+pub(crate) use self::crypto::CryptoEngine;
+pub(crate) use self::keys::Key;

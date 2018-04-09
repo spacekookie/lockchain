@@ -47,7 +47,7 @@ impl Vault {
         let mut me = Vault {
             name: String::from(name),
             path: buffer.to_str().unwrap().to_owned(),
-            primary_key: Key::new(),
+            primary_key: Key::generate(),
             records: HashMap::new(),
         };
 
@@ -105,8 +105,7 @@ impl Vault {
         return Vault {
             name: String::from(name),
             path: "".to_owned(),
-            primary_key: Key::new(),
-            // crypto: crypto,
+            primary_key: Key::generate(),
             records: record_map,
         };
     }

@@ -1,12 +1,10 @@
 //! Lockchain record handling module
 //! 
 //! A record is a set of key-value store values with a header
-//! 
 
 
 use std::collections::BTreeMap;
 use chrono::{Local, DateTime};
-use version::*;
 
 
 /// A generic payload for a record

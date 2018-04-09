@@ -1,9 +1,7 @@
 //! A collection of utility submodules
-//! 
-//! 
 
 /// Encoding module
-pub mod Encoding {
+pub mod encoding {
     use base64;
     use std::fmt::Write;
 
@@ -29,7 +27,7 @@ pub mod Encoding {
 }
 
 /// A hashing utility module
-pub mod Hashing {
+pub mod hashing {
     use blake2::Blake2s;
     use blake2::digest::{Input, VariableOutput};
 
@@ -58,7 +56,7 @@ pub mod Hashing {
 /// Random number utility module for lockchain
 /// 
 /// Provides stateless secure random number and byte generation
-pub mod Random {
+pub mod random {
     use rand::{thread_rng, Rng};
 
     /// Generate a random number with an upper bound

@@ -1,10 +1,13 @@
-//!
+//! Comprehensive encryption submodule which handles serialising and de-serialising
 
 use miscreant::aead::{Aes256Siv, Algorithm};
-use security::{keys::{Key, KEY_LENGTH}, utils::{Encoding, Hashing, Random}};
+use security::{keys::{Key, KEY_LENGTH}, utils::{encoding, random}};
 use serde::{Serialize, de::DeserializeOwned};
 use serde_json;
-use std::error::Error;
+
+use std::{error::Error, fs::File};
+use std::io::prelude::*;
+
 
 /// The main encryption context
 pub struct CryptoEngine {
@@ -17,48 +20,89 @@ pub struct CryptoEngine {
 #[derive(Serialize, Deserialize)]
 struct PackedData {
     nonce: Vec<u8>,
+    iv: Vec<u8>,
     data: Vec<u8>,
 }
 
 impl CryptoEngine {
-    /// Create a new encryption context with a key
-    pub fn new(key: Key) -> CryptoEngine {
+
+    /// Create a new CryptoEngine from a key
+    /// 
+    /// This generates a new IV which is then used for all
+    /// cryptographic transactions in a vault context
+    pub fn generate(key: Key) -> CryptoEngine {
         return CryptoEngine {
             ctx: Aes256Siv::new(&key.to_slice()),
             key: key,
-            iv: Random::bytes(KEY_LENGTH),
+            iv: random::bytes(KEY_LENGTH),
         };
     }
 
     /// Load an existing encryption context into scope
-    pub fn load(key: Key, iv: Vec<u8>) -> CryptoEngine {
-        return CryptoEngine {
-            ctx: Aes256Siv::new(&key.to_slice()),
-            key: key,
-            iv: iv,
+    /// 
+    /// Takes an encrypted stream of a key file that wraps a key object
+    /// in a packed encryption object.
+    pub fn load(path: &String, pw: &str, salt: &str) -> Result<CryptoEngine, Box<Error>> {
+        let mut file = File::open(path)?;
+        let mut file_content = String::new();
+        file.read_to_string(&mut file_content)?;
+
+        let decoded = String::from_utf8(encoding::base64_decode(&file_content))?;
+        let packed: PackedData = serde_json::from_str(&decoded)?;
+
+        /* Decrypt key */
+        let mut tmp = CryptoEngine {
+            ctx: Aes256Siv::new(&packed.data.as_slice()),
+            key: Key::from_password(pw, salt),
+            iv: packed.iv,
         };
+        let decrypted_key: Key = tmp.decrypt(String::from_utf8(packed.data)?)?;
+
+        return Ok(CryptoEngine {
+            ctx: Aes256Siv::new(&decrypted_key.to_slice()),
+            key: decrypted_key,
+            iv: tmp.iv,
+        });
+    }
+
+    /// Save the current key, encrypted to disk
+    pub fn save(&mut self, path: &String, pw: &str, salt: &str) -> Result<(), Box<Error>> {
+        
+        /* Encrypt key */
+        let mut tmp = CryptoEngine {
+            ctx: Aes256Siv::new(&self.key.data.as_slice()),
+            key: Key::from_password(pw, salt),
+            iv: self.iv.clone(),
+        };
+
+        let encrypted_key = tmp.encrypt(&self.key)?;
+        
+        let mut file = File::create(path)?;
+        file.write_all(encrypted_key.as_bytes())?;
+        return Ok(());
     }
 
     /// Encrypt a piece of data, returns a packed and encoded string
     pub fn encrypt<T: Serialize>(&mut self, data: &T) -> Result<String, Box<Error>> {
         let serial = serde_json::to_string(&data)?;
-        let nonce = Random::bytes(64);
+        let nonce = random::bytes(64);
         let iv = &self.iv.as_slice();
         let data = &serial.as_bytes();
 
         let encrypted = self.ctx.seal(nonce.as_slice(), iv, data);
         let packed = PackedData {
-            nonce: nonce,
+            iv: self.iv.clone(),
             data: encrypted,
+            nonce: nonce,
         };
 
         let enc_packed = serde_json::to_string(&packed)?;
-        return Ok(Encoding::base64_encode(&enc_packed.into_bytes()));
+        return Ok(encoding::base64_encode(&enc_packed.into_bytes()));
     }
 
     /// Decrypt a ciphertext string into a type object
     pub fn decrypt<T: DeserializeOwned>(&mut self, cipher: String) -> Result<T, Box<Error>> {
-        let dec_packed = String::from_utf8(Encoding::base64_decode(&cipher))?;
+        let dec_packed = String::from_utf8(encoding::base64_decode(&cipher))?;
         let p: PackedData = serde_json::from_str(&dec_packed)?;
 
         let iv = &self.iv.as_slice();

@@ -1,12 +1,6 @@
 //! A module that handles key generation and key loading
-//!
 
-
-
-use std::fs::File;
-use std::io::prelude::*;
-
-use super::utils::{Hashing, Encoding, Random};
+use super::utils::{hashing, random};
 pub const KEY_LENGTH: usize = 64;
 
 
@@ -17,37 +11,21 @@ pub struct Key {
 }
 
 impl Key {
+
     /// Create a new key from scratch
-    pub fn new() -> Key {
-        let data = Random::bytes(KEY_LENGTH);
+    pub fn generate() -> Key {
+        let data = random::bytes(KEY_LENGTH);
         return Key { data: data };
     }
 
     /// Use a password as a key
     pub fn from_password(password: &str, salt: &str) -> Key {
-        let hashed = Hashing::blake2(password, salt);
+        let hashed = hashing::blake2(password, salt);
         let mut vec: Vec<u8> = Vec::new();
         for b in &hashed {
             vec.push(b.clone());
         }
         return Key { data: vec };
-    }
-
-    /// Load an encrypted key from disk
-    pub fn load(path: &String, password: &str) -> Key {
-        let tmp_key = Key::from_password(password, "REPLACE WITH SALT");
-        
-        return Key::new();
-    }
-
-    /// Save the current key, encrypted to disk
-    pub fn save(&self, path: &String, password: &str) {
-        let tmp_key = Key::from_password(password, "REPLACE WITH SALT");
-        // let ctx = CryptoCtx::existing(&tmp_key);
-
-        // let encrypted = ctx.encrypt(&self.clone());
-        // let key_file = File::create(path).unwrap();
-        // key_file.write_all(encrypted.as_bytes()).unwrap();
     }
 
     /// Used to get the raw data from this key, as a slice copy

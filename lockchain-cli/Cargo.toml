@@ -1,0 +1,8 @@
+[package]
+name = "lockchain-cli"
+version = "0.1.0"
+authors = ["Katharina Fey <kookie@spacekookie.de>"]
+
+[dependencies]
+lockchain-core = { path = "../lockchain-core" }
+clap = "*"

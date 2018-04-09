@@ -1,4 +1,13 @@
 //! Lockchain library core
+//! 
+//! **Documentation TBD**
+//! 
+//! In short: this crate handles handling of lockchain vaults. A vault
+//! is a collection of secret records that can be searched in an efficient
+//! manner, without ever having to keep the entire set in memory 
+//! in unencrypted form.
+//! 
+//! This is primarily used in the lockchain password manager.
 
 extern crate chrono;
 extern crate serde;
@@ -13,7 +22,4 @@ extern crate rand;
 pub mod version;
 pub mod record;
 pub mod vault;
-mod security;
-
-
-mod test;
+pub mod security;
