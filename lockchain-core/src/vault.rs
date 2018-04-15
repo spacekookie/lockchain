@@ -110,7 +110,7 @@ impl Vault {
         };
     }
 
-    /// Adds a new record to the vault
+    /// Adds a new (empty) record to the vault
     pub fn add_record(&mut self, name: &str, category: &str, tags: Vec<&str>) {
         let mut record = Record::new(name, category);
         for tag in tags {
@@ -120,6 +120,7 @@ impl Vault {
         self.records.insert(String::from(name), record);
     }
 
+    /// Fill an existing record with data
     pub fn add_data(&mut self, record: &str, key: &str, data: Payload) {
         let r: &mut Record = self.records.get_mut(record).unwrap();
         r.set_data(key, data);
