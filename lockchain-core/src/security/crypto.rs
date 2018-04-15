@@ -1,13 +1,13 @@
 //! Comprehensive encryption submodule which handles serialising and de-serialising
 
 use miscreant::aead::{Aes256Siv, Algorithm};
-use security::{keys::{Key, KEY_LENGTH}, utils::{encoding, random}};
-use serde::{Serialize, de::DeserializeOwned};
+use security::{keys::{Key, KEY_LENGTH},
+               utils::{encoding, random}};
+use serde::{de::DeserializeOwned, Serialize};
 use serde_json;
 
-use std::{error::Error, fs::File};
 use std::io::prelude::*;
-
+use std::{error::Error, fs::File};
 
 /// The main encryption context
 pub struct CryptoEngine {
@@ -25,9 +25,8 @@ struct PackedData {
 }
 
 impl CryptoEngine {
-
     /// Create a new CryptoEngine from a key
-    /// 
+    ///
     /// This generates a new IV which is then used for all
     /// cryptographic transactions in a vault context
     pub fn generate(key: Key) -> CryptoEngine {
@@ -39,10 +38,10 @@ impl CryptoEngine {
     }
 
     /// Load an existing encryption context into scope
-    /// 
+    ///
     /// Takes an encrypted stream of a key file that wraps a key object
     /// in a packed encryption object.
-    pub fn load(path: &String, pw: &str, salt: &str) -> Result<CryptoEngine, Box<Error>> {
+    pub fn load(path: &str, pw: &str, salt: &str) -> Result<CryptoEngine, Box<Error>> {
         let mut file = File::open(path)?;
         let mut file_content = String::new();
         file.read_to_string(&mut file_content)?;
@@ -51,23 +50,21 @@ impl CryptoEngine {
         let packed: PackedData = serde_json::from_str(&decoded)?;
 
         /* Decrypt key */
-        let mut tmp = CryptoEngine {
+        let decrypted_key: Key = CryptoEngine {
             ctx: Aes256Siv::new(&packed.data.as_slice()),
             key: Key::from_password(pw, salt),
-            iv: packed.iv,
-        };
-        let decrypted_key: Key = tmp.decrypt(String::from_utf8(packed.data)?)?;
+            iv: packed.iv.clone(),
+        }.decrypt(String::from_utf8(packed.data)?)?;
 
         return Ok(CryptoEngine {
             ctx: Aes256Siv::new(&decrypted_key.to_slice()),
             key: decrypted_key,
-            iv: tmp.iv,
+            iv: packed.iv,
         });
     }
 
     /// Save the current key, encrypted to disk
-    pub fn save(&mut self, path: &String, pw: &str, salt: &str) -> Result<(), Box<Error>> {
-        
+    pub fn save(&mut self, path: &str, pw: &str, salt: &str) -> Result<(), Box<Error>> {
         /* Encrypt key */
         let mut tmp = CryptoEngine {
             ctx: Aes256Siv::new(&self.key.data.as_slice()),
@@ -76,7 +73,7 @@ impl CryptoEngine {
         };
 
         let encrypted_key = tmp.encrypt(&self.key)?;
-        
+
         let mut file = File::create(path)?;
         file.write_all(encrypted_key.as_bytes())?;
         return Ok(());

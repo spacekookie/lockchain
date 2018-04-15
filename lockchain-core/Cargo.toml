@@ -2,15 +2,15 @@
 name = "lockchain-core"
 description = "The core library that handles lockchain vaults and records"
 docs = "https://docs.rs/lockchain-core"
+website = "https://github.com/spacekookie/lockchain/tree/master/lockchain-core"
 readme = "README.md"
 license = "MIT/X11 OR Apache-2.0"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Katharina Fey <kookie@spacekookie.de>"]
 
 [dependencies]
 chrono = { version = "0.4", features = ["serde", "rustc-serialize"] }
 ordermap = "^0.3"
-human-panic = "^0.1"
 
 # Cryptography
 miscreant = "^0.3"

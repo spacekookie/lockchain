@@ -8,17 +8,15 @@
 //! is enabled though.
 //!
 
-use std::collections::{HashMap, BTreeMap};
+use std::collections::{BTreeMap, HashMap};
+use std::fs::{self, File};
 use std::io::prelude::*;
-use std::path::{PathBuf, Path};
-use std::fs;
+use std::path::{Path, PathBuf};
 
-
-use security::keys::{self, Key};
-use record::{Record, Payload};
+use record::{Payload, Record};
+use security::{CryptoEngine, Key};
 
 use serde_json;
-
 
 /// This should be made pretty with actual Errors at some point
 #[derive(Debug)]
@@ -32,14 +30,13 @@ pub enum ErrorType {
 pub struct Vault {
     name: String,
     path: String,
-    primary_key: Key,
+    engine: CryptoEngine,
     pub records: HashMap<String, Record>,
 }
 
 impl Vault {
     /// Attempt to create a new vault
     pub fn new(name: &str, path: &str, password: &str) -> Result<Vault, ErrorType> {
-
         let mut buffer = PathBuf::new();
         buffer.push(path);
         buffer.push(format!("{}.vault", name));
@@ -47,21 +44,26 @@ impl Vault {
         let mut me = Vault {
             name: String::from(name),
             path: buffer.to_str().unwrap().to_owned(),
-            primary_key: Key::generate(),
+            engine: CryptoEngine::generate(Key::generate()),
             records: HashMap::new(),
         };
 
         /* Create relevant files */
         match me.create_dirs() {
-            ErrorType::Success => {}
+            ErrorType::Success => {
+                let mut buffer = buffer.clone();
+                buffer.push("primary.key");
+                me.engine
+                    .save(buffer.to_str().unwrap(), password, &me.name)
+                    .unwrap();
+            }
             val => return Err(val),
         }
 
         return Ok(me);
     }
 
-    pub fn load(name: &str, path: &str, password: &str) -> Vault {
-
+    pub fn load(name: &str, path: &str, password: &str) -> Result<Vault, ErrorType> {
         /* Construct the base path */
         let mut pathbuf = PathBuf::new();
         pathbuf.push(path);
@@ -69,45 +71,38 @@ impl Vault {
 
         /* Load the primary key */
         pathbuf.push("primary.key");
-        // let loaded_key: Key = Key::load(pathbuf.to_str().unwrap(), password);
-
-        // let loaded_key: Key = keys::load_key(pathbuf.as_os_str());
+        let mut engine = match CryptoEngine::load(pathbuf.to_str().unwrap(), password, name) {
+            Ok(e) => e,
+            Err(e) => return Err(ErrorType::FailedToInitialise),
+        };
         pathbuf.pop();
-
-        /* Decrypt the primary key */
-        // let password_key = keys::password_to_key(password);
-        // let decrypted_key = AES::decrypt(loaded_key, &password_key);
-
-
 
         /* Load all existing records */
-        pathbuf.pop();
         pathbuf.push("records");
         let records = fs::read_dir(pathbuf.as_path()).unwrap();
-        let mut record_map: HashMap<String, Record> = HashMap::new();
+        let mut record_map = HashMap::new();
         pathbuf.pop();
 
         /* Decrypt and map all existing records */
-        // for entry in records {
-        //     let mut encrypted = String::new();
-        //     let record = entry.unwrap();
-        //     let mut file = File::open(record.path().as_os_str()).unwrap();
-        //     file.read_to_string(&mut encrypted).unwrap();
+        for entry in records {
+            let mut encrypted = String::new();
+            let record = entry.unwrap();
+            let mut file = File::open(record.path().as_os_str()).unwrap();
+            file.read_to_string(&mut encrypted).unwrap();
 
             /* Decrypt and decode the data */
-            // let decrypted = crypto.decrypt(&encrypted);
-            // let a_record: Record = serde_json::from_str(&decrypted).unwrap();
+            let a_record: Record = engine.decrypt(encrypted).unwrap();
 
-            // let name = a_record.header.name.clone();
-            // record_map.insert(name, a_record);
-        // }
+            let name = a_record.header.name.clone();
+            record_map.insert(name, a_record);
+        }
 
-        return Vault {
+        return Ok(Vault {
             name: String::from(name),
             path: "".to_owned(),
-            primary_key: Key::generate(),
+            engine: engine,
             records: record_map,
-        };
+        });
     }
 
     /// Adds a new (empty) record to the vault
@@ -127,47 +122,39 @@ impl Vault {
     }
 
     /// Sync current records to disk, overwriting existing files
-    pub fn sync(&self) {
-
-        let mut path = self.path.clone();
-        path.push_str("records");
-        // println!("Syncing records in: {:?}", path.as_os_str());
+    pub fn sync(&mut self) {
+        let mut buffer = PathBuf::new();
+        buffer.push(&self.path);
+        buffer.push("records");
 
         for (name, record) in &self.records {
-            let serialised = serde_json::to_string(&record).unwrap();
-            // let encrypted = self.crypto.encrypt(&serialised);
+            let encrypted = self.engine.encrypt(&record).unwrap();
 
             /* <vault>/records/<name>.data */
-            // {
-            //     path.push(format!("{}.data", name));
-            //     let file = path.as_path();
-            //     println!("File exists: {}", file.exists());
+            {
+                buffer.push(&format!("{}.data", name));
+                let file = buffer.as_path();
+                // println!("Saving file '{}' to '{}'", name, file.to_str().unwrap());
 
-            //     let mut handle = match file.exists() {
-            //         true => {
-            //             match File::open(file.as_os_str()) {
-            //                 Ok(k) => k,
-            //                 Err(e) => panic!("Failed to open file: {}", e),
-            //             }
-            //         }
-            //         false => {
-            //             match File::create(file.as_os_str()) {
-            //                 Ok(k) => k,
-            //                 Err(e) => {
-            //                     panic!("Failed to create file ({:?}): {}", file.as_os_str(), e)
-            //                 }
-            //             }
-            //         }
-            //     };
+                let mut handle = match file.exists() {
+                    true => match File::open(file.as_os_str()) {
+                        Ok(k) => k,
+                        Err(e) => panic!("Failed to open file: {}", e),
+                    },
+                    false => match File::create(file.as_os_str()) {
+                        Ok(k) => k,
+                        Err(e) => panic!("Failed to create file ({:?}): {}", file.as_os_str(), e),
+                    },
+                };
 
-            //     /* Write to disk */
-            //     match handle.write_all(encrypted.as_bytes()) {
-            //         Err(e) => println!("An error was encountered while writing '{}': {}", name, e),
-            //         _ => {}
-            //     }
-            // }
+                /* Write to disk */
+                match handle.write_all(encrypted.as_bytes()) {
+                    Err(e) => println!("An error was encountered while writing '{}': {}", name, e),
+                    _ => {}
+                }
+            }
 
-            // path.pop();
+            buffer.pop();
         }
     }
 
@@ -175,7 +162,6 @@ impl Vault {
 
     /// Create all relevant directories
     fn create_dirs(&mut self) -> ErrorType {
-
         let mut path = PathBuf::new();
         path.push(&self.path);
 
@@ -190,31 +176,9 @@ impl Vault {
             _ => {}
         };
 
-        /* Create configs */
-        // let key = match self.crypto.dump_encrypted_key() {
-        //     Some(k) => k,
-        //     None => return ErrorType::FailedToInitialise,
-        // };
-
-        // println!("Primary key: {}", key);
-
-        /* Write encrypted key to disk */
-        // {
-        //     self.path.push("primary.key");
-        //     let key_path = self.path.as_os_str();
-        //     let mut key_file = File::create(key_path).unwrap();
-        //     println!("Creating key file at {:?}", key_file);
-        //     key_file.write_all(key.as_bytes()).unwrap();
-        // }
-
         /* Create a few other directories */
-        // {
-        //     self.path.pop();
-        //     self.path.push("records");
-        //     fs::create_dir_all(self.path.as_path()).unwrap();
-        //     self.path.pop();
-        // }
-
+        path.push("records");
+        fs::create_dir_all(path.as_path()).unwrap();
         return ErrorType::Success;
     }
 }
