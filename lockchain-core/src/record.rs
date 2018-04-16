@@ -5,6 +5,7 @@
 
 use std::collections::BTreeMap;
 use chrono::{Local, DateTime};
+use serde_json;
 
 
 /// A generic payload for a record
@@ -16,6 +17,12 @@ pub enum Payload {
     BTreeMap(BTreeMap<String, Payload>),
 }
 
+/// The header of a record
+/// 
+/// Contains easily searchable fields of metadata. Nothing
+/// in the Header should ever be considered secure as the
+/// headers are kept cached for much longer than the rest
+/// of the data.
 #[derive(Debug, Serialize, Deserialize, Eq, PartialEq)]
 pub struct Header {
     pub name: String,
@@ -26,10 +33,10 @@ pub struct Header {
     pub date_updated: DateTime<Local>,
 }
 
+/// 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Record {
     pub header: Header,
-    // pub fields: BTreeMap<String, Payload>,
     pub body: BTreeMap<String, Payload>,
 }
 
@@ -71,6 +78,18 @@ impl Record {
     /// Set a simple key-value pair
     pub fn set_data(&mut self, key: &str, val: Payload) {
         self.body.insert(String::from(key), val);
+    }
+
+    /// Contains a cloned value of single data field
+    pub fn get_data(&self, key: &str) -> Payload {
+        return self.body.get(key).unwrap().clone();
+    }
+
+    /// Serialise the entire body into a json tree
+    /// 
+    /// Contains all secret values in a json tree that you can work with manually.
+    pub fn get_json(&self) -> String {
+        return serde_json::to_string(&self.body).unwrap();
     }
 
     /// Add a new tag to this record head. Checks that tags don't already exists

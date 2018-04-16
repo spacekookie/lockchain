@@ -5,7 +5,7 @@ docs = "https://docs.rs/lockchain-core"
 website = "https://github.com/spacekookie/lockchain/tree/master/lockchain-core"
 readme = "README.md"
 license = "MIT/X11 OR Apache-2.0"
-version = "0.1.1"
+version = "0.2.0"
 authors = ["Katharina Fey <kookie@spacekookie.de>"]
 
 [dependencies]
