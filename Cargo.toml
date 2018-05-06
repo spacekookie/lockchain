@@ -1,6 +1,14 @@
 [workspace]
 members = [
+
+    # Core library components to create & parse vaults
     "lockchain-core",
-    "lockchain-gtk",
-    "lockchain-cli"
+    "lockchain-core/lockchain-files",
+    "lockchain-core/lockchain-crypto",
+
+    # Primary data server
+    "lockchain-server",
+
+    # RESTful API layer
+    "lockchain-http",
 ]

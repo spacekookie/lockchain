@@ -1,5 +1,11 @@
 # lockchain-core
 
+This library ecosystem is made of three main parts.
+
+ - `lockchain-core` Common types shared between both `secret` and `default` operation modes.
+ - `lockchain-files` load vaults, decode files and work with encrypted streams.
+ - `lockchain-crypto` attach crypto handlers to vaults as a middleware to decrypt data.
+
 If you're a Rust developer and interested in the `lockchain` crate, this README is for you. Lockchain is a document based, encrypted data vault. It provides you with an easy to use API to create, manage and update vaults and records. Build robust and user-friendly applications that deal with their data in a secure manner.
 
 Most notibly, this crate is being used by the [lockchain]() password manager as well as the [poke]() linux ssh key manager.
