@@ -47,6 +47,8 @@ pub struct Header {
     pub date_updated: DateTime<Local>,
 }
 
+pub type Body = BTreeMap<String, Payload>;
+
 /// Represents a whole record in memory
 /// 
 /// The body field can be `None` if it hasn't been cached
@@ -57,5 +59,5 @@ pub struct Header {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Record {
     pub header: Header,
-    pub body: Option<BTreeMap<String, Payload>>,
+    pub body: Option<Body>,
 }
