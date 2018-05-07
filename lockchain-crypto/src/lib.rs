@@ -1,17 +1,25 @@
-//!
+//! A shim-layer crate for lockchain encryption
+//! 
+//! To get going with encrypted lockchain files, just initialise an
+//! AesEngine type and start working with encrypted types provided by
+//! some backend.
 
 #[macro_use]
 extern crate serde_derive;
 extern crate serde;
+extern crate miscreant;
+extern crate base64;
+extern crate blake2;
+extern crate rand;
 
 extern crate lockchain_core as lcc;
 
-use lcc::{traits::{AutoEncoder, Body},
-          Payload};
-use std::collections::BTreeMap;
 
 mod databody;
 mod engine;
+mod keys;
+mod utils;
+mod data;
 
 pub use databody::*;
-pub use engine::*;
+pub use engine::AesEngine;

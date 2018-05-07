@@ -62,7 +62,7 @@ where
     T: Encryptable + AutoEncoder + Body,
 {
     fn encrypt(&mut self, item: T) -> EncryptedBody;
-    fn decrypt(&mut self, item: EncryptedBody) -> T;
+    fn decrypt(&mut self, item: EncryptedBody) -> Option<T>;
 }
 
 /// A trait that abstracts file or record loading for

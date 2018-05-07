@@ -9,6 +9,14 @@ pub struct DataBody {
     tree: BTreeMap<String, Payload>,
 }
 
+impl DataBody {
+    pub fn new() -> Self {
+        DataBody {
+            tree: BTreeMap::new(),
+        }
+    }
+}
+
 impl AutoEncoder for DataBody {}
 
 impl Body for DataBody {
