@@ -1,25 +1,14 @@
 [package]
 name = "lockchain-core"
-description = "The core library that handles lockchain vaults and records"
+description = "Provides common abstractions for the lockchain crate ecoystem"
 docs = "https://docs.rs/lockchain-core"
 website = "https://github.com/spacekookie/lockchain/tree/master/lockchain-core"
 readme = "README.md"
 license = "MIT/X11 OR Apache-2.0"
-version = "0.2.0"
+version = "0.3.0"
 authors = ["Katharina Fey <kookie@spacekookie.de>"]
 
 [dependencies]
-chrono = { version = "0.4", features = ["serde", "rustc-serialize"] }
-ordermap = "^0.3"
-
-# Cryptography
-miscreant = "^0.3"
-base64 = "^0.8"
-blake2 = "^0.7"
-pwhash = "^0.1"
-rand = "^0.3"
-
-# Serialisation
-serde = "^1.0"
-serde_json = "^1.0"
-serde_derive = "^1.0"
+chrono = { version = "0.4", features = ["serde"] }
+serde_derive = "1.0"
+serde = "1.0"

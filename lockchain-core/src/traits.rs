@@ -20,11 +20,11 @@ use record::{Header, Payload};
 /// This allows working with both encrypted and cleartext data bodies.
 pub trait Body: DeserializeOwned + Serialize {
     ///Get the value of a field from this body
-    fn get_field(&self, key: &str) -> Option<Payload>;
+    fn get_field(&self, key: &str) -> Option<&Payload>;
     /// Set the value of a field
-    fn set_field(&mut self, key: &str, value: &Payload);
+    fn set_field(&mut self, key: &str, value: Payload) -> Option<()>;
     /// Remove versioning and flatten the data tree to a single level.
-    fn flatten(&mut self);
+    fn flatten(&mut self) -> Option<()>;
 }
 
 
@@ -63,4 +63,13 @@ pub trait Loading {
     fn save(&mut self, _path: &str) {
         unimplemented!()
     }
+}
+
+/// A common vault abstraction trait that deals with
+/// data integrety and synchronisation for different
+/// platform backends.
+pub trait VaultLayer {
+    fn fetch(&mut self);
+    fn pull(&mut self, name: &str);
+    fn sync(&mut self);
 }

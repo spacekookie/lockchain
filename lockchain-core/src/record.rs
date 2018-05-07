@@ -11,9 +11,7 @@
 
 use chrono::{DateTime, Local};
 use std::collections::BTreeMap;
-use serde::{de::DeserializeOwned, Serialize};
-
-// use traits::Body;
+use traits::Body;
 
 /// An enum that wraps around all possible data types to store
 /// as the value of a vault record.
@@ -68,15 +66,30 @@ pub struct Record<T: Body> {
     pub body: Option<T>,
 }
 
-/// A Body trait that can be implemented to hook into the generic Record
-/// data module.
-///
-/// This allows working with both encrypted and cleartext data bodies.
-pub trait Body: DeserializeOwned + Serialize {
-    ///Get the value of a field from this body
-    fn get_field(&self, key: &str) -> Option<Payload>;
-    /// Set the value of a field
-    fn set_field(&mut self, key: &str, value: &Payload);
-    /// Remove versioning and flatten the data tree to a single level.
-    fn flatten(&mut self);
+impl<T: Body> Record<T> {
+    /// Create a new Record, generically for a backend in question
+    pub fn new(name: &str, category: &str, tags: Vec<&str>) -> Self {
+        Record {
+            header: Header {
+                name: name.to_owned(),
+                category: category.to_owned(),
+                tags: tags.into_iter().map(|s| s.to_owned()).collect(),
+                fields: BTreeMap::new(),
+                date_created: Local::now(),
+                date_updated: Local::now(),
+            },
+            body: None,
+        }
+    }
+
+    /// Attempt to set a key to a certain value
+    pub fn add_data(&mut self, key: &str, value: Payload) -> Option<()> {
+        (self.body.as_mut()?).set_field(key, value)?;
+        Some(())
+    }
+
+    /// Attempt to read out the value of a certain key
+    pub fn get_data(&self, key: &str) -> Option<&Payload> {
+        (self.body.as_ref()?).get_field(key)
+    }
 }
