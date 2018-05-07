@@ -11,7 +11,23 @@
 //! compilation work without external crates but not calling
 //! functions at runtime.
 
-use record::{Header, Body};
+use serde::{de::DeserializeOwned, Serialize};
+use record::{Header, Payload};
+
+/// A Body trait that can be implemented to hook into the generic Record
+/// data module.
+///
+/// This allows working with both encrypted and cleartext data bodies.
+pub trait Body: DeserializeOwned + Serialize {
+    type Impl: Serialize + DeserializeOwned;
+    ///Get the value of a field from this body
+    fn get_field(&self, key: &str) -> Option<Payload>;
+    /// Set the value of a field
+    fn set_field(&mut self, key: &str, value: &Payload);
+    /// Remove versioning and flatten the data tree to a single level.
+    fn flatten(&mut self);
+}
+
 
 /// A simple trait that allows libraries to hook into the
 /// `body()` and `record()` hooks for vault records.
@@ -20,9 +36,9 @@ pub trait LoadRecord {
         unimplemented!()
     }
 
-    fn body() -> Body {
-        unimplemented!()
-    }
+    // fn body() -> Body {
+    //     unimplemented!()
+    // }
 }
 
 

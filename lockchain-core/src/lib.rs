@@ -1,14 +1,16 @@
 //! Common library types used in lockchain crates
+#![feature(external_doc)]
+#![doc(include = "../README.md")]
 
 #[macro_use]
 extern crate serde_derive;
-extern crate serde;
 extern crate chrono;
+extern crate serde;
 
 pub mod errors;
-pub mod traits;
 mod record;
+pub mod traits;
 mod vault;
 
-pub use self::record::{Record, Header, Body, Payload};
+pub use self::record::{Header, Payload, Record};
 pub use self::vault::Vault;

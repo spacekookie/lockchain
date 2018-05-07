@@ -9,8 +9,9 @@
 //! how data can be written and read from records.
 
 
-use std::collections::{BTreeMap, HashMap};
+use std::collections::HashMap;
 use record::{Payload, Record};
+use traits::Body;
 
 /// In-memory representation of a lockchain vault.
 /// 
@@ -20,18 +21,36 @@ use record::{Payload, Record};
 /// To provide on-disk functionality it requires the `-storage`
 /// trait library and for encrypted file access the `-crypto`
 /// crate.
-pub struct Vault {
+/// 
+/// The body backend is being being generic with the `Body` trait.
+pub struct Vault<T: Body> {
+    /// The name of this vault
     name: String,
-    records: HashMap<String, Record>,
+    /// The location of this vault (either local or remote)
+    location: String,
+    ///A list of known records in this vault
+    records: HashMap<String, Record<T>>,
 }
 
-impl Vault {
+impl<T: Body> Vault<T> {
+
+    pub fn new(name: &str, location: &str) -> Vault<T> {
+        Vault {
+            name: name.to_owned(),
+            location: location.to_owned(),
+            records: HashMap::<String, Record<T>>::new()
+        }
+    }
+
+    pub fn fetch(&mut self) {
+        unimplemented!()
+    }
 
     /// Try to retrieve a record from this vault.
     /// 
     /// Returns `None` if it doesn't exist or can't be retrieved
     /// from the selected storage backend for this vault.
-    pub fn get_record(&self, name: &str) -> Option<Record> {
+    pub fn get_record(&self, name: &str) -> Option<Record<T>> {
         unimplemented!()
     }
 
