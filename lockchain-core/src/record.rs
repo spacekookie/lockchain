@@ -11,7 +11,9 @@
 
 use chrono::{DateTime, Local};
 use std::collections::BTreeMap;
-use traits::Body;
+use serde::{de::DeserializeOwned, Serialize};
+
+// use traits::Body;
 
 /// An enum that wraps around all possible data types to store
 /// as the value of a vault record.
@@ -62,5 +64,19 @@ pub struct Header {
 #[derive(Debug, Eq, PartialEq, Clone, Serialize, Deserialize)]
 pub struct Record<T: Body> {
     pub header: Header,
-    pub body: Option<Box<T::Impl>>,
+    #[serde(bound(deserialize = "T: Body"))]
+    pub body: Option<T>,
+}
+
+/// A Body trait that can be implemented to hook into the generic Record
+/// data module.
+///
+/// This allows working with both encrypted and cleartext data bodies.
+pub trait Body: DeserializeOwned + Serialize {
+    ///Get the value of a field from this body
+    fn get_field(&self, key: &str) -> Option<Payload>;
+    /// Set the value of a field
+    fn set_field(&mut self, key: &str, value: &Payload);
+    /// Remove versioning and flatten the data tree to a single level.
+    fn flatten(&mut self);
 }

@@ -10,8 +10,7 @@
 
 
 use std::collections::HashMap;
-use record::{Payload, Record};
-use traits::Body;
+use record::{Payload, Record, Body};
 
 /// In-memory representation of a lockchain vault.
 /// 

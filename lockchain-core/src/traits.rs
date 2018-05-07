@@ -19,7 +19,6 @@ use record::{Header, Payload};
 ///
 /// This allows working with both encrypted and cleartext data bodies.
 pub trait Body: DeserializeOwned + Serialize {
-    type Impl: Serialize + DeserializeOwned;
     ///Get the value of a field from this body
     fn get_field(&self, key: &str) -> Option<Payload>;
     /// Set the value of a field
@@ -31,25 +30,25 @@ pub trait Body: DeserializeOwned + Serialize {
 
 /// A simple trait that allows libraries to hook into the
 /// `body()` and `record()` hooks for vault records.
-pub trait LoadRecord {
+pub trait LoadRecord<T: Body> {
     fn header() -> Header {
         unimplemented!()
     }
 
-    // fn body() -> Body {
-    //     unimplemented!()
-    // }
+    fn body() -> T {
+        unimplemented!()
+    }
 }
 
 
 /// This is a trait which needs to be implemented by any
 /// backend which hopes to do encryption on data.
-pub trait Encryption {
+pub trait Encryption: Body {
     fn encrypt(&mut self) -> Vec<u8> {
         unimplemented!()
     }
 
-    fn decrypt(_: Vec<u8>) -> Box<Self> {
+    fn decrypt(_data: Vec<u8>) -> Box<Self> {
         unimplemented!()
     }
 }
