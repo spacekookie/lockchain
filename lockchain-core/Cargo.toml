@@ -10,5 +10,10 @@ authors = ["Katharina Fey <kookie@spacekookie.de>"]
 
 [dependencies]
 chrono = { version = "0.4", features = ["serde"] }
+
 serde_derive = "1.0"
+serde_json = "1.0"
 serde = "1.0"
+
+base64 = "0.8"
+bcrypt = "0.2"

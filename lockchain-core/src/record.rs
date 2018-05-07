@@ -93,3 +93,20 @@ impl<T: Body> Record<T> {
         (self.body.as_ref()?).get_field(key)
     }
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct EncryptedBody {
+    pub cipher: String,
+}
+
+impl Body for EncryptedBody {
+    fn get_field(&self, _: &str) -> Option<&Payload> {
+        None
+    }
+    fn set_field(&mut self, _: &str, _: Payload) -> Option<()> {
+        None
+    }
+    fn flatten(&mut self) -> Option<()> {
+        None
+    }
+}

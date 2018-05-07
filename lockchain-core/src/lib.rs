@@ -4,13 +4,18 @@
 
 #[macro_use]
 extern crate serde_derive;
-extern crate chrono;
+extern crate serde_json;
 extern crate serde;
+extern crate chrono;
+extern crate bcrypt;
+extern crate base64;
 
 pub mod errors;
-mod record;
 pub mod traits;
+mod users;
+mod record;
 mod vault;
 
-pub use self::record::{Header, Payload, Record};
+pub use self::record::{Header, Payload, Record, EncryptedBody};
 pub use self::vault::Vault;
+pub use self::users::User;

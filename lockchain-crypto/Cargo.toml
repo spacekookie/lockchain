@@ -4,3 +4,9 @@ version = "0.1.0"
 authors = ["Katharina Fey <kookie@spacekookie.de>"]
 
 [dependencies]
+lockchain-core = { path = "../lockchain-core" }
+serde_derive = "1.0"
+serde = "1.0"
+
+# Cryptography
+miscreant = "^0.3"
