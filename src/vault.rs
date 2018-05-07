@@ -121,4 +121,64 @@ impl Vault {
         r.set_data(key, data);
     }
 
+    /// Sync current records to disk, overwriting existing files
+    pub fn sync(&mut self) {
+        let mut buffer = PathBuf::new();
+        buffer.push(&self.path);
+        buffer.push("records");
+
+        for (name, record) in &self.records {
+            let encrypted = self.engine.encrypt(&record).unwrap();
+
+            /* <vault>/records/<name>.data */
+            {
+                buffer.push(&format!("{}.data", name));
+                let file = buffer.as_path();
+                // println!("Saving file '{}' to '{}'", name, file.to_str().unwrap());
+
+                let mut handle = match file.exists() {
+                    true => match File::open(file.as_os_str()) {
+                        Ok(k) => k,
+                        Err(e) => panic!("Failed to open file: {}", e),
+                    },
+                    false => match File::create(file.as_os_str()) {
+                        Ok(k) => k,
+                        Err(e) => panic!("Failed to create file ({:?}): {}", file.as_os_str(), e),
+                    },
+                };
+
+                /* Write to disk */
+                match handle.write_all(encrypted.as_bytes()) {
+                    Err(e) => println!("An error was encountered while writing '{}': {}", name, e),
+                    _ => {}
+                }
+            }
+
+            buffer.pop();
+        }
+    }
+
+    /**************************/
+
+    /// Create all relevant directories
+    fn create_dirs(&mut self) -> ErrorType {
+        let mut path = PathBuf::new();
+        path.push(&self.path);
+
+        /* Check if the directories already exist */
+        if path.as_path().exists() {
+            return ErrorType::DirectoryAlreadyExists;
+        }
+
+        /* Create the directory */
+        match fs::create_dir_all(path.as_path()) {
+            Err(_) => return ErrorType::FailedToInitialise,
+            _ => {}
+        };
+
+        /* Create a few other directories */
+        path.push("records");
+        fs::create_dir_all(path.as_path()).unwrap();
+        return ErrorType::Success;
+    }
 }

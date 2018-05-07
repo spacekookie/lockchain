@@ -1,14 +1,24 @@
-//! Lockchain record handling module
+//! Common record representation inside of vaults.
 //! 
-//! A record is a set of key-value store values with a header
+//! A record is a collection of data stored in a vault. It's
+//! structured into a publicly known, unencrypted header and
+//! a securely saved, encrypted body.
+//! 
+//! While the `lockchain-server` never has access to the body data,
+//! the header is stored and cached for make search requests faster.
+//! 
+//! **No secret information should ever be stored in the header**
 
 
 use std::collections::BTreeMap;
 use chrono::{Local, DateTime};
-use serde_json;
 
 
-/// A generic payload for a record
+/// An enum that wraps around all possible data types to store
+/// as the value of a vault record.
+/// 
+/// This doesn't include metadata attached to a field, just the
+/// data representation itself (i.e. text, number or sub data-tree)
 #[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone)]
 pub enum Payload {
     Text(String),
@@ -17,13 +27,17 @@ pub enum Payload {
     BTreeMap(BTreeMap<String, Payload>),
 }
 
-/// The header of a record
+/// The public header of a record
 /// 
-/// Contains easily searchable fields of metadata. Nothing
-/// in the Header should ever be considered secure as the
-/// headers are kept cached for much longer than the rest
-/// of the data.
-#[derive(Debug, Serialize, Deserialize, Eq, PartialEq)]
+/// A header consists of always-available fields that
+/// are hard-defined in the lockchain file format as well
+/// as custom fields that can be declared by each application
+/// specifically.
+/// 
+/// You should never rely on the presence of custom fields as
+/// older version of the software might not support them or
+/// know about them!
+#[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone)]
 pub struct Header {
     pub name: String,
     pub category: String,
@@ -33,67 +47,15 @@ pub struct Header {
     pub date_updated: DateTime<Local>,
 }
 
+/// Represents a whole record in memory
 /// 
+/// The body field can be `None` if it hasn't been cached
+/// yet. Calling `body()` will either resolve the data from disk
+/// or still return `None` if the current setting doesn't support
+/// body loading (such as the  `lockchain-server` which has no
+/// cryptocraphy subsystem)
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Record {
     pub header: Header,
-    pub body: BTreeMap<String, Payload>,
-}
-
-
-impl Header {
-
-    /// Create a new header with a name of a category
-    pub fn new(name: String, category: String) -> Header {
-        let me = Header {
-            name: name,
-            category: category,
-            tags: Vec::new(),
-            fields: BTreeMap::new(),
-            date_created: Local::now(),
-            date_updated: Local::now(),
-        };
-
-        return me;
-    }
-}
-
-impl PartialEq for Record {
-    fn eq(&self, other: &Record) -> bool {
-        self.header == other.header
-    }
-}
-
-impl Record {
-
-    /// Create a new record
-    pub fn new(name: &str, category: &str) -> Record {
-        return Record {
-            header: Header::new(String::from(name), String::from(category)),
-            // fields: BTreeMap::new(),
-            body: BTreeMap::new(),
-        };
-    }
-
-    /// Set a simple key-value pair
-    pub fn set_data(&mut self, key: &str, val: Payload) {
-        self.body.insert(String::from(key), val);
-    }
-
-    /// Contains a cloned value of single data field
-    pub fn get_data(&self, key: &str) -> Payload {
-        return self.body.get(key).unwrap().clone();
-    }
-
-    /// Serialise the entire body into a json tree
-    /// 
-    /// Contains all secret values in a json tree that you can work with manually.
-    pub fn get_json(&self) -> String {
-        return serde_json::to_string(&self.body).unwrap();
-    }
-
-    /// Add a new tag to this record head. Checks that tags don't already exists
-    pub fn add_tag(&mut self, tag: &str) {
-        self.header.tags.push(String::from(tag));
-    }
+    pub body: Option<BTreeMap<String, Payload>>,
 }
