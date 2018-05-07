@@ -1,11 +1,11 @@
 [package]
 name = "lockchain-core"
 description = "Provides common abstractions for the lockchain crate ecoystem"
-docs = "https://docs.rs/lockchain-core"
-website = "https://github.com/spacekookie/lockchain/tree/master/lockchain-core"
+documentation = "https://docs.rs/lockchain-core"
+homepage = "https://github.com/spacekookie/lockchain/tree/master/lockchain-core"
 readme = "README.md"
 license = "MIT/X11 OR Apache-2.0"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Katharina Fey <kookie@spacekookie.de>"]
 
 [dependencies]
