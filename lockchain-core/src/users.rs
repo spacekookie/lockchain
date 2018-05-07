@@ -3,6 +3,7 @@
 use bcrypt::{self, DEFAULT_COST};
 
 /// Simple user authentication abstraction
+#[allow(dead_code)]
 pub struct User {
     name: String,
     pw_hash: String,
@@ -12,7 +13,7 @@ pub struct User {
 
 impl User {
     ///
-    fn register(name: &str, password: &str, salt: &str) -> Option<User> {
+    pub fn register(name: &str, password: &str, salt: &str) -> Option<User> {
         Some(User {
             name: name.to_owned(),
             pw_hash: bcrypt::hash(&format!("{}{}", password, salt), DEFAULT_COST).ok()?,

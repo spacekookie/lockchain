@@ -96,7 +96,7 @@ impl<T: Body> Record<T> {
 
 #[derive(Serialize, Deserialize)]
 pub struct EncryptedBody {
-    pub cipher: String,
+    pub ciph: String,
 }
 
 impl Body for EncryptedBody {

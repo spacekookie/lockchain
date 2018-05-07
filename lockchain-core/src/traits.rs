@@ -11,7 +11,7 @@
 //! compilation work without external crates but not calling
 //! functions at runtime.
 
-use record::{Header, Payload, EncryptedBody};
+use record::{EncryptedBody, Header, Payload};
 use serde::{de::DeserializeOwned, Serialize};
 use users::User;
 
@@ -48,16 +48,21 @@ pub trait UserLogin {
     fn login(name: &str, password: &str, salt: &str) -> Option<User>;
 }
 
-/// This is a trait which needs to be implemented by any
-/// backend which hopes to do encryption on data.
-pub trait Encryption: Body + AutoEncoder {
-    fn encrypt(&mut self) -> EncryptedBody {
-        unimplemented!()
-    }
+/// A set of utility function that need to be implemented in order
+/// for a type to be encryptable or decryptable.
+pub trait Encryptable: AutoEncoder {}
 
-    fn decrypt(_enc: EncryptedBody) -> Box<Self> {
-        unimplemented!()
-    }
+/// A base trait that describes the basic functionality of
+/// an encryption backend which handles encrypted files.
+///
+/// Encryption is never done directly on the bodies, only via
+/// this scheduler type with the help of the [[Encryptable]] trait.
+pub trait EncryptionHandler<T>
+where
+    T: Encryptable + AutoEncoder + Body,
+{
+    fn encrypt(&mut self, item: T) -> EncryptedBody;
+    fn decrypt(&mut self, item: EncryptedBody) -> T;
 }
 
 /// A trait that abstracts file or record loading for
