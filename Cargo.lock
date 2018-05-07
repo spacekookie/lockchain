@@ -201,7 +201,7 @@ version = "0.1.0"
 
 [[package]]
 name = "lockchain-core"
-version = "0.3.1"
+version = "0.3.2"
 dependencies = [
  "base64 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bcrypt 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -217,7 +217,7 @@ version = "0.1.0"
 dependencies = [
  "base64 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "blake2 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
- "lockchain-core 0.3.1",
+ "lockchain-core 0.3.2",
  "miscreant 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "rand 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)",
