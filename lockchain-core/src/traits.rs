@@ -11,7 +11,7 @@
 //! compilation work without external crates but not calling
 //! functions at runtime.
 
-use record::{EncryptedBody, Header, Payload};
+use record::{Record, EncryptedBody, Header, Payload};
 use serde::{de::DeserializeOwned, Serialize};
 use users::User;
 
@@ -77,13 +77,37 @@ pub trait Loading {
     }
 }
 
-/// A common vault abstraction trait that deals with
-/// data integrety and synchronisation for different
-/// platform backends.
-pub trait VaultLayer {
+/// Trait for an in-memory representation of a lockchain vault.
+///
+/// By itself it represents vault metadata (name, users, location)
+/// as well as a list of record headers.
+///
+/// To provide on-disk functionality it requires the `-storage`
+/// trait library and for encrypted file access the `-crypto`
+/// crate.
+///
+/// The body backend is being being generic with the `Body` trait.
+pub trait Vault<T> where T: Body {
+    /// A shared constructor for all vault implementations
+    fn new(name: &str, location: &str) -> Self;
+    /// Fetch metadata headers for all records
     fn fetch(&mut self);
+    /// Pull a specific record from the backend
     fn pull(&mut self, name: &str);
+    /// Sync all changes back to the backend
     fn sync(&mut self);
+    /// Get a complete record from this vault
+    fn get_record(&self, name: &str) -> Option<&Record<T>>;
+    /// Probe if a record is contained
+    fn contains(&self, name: &str) -> bool;
+    /// Add a new record to this vault
+    fn add_record(&mut self, key: &str, category: &str, tags: Vec<&str>);
+    /// Delete a record from this vault
+    fn delete_record(&mut self, record: &str) -> Option<Record<T>>;
+    /// Add data to an existing record, overwriting existing fields
+    fn add_data(&mut self, record: &str, key: &str, data: Payload) -> Option<()>;
+    /// Get the (latest) value of a specific record data field
+    fn get_data(&self, record: &str, key: &str) -> Option<&Payload>;
 }
 
 /// Auto-implement this trait to serialise types to json

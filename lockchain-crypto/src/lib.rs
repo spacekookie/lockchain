@@ -8,9 +8,6 @@
 extern crate serde_derive;
 extern crate serde;
 extern crate miscreant;
-extern crate base64;
-extern crate blake2;
-extern crate rand;
 
 extern crate lockchain_core as lcc;
 

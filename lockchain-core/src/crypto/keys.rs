@@ -1,8 +1,12 @@
 //! A module that handles key generation and key loading
 
 use super::utils::{hashing, random};
-pub const KEY_LENGTH: usize = 64;
 
+/// A shared key length parameter for all cryptographic operations
+/// 
+/// This is *not* ideal and should be replaced with something better
+/// at some point in the future
+pub const KEY_LENGTH: usize = 64;
 
 /// A wrapper to represent a key for encryption
 #[derive(Debug, Serialize, Deserialize, Eq, PartialEq, Clone)]

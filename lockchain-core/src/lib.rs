@@ -1,6 +1,7 @@
 //! Common library types used in lockchain crates
 #![feature(external_doc)]
 #![doc(include = "../README.md")]
+#![feature(non_modrs_mods)]
 
 #[macro_use]
 extern crate serde_derive;
@@ -9,13 +10,15 @@ extern crate serde;
 extern crate chrono;
 extern crate bcrypt;
 extern crate base64;
+extern crate blake2;
+extern crate rand;
 
 pub mod errors;
 pub mod traits;
+pub mod crypto;
 mod users;
 mod record;
-mod vault;
+
 
 pub use self::record::{Header, Payload, Record, EncryptedBody};
-pub use self::vault::Vault;
 pub use self::users::User;

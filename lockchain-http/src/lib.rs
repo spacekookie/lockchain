@@ -8,6 +8,20 @@ pub struct Server {
 
 }
 
+impl Server {
+    
+}
+
+/// An enum that represents optional features. At least
+/// one flag needs to be provided to initialise [[Server]]
+/// in order to make a working lockchain-http interface.
 pub enum ApiFeature {
-    BasicIo
+    /// Basic functionality for record I/O
+    Base,
+    /// Enables user access management
+    Users,
+    /// Allows management of user identities
+    UserManagement,
+    /// Allows management of filestorage scopes & loading
+    VaultManagement,        
 }
