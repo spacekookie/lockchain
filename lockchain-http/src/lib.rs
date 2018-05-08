@@ -1,7 +1,4 @@
-#[cfg(test)]
-mod tests {
-    #[test]
-    fn it_works() {
-        assert_eq!(2 + 2, 4);
-    }
-}
+//! A plug and play http interface layer for various lockchain components
+
+extern crate gotham_serde_json_body_parser as goth_json;
+

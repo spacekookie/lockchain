@@ -1,6 +1,19 @@
 [package]
 name = "lockchain-http"
-version = "0.1.0"
+description = "Generic HTTP interface crate for the lockchain ecosystem. Can serve both encrypted and cleartext records"
+version = "0.0.0"
 authors = ["Katharina Fey <kookie@spacekookie.de>"]
 
+documentation = "https://docs.rs/lockchain-http"
+homepage = "https://github.com/spacekookie/lockchain/tree/master/lockchain-http"
+readme = "README.md"
+license = "MIT/X11 OR Apache-2.0"
+
+
 [dependencies]
+lockchain-core = "<= 0.3.2"
+
+# Web stack
+gotham = "0.2"
+gotham_derive = "0.2"
+gotham_serde_json_body_parser = "0.2.0"
