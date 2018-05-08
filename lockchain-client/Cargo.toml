@@ -1,0 +1,12 @@
+[package]
+name = "lockchain-client"
+description = "Client side component of the lockchain stack. Decrypts records and provides a Rust API to use them."
+version = "0.0.0"
+authors = ["Katharina Fey <kookie@spacekookie.de>"]
+
+documentation = "https://docs.rs/lockchain-client"
+homepage = "https://github.com/spacekookie/lockchain/tree/master/lockchain-client"
+readme = "README.md"
+license = "MIT/X11 OR Apache-2.0"
+
+[dependencies]
