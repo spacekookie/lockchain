@@ -490,7 +490,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
 name = "lockchain-client"
-version = "0.1.0"
+version = "0.0.0"
 
 [[package]]
 name = "lockchain-core"
@@ -532,7 +532,10 @@ dependencies = [
 
 [[package]]
 name = "lockchain-files"
-version = "0.1.0"
+version = "0.0.0"
+dependencies = [
+ "lockchain-core 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+]
 
 [[package]]
 name = "lockchain-http"

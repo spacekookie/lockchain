@@ -5,7 +5,7 @@ members = [
     "lockchain-crypto",
 
     "lockchain-server",
-    "lockchain-receiver",
+    "lockchain-client",
 
     "lockchain-http",
 ]
