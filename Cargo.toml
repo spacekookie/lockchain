@@ -1,7 +1,7 @@
 [workspace]
 members = [
     "lockchain-core",
-    "lockchain-store",
+    "lockchain-files",
     "lockchain-crypto",
 
     "lockchain-server",
