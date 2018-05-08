@@ -14,8 +14,6 @@ extern crate lockchain_core as lcc;
 
 mod databody;
 mod engine;
-mod keys;
-mod utils;
 mod data;
 
 pub use databody::*;

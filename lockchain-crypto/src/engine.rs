@@ -6,8 +6,9 @@ use miscreant::aead::{Aes256Siv, Algorithm};
 
 use super::data::PackedData;
 use super::databody::DataBody;
-use super::{keys::{Key, KEY_LENGTH},
-            utils::random};
+
+use lcc::crypto::{Key, keys::KEY_LENGTH};
+use lcc::crypto::utils::random;
 
 use std::collections::BTreeMap;
 

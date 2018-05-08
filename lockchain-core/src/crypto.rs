@@ -6,5 +6,5 @@
 mod keys;
 mod utils;
 
-pub use self::keys::Key;
+pub use self::keys::{Key, KEY_LENGTH};
 pub use self::utils::*;

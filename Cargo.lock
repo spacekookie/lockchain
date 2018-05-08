@@ -527,6 +527,19 @@ version = "0.0.0"
 [[package]]
 name = "lockchain-core"
 version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "base64 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bcrypt 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "chrono 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_derive 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.17 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "lockchain-core"
+version = "0.4.0"
 dependencies = [
  "base64 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bcrypt 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -539,23 +552,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "lockchain-core"
-version = "0.3.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-dependencies = [
- "base64 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "bcrypt 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
- "chrono 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde_derive 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)",
- "serde_json 1.0.17 (registry+https://github.com/rust-lang/crates.io-index)",
-]
-
-[[package]]
 name = "lockchain-crypto"
 version = "0.1.0"
 dependencies = [
- "lockchain-core 0.3.2",
+ "lockchain-core 0.4.0",
  "miscreant 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)",
