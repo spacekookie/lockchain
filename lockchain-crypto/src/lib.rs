@@ -11,10 +11,8 @@ extern crate miscreant;
 
 extern crate lockchain_core as lcc;
 
-
 mod databody;
 mod engine;
-mod data;
 
 pub use databody::*;
 pub use engine::AesEngine;

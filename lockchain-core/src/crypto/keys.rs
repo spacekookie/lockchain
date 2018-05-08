@@ -1,5 +1,6 @@
 //! A module that handles key generation and key loading
 
+use traits::AutoEncoder;
 use super::utils::{hashing, random};
 
 /// A shared key length parameter for all cryptographic operations
@@ -14,12 +15,14 @@ pub struct Key {
     pub data: Vec<u8>,
 }
 
+impl AutoEncoder for Key {}
+
 impl Key {
 
     /// Create a new key from scratch
     pub fn generate() -> Key {
         let data = random::bytes(KEY_LENGTH);
-        return Key { data: data };
+        Key { data: data }
     }
 
     /// Use a password as a key
@@ -29,13 +32,17 @@ impl Key {
         for b in &hashed {
             vec.push(b.clone());
         }
-        return Key { data: vec };
+        Key { data: vec }
+    }
+
+    pub fn to_vec(&self) -> Vec<u8> {
+        self.data.clone()
     }
 
     /// Used to get the raw data from this key, as a slice copy
     pub fn to_slice(&self) -> [u8; KEY_LENGTH] {
         let mut slice: [u8; KEY_LENGTH] = [0; KEY_LENGTH];
         slice.clone_from_slice(&self.data);
-        return slice;
+        slice
     }
 }

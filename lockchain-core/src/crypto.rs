@@ -5,6 +5,8 @@
 
 mod keys;
 mod utils;
+mod data;
 
 pub use self::keys::{Key, KEY_LENGTH};
+pub use self::data::PackedData;
 pub use self::utils::*;

@@ -5,11 +5,11 @@ documentation = "https://docs.rs/lockchain-crypto"
 homepage = "https://github.com/spacekookie/lockchain/tree/master/lockchain-crypto"
 readme = "README.md"
 license = "MIT/X11 OR Apache-2.0"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Katharina Fey <kookie@spacekookie.de>"]
 
 [dependencies]
-lockchain-core = { version = ">=0.4", path = "../lockchain-core" }
+lockchain-core = { path = "../lockchain-core", version = ">= 0.5.0-alpha" }
 serde_derive = "1.0"
 serde = "1.0"
 

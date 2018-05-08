@@ -539,7 +539,22 @@ dependencies = [
 
 [[package]]
 name = "lockchain-core"
-version = "0.4.0"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "base64 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "bcrypt 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "blake2 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
+ "chrono 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "rand 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_derive 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.17 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "lockchain-core"
+version = "0.5.0"
 dependencies = [
  "base64 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bcrypt 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -553,9 +568,9 @@ dependencies = [
 
 [[package]]
 name = "lockchain-crypto"
-version = "0.1.0"
+version = "0.2.0"
 dependencies = [
- "lockchain-core 0.4.0",
+ "lockchain-core 0.5.0",
  "miscreant 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -564,16 +579,19 @@ dependencies = [
 [[package]]
 name = "lockchain-files"
 version = "0.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "lockchain-core 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lockchain-core 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "lockchain-files"
-version = "0.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+version = "0.1.0"
 dependencies = [
- "lockchain-core 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lockchain-core 0.5.0",
+ "serde 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_derive 1.0.50 (registry+https://github.com/rust-lang/crates.io-index)",
+ "serde_json 1.0.17 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -602,7 +620,7 @@ name = "lockchain-server"
 version = "0.1.0"
 dependencies = [
  "clap 2.31.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "lockchain-core 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lockchain-core 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "lockchain-files 0.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "lockchain-http 0.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -1424,6 +1442,7 @@ dependencies = [
 "checksum libc 0.2.40 (registry+https://github.com/rust-lang/crates.io-index)" = "6fd41f331ac7c5b8ac259b8bf82c75c0fb2e469bbf37d2becbba9a6a2221965b"
 "checksum linked-hash-map 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)" = "70fb39025bc7cdd76305867c4eccf2f2dcf6e9a57f5b21a93e1c2d86cd03ec9e"
 "checksum lockchain-core 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)" = "8cc843193c0f63da17232b600423a6da3117a86ed43b91652ab81300d017f0c1"
+"checksum lockchain-core 0.4.1 (registry+https://github.com/rust-lang/crates.io-index)" = "d8734dcfea6d8b3a58dfcb8acb68ad2beac6e3dc3c31b50d3b4352d1317c5052"
 "checksum lockchain-files 0.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "7c6404bea015818d89ea81e86c6eb463cfc0e0599a04c67bfcfbb285f4ff4133"
 "checksum lockchain-http 0.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "cfef9fc7585ca94e9f5294854d208914fbff1bbd85a7f47a3e335665b08df302"
 "checksum log 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)" = "e19e8d5c34a3e0e2223db8e060f9e8264aeeb5c5fc64a4ee9965c062211c024b"

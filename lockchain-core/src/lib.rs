@@ -19,6 +19,6 @@ pub mod crypto;
 mod users;
 mod record;
 
-
+pub use self::crypto::PackedData;
 pub use self::record::{Header, Payload, Record, EncryptedBody};
 pub use self::users::User;
