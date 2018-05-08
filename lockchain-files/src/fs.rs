@@ -4,18 +4,20 @@ use std::path::PathBuf;
 use std::fs::{self, OpenOptions};
 use lcc::traits::AutoEncoder;
 
-use lcc::Record;
-
 pub struct Filesystem {
     name: String,
     path: String,
     root: PathBuf,
 }
 
-pub enum FileType<T> {
-    Record(T),
-    Metadata(T),
-    Checksum(T)
+/// A switching enum to determine what type of file to load
+pub enum FileType {
+    /// A data record file
+    Record,
+    /// A vault/ zser metadata file 
+    Metadata,
+    /// A simple checksum file
+    Checksum
 }
 
 impl Filesystem {
@@ -41,7 +43,12 @@ impl Filesystem {
     }
 
     /// Load all files of a certain type into a Vec<String>
-    pub fn fetch<T: AutoEncoder>(types: FileType<T>) -> Vec<T> {
+    pub fn fetch<T: AutoEncoder>(&self, types: FileType) -> Vec<T> {
+        unimplemented!()
+    }
+
+    /// Load a single file of a certain type
+    pub fn pull<T: AutoEncoder>(&self, ftype: FileType, id: &str) -> T {
         unimplemented!()
     }
 }

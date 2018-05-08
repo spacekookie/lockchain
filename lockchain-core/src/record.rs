@@ -11,7 +11,7 @@
 
 use chrono::{DateTime, Local};
 use std::collections::BTreeMap;
-use traits::Body;
+use traits::{Body, AutoEncoder};
 
 /// An enum that wraps around all possible data types to store
 /// as the value of a vault record.
@@ -93,6 +93,8 @@ impl<T: Body> Record<T> {
         (self.body.as_ref()?).get_field(key)
     }
 }
+
+impl<T: Body> AutoEncoder for Record<T> {}
 
 #[derive(Serialize, Deserialize)]
 pub struct EncryptedBody {

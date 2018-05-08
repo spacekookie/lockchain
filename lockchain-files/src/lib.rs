@@ -10,12 +10,12 @@ extern crate serde_json;
 
 extern crate lockchain_core as lcc;
 
-use lcc::traits::{Body, Vault};
+use lcc::traits::{AutoEncoder, Body, Vault};
 use lcc::{Payload, Record};
 use std::collections::HashMap;
 
 mod fs;
-use fs::Filesystem;
+use fs::{FileType, Filesystem};
 
 /// Represents a vault on disk
 pub struct DataVault<T: Body> {
@@ -40,7 +40,14 @@ impl<T: Body> Vault<T> for DataVault<T> {
     }
 
     fn fetch(&mut self) {
-        unimplemented!()
+        self.records.clear();
+        self.fs
+            .fetch::<Record<T>>(FileType::Record)
+            .into_iter()
+            .map(|rec| (rec.header.name.clone(), rec))
+            .for_each(|x| {
+                self.records.insert(x.0, x.1);
+            });
     }
 
     fn pull(&mut self, name: &str) {
