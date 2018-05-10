@@ -20,6 +20,11 @@ Additionally there is `lockchain-http` which provides an easy to use RESTful API
 **There are some graphical representations below**
 
 ![](./assets/lockchain-simple.png)
+
+---
+
+**A full application stack**
+
 ![](./assets/lockchain-complete.png)
 
 
