@@ -17,6 +17,11 @@ This enables a few different configurations.
 
 Additionally there is `lockchain-http` which provides an easy to use RESTful API to use for browser extentions or client-side logic which can't rely on local cryptography. 
 
+**There are some graphical representations below**
+
+![](./assets/lockchain-simple.png)
+![](./assets/lockchain-complete.png)
+
 
 ## Security notice
 

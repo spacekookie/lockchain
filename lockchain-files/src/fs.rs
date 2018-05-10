@@ -3,6 +3,7 @@
 use std::path::PathBuf;
 use std::fs::{self, OpenOptions};
 use lcc::traits::AutoEncoder;
+use lcc::Record;
 
 pub struct Filesystem {
     name: String,

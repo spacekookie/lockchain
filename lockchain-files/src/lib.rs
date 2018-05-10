@@ -3,11 +3,6 @@
 //!
 #![feature(non_modrs_mods)]
 
-extern crate serde;
-#[macro_use]
-extern crate serde_derive;
-extern crate serde_json;
-
 extern crate lockchain_core as lcc;
 
 use lcc::traits::{AutoEncoder, Body, Vault};
