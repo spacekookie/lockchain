@@ -5,8 +5,8 @@
 
 extern crate lockchain_core as lcc;
 
-use lcc::traits::{AutoEncoder, Body, Vault};
-use lcc::{Payload, Record, EncryptedBody};
+use lcc::traits::{Body, Vault};
+use lcc::{Payload, Record};
 use std::collections::HashMap;
 
 mod fs;
@@ -34,10 +34,12 @@ impl<T: Body> Vault<T> for DataVault<T> {
         }.initialize()
     }
 
+    /// Caches all files from disk to memory
     fn fetch(&mut self) {
         self.records.clear();
         self.fs
             .fetch::<Record<T>>(FileType::Record)
+            .unwrap()
             .into_iter()
             .map(|rec| (rec.header.name.clone(), rec))
             .for_each(|x| {
@@ -45,35 +47,41 @@ impl<T: Body> Vault<T> for DataVault<T> {
             });
     }
 
+    /// Make sure a single record is loaded
     fn pull(&mut self, name: &str) {
-        unimplemented!()
+        self.records.remove(name);
+        self.records.insert(
+            name.to_owned(),
+            self.fs.pull::<Record<T>>(FileType::Record, name).unwrap(),
+        );
     }
 
     fn sync(&mut self) {
-        unimplemented!()
+        self.fs.sync::<Record<T>>(FileType::Record).unwrap();
     }
 
     fn get_record(&self, name: &str) -> Option<&Record<T>> {
-        unimplemented!()
+        self.records.get(name)
     }
 
     fn contains(&self, name: &str) -> bool {
-        unimplemented!()
+        self.records.contains_key(name)
     }
 
     fn add_record(&mut self, key: &str, category: &str, tags: Vec<&str>) {
-        unimplemented!()
+        self.records
+            .insert(key.to_owned(), Record::new(key, category, tags));
     }
 
     fn delete_record(&mut self, record: &str) -> Option<Record<T>> {
-        unimplemented!()
+        self.records.remove(record)
     }
 
     fn add_data(&mut self, record: &str, key: &str, data: Payload) -> Option<()> {
-        unimplemented!()
+        self.records.get_mut(record)?.add_data(key, data)
     }
 
     fn get_data(&self, record: &str, key: &str) -> Option<&Payload> {
-        unimplemented!()
+        self.records.get(record)?.get_data(key)
     }
 }

@@ -28,8 +28,8 @@ pub mod encoding {
 
 /// A hashing utility module
 pub mod hashing {
-    use blake2::Blake2s;
     use blake2::digest::{Input, VariableOutput};
+    use blake2::Blake2s;
 
     const BLAKE_16_LENGTH: usize = 16;
 
@@ -54,7 +54,7 @@ pub mod hashing {
 }
 
 /// Random number utility module for lockchain
-/// 
+///
 /// Provides stateless secure random number and byte generation
 pub mod random {
     use rand::{thread_rng, Rng};
@@ -84,5 +84,21 @@ pub mod random {
         }
 
         return vec;
+
+    }
+    /// A small utility wraper around bcrypt to allow
+    /// easy password checking.
+    pub mod passwd {
+        use bcrypt::{self, DEFAULT_COST};
+
+        /// Create a new password, returning a hash
+        pub fn create(pw: &str) -> Option<String> {
+            Some(bcrypt::hash(pw, DEFAULT_COST).ok()?)
+        }
+
+        /// Verify a password against it's stored hash
+        pub fn verify(pw: &str, hash: &str) -> Option<bool> {
+            bcrypt::verify(pw, hash).ok()
+        }
     }
 }

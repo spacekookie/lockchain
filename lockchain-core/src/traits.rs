@@ -11,12 +11,12 @@
 //! compilation work without external crates but not calling
 //! functions at runtime.
 
-use record::{Record, EncryptedBody, Header, Payload};
+use record::{EncryptedBody, Header, Payload, Record};
 use serde::{de::DeserializeOwned, Serialize};
 use users::User;
 
 use base64;
-use serde_json;
+use serde_json::{self, Error as SerdeError};
 
 /// A Body trait that can be implemented to hook into the generic Record
 /// data module.
@@ -87,7 +87,10 @@ pub trait Loading {
 /// crate.
 ///
 /// The body backend is being being generic with the `Body` trait.
-pub trait Vault<T> where T: Body {
+pub trait Vault<T>
+where
+    T: Body,
+{
     /// A shared constructor for all vault implementations
     fn new(name: &str, location: &str) -> Self;
     /// Fetch metadata headers for all records
@@ -112,12 +115,12 @@ pub trait Vault<T> where T: Body {
 
 /// Auto-implement this trait to serialise types to json
 pub trait AutoEncoder: Serialize + DeserializeOwned {
-    fn encode(&self) -> String {
-        serde_json::to_string_pretty(self).unwrap()
+    fn encode(&self) -> Result<String, SerdeError> {
+        serde_json::to_string_pretty(self)
     }
 
-    fn decode(s: &str) -> Self {
-        serde_json::from_str(s).unwrap()
+    fn decode(s: &str) -> Result<Self, SerdeError> {
+        serde_json::from_str(s)
     }
 }
 
