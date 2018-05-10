@@ -6,7 +6,7 @@
 extern crate lockchain_core as lcc;
 
 use lcc::traits::{AutoEncoder, Body, Vault};
-use lcc::{Payload, Record};
+use lcc::{Payload, Record, EncryptedBody};
 use std::collections::HashMap;
 
 mod fs;
