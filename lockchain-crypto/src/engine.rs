@@ -41,12 +41,12 @@ impl AesEngine {
     /// Load a packed data object which contains an Aes context
     pub fn load(packed: PackedData, pw: &str, salt: &str) -> Option<Self> {
         let mut temp = Self::from_pw(pw, salt);
-        let k = Key::decode(&String::from_utf8(temp.decrypt_primitive(&packed)?).ok()?);
+        let k = Key::decode(&String::from_utf8(temp.decrypt_primitive(&packed)?).ok()?).ok()?;
 
         Some(Self {
             ctx: Aes256Siv::new(&k.to_slice()),
             _key: k,
-            iv: packed.iv
+            iv: packed.iv,
         })
     }
 
@@ -78,15 +78,15 @@ impl AesEngine {
 
 impl EncryptionHandler<DataBody> for AesEngine {
     fn encrypt(&mut self, item: DataBody) -> EncryptedBody {
-        let ser = item.encode();
-        let data = self.encrypt_primitive(&ser.as_bytes().to_vec()).encode();
+        let ser = item.encode().unwrap();
+        let data = self.encrypt_primitive(&ser.as_bytes().to_vec())
+            .encode()
+            .unwrap();
         EncryptedBody { data }
     }
 
     fn decrypt(&mut self, item: EncryptedBody) -> Option<DataBody> {
-        let packed = PackedData::decode(&item.data);
-        Some(DataBody::decode(&String::from_utf8(
-            self.decrypt_primitive(&packed)?,
-        ).ok()?))
+        let packed = PackedData::decode(&item.data).ok()?;
+        Some(DataBody::decode(&String::from_utf8(self.decrypt_primitive(&packed)?).ok()?).ok()?)
     }
 }
