@@ -57,7 +57,9 @@ impl<T: Body> Vault<T> for DataVault<T> {
     }
 
     fn sync(&mut self) {
-        self.fs.sync::<Record<T>>(FileType::Record).unwrap();
+        self.fs
+            .sync::<Record<T>>(&self.records, FileType::Record)
+            .unwrap();
     }
 
     fn get_record(&self, name: &str) -> Option<&Record<T>> {

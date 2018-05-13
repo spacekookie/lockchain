@@ -1,4 +1,8 @@
 //! A plug and play http interface layer for various lockchain components
+#![feature(external_doc)]
+#![doc(include = "../README.md")]
+#![feature(non_modrs_mods)]
+
 
 extern crate gotham_serde_json_body_parser as goth_json;
 extern crate gotham;

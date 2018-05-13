@@ -1,9 +1,13 @@
 //! Utility module which handles filesystem writes
 
 use lcc::traits::AutoEncoder;
-use std::fs::{self, File};
-use std::io::{self, Read};
-use std::path::PathBuf;
+
+use std::collections::HashMap;
+use std::error::Error;
+use std::io::{self, Read, Write};
+use std::{
+    fs::{self, File, OpenOptions as OO}, path::PathBuf,
+};
 
 pub struct Filesystem {
     name: String,
@@ -12,6 +16,7 @@ pub struct Filesystem {
 }
 
 /// A switching enum to determine what type of file to load
+
 pub enum FileType {
     /// A data record file
     Record,
@@ -44,7 +49,7 @@ impl Filesystem {
     }
 
     /// Load all files of a certain type into a Vec<String>
-    pub fn fetch<T: AutoEncoder>(&self, types: FileType) -> Result<Vec<T>, io::Error> {
+    pub fn fetch<T: AutoEncoder>(&self, types: FileType) -> Result<Vec<T>, Box<Error>> {
         Ok(fs::read_dir(match types {
             FileType::Record => self.root.join("records"),
             _ => self.root.join("."),
@@ -62,12 +67,48 @@ impl Filesystem {
             .collect())
     }
 
-    pub fn pull<T: AutoEncoder>(&self, types: FileType, id: &str) -> Result<T, io::Error> {
-        unimplemented!()
+    pub fn pull<T: AutoEncoder>(&self, types: FileType, id: &str) -> Result<T, Box<Error>> {
+        Ok(T::decode(&File::open(self.root.join(&format!(
+            "{}.{}",
+            id,
+            match types {
+                FileType::Record => "record",
+                _ => "dat",
+            }
+        )))?.get_string()?)?)
     }
 
-    pub fn sync<T: AutoEncoder>(&self, types: FileType) -> Result<(), io::Error> {
-        unimplemented!()
+    pub fn sync<T: AutoEncoder>(
+        &self,
+        data: &HashMap<String, T>,
+        types: FileType,
+    ) -> Result<(), Box<Error>> {
+        data.into_iter()
+            .map(|(k, v)| (k, v.encode().ok()))
+            .map(|(k, v)| {
+                (
+                    self.root.join(format!(
+                        "{}.{}",
+                        k,
+                        match types {
+                            FileType::Record => "record",
+                            _ => "dat",
+                        }
+                    )),
+                    v,
+                )
+            })
+            .filter(|(_, v)| v.is_some())
+            .map(|(k, v)| (k, v.unwrap()))
+            .map(|(path, data): (PathBuf, String)| (OO::new().write(true).open(path), data))
+            .filter(|(path, _)| path.is_ok())
+            .map(|(file, data)| (file.unwrap(), data))
+            .for_each(|(mut file, data)| {
+                file.write_all(data.as_bytes())
+                    .expect("Failed to write file!")
+            });
+
+        Ok(())
     }
 }
 
