@@ -865,7 +865,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "lockchain-client"
 version = "0.0.0"
 dependencies = [
- "lockchain-core 0.7.0",
+ "lockchain-core 0.7.1",
 ]
 
 [[package]]
@@ -884,6 +884,7 @@ dependencies = [
 [[package]]
 name = "lockchain-core"
 version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "base64 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bcrypt 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -897,8 +898,7 @@ dependencies = [
 
 [[package]]
 name = "lockchain-core"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+version = "0.7.1"
 dependencies = [
  "base64 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bcrypt 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -914,7 +914,7 @@ dependencies = [
 name = "lockchain-crypto"
 version = "0.7.0"
 dependencies = [
- "lockchain-core 0.7.0",
+ "lockchain-core 0.7.1",
  "miscreant 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -924,7 +924,7 @@ dependencies = [
 name = "lockchain-files"
 version = "0.7.0"
 dependencies = [
- "lockchain-core 0.7.0",
+ "lockchain-core 0.7.1",
 ]
 
 [[package]]
@@ -953,7 +953,7 @@ dependencies = [
  "actix 0.5.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "actix-web 0.6.11 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures 0.1.21 (registry+https://github.com/rust-lang/crates.io-index)",
- "lockchain-core 0.7.0",
+ "lockchain-core 0.7.1",
  "serde 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
