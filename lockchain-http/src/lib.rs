@@ -1,7 +1,15 @@
-// //! A plug and play http interface layer for various lockchain components
-// #![feature(external_doc)]
-// #![doc(include = "../README.md")]
-// #![feature(non_modrs_mods)]
+//! A plug and play http interface layer for various lockchain components
+//!
+//! The way this is done is by shimming a common REST interface (via actix-web) in
+//! between common `lockchain-core` types and the `lockchain-client` library which
+//! is a base wrapper around `reqwest` which uses this API.
+//!
+//! You can of course also use whatever other library, in whatever language you want
+//! to access this API. Doing so via the *official* client gives you the ability to
+//! negotiate version numbers and have more advanced error handling built-in.
+//!
+//! Ideally this shim-layer version should be the same as the `lockchain-core` it binds
+//! against, however especially during development this won't always be the case.
 
 #[macro_use]
 extern crate serde_derive;
@@ -13,10 +21,10 @@ extern crate lockchain_core as lockchain;
 use actix::{server, App};
 use lockchain::traits::Body;
 
-mod model;
-pub use model::CarrierMessage;
-
 mod handlers;
+mod model;
+
+pub use model::CarrierMessage;
 
 /// Starts a new lockchain server for a certain payload type
 ///
