@@ -883,8 +883,7 @@ dependencies = [
 
 [[package]]
 name = "lockchain-core"
-version = "0.7.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
+version = "0.7.1"
 dependencies = [
  "base64 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bcrypt 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -899,6 +898,7 @@ dependencies = [
 [[package]]
 name = "lockchain-core"
 version = "0.7.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
  "base64 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bcrypt 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -932,7 +932,7 @@ name = "lockchain-files"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 dependencies = [
- "lockchain-core 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lockchain-core 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -963,7 +963,7 @@ name = "lockchain-server"
 version = "0.1.0"
 dependencies = [
  "clap 2.31.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "lockchain-core 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "lockchain-core 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
  "lockchain-files 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "lockchain-http 0.0.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -2127,7 +2127,7 @@ dependencies = [
 "checksum linked-hash-map 0.4.2 (registry+https://github.com/rust-lang/crates.io-index)" = "7860ec297f7008ff7a1e3382d7f7e1dcd69efc94751a2284bafc3d013c2aa939"
 "checksum linked-hash-map 0.5.1 (registry+https://github.com/rust-lang/crates.io-index)" = "70fb39025bc7cdd76305867c4eccf2f2dcf6e9a57f5b21a93e1c2d86cd03ec9e"
 "checksum lockchain-core 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)" = "8cc843193c0f63da17232b600423a6da3117a86ed43b91652ab81300d017f0c1"
-"checksum lockchain-core 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "08ac88e8b583104b5503ac7e628e9494afc0493b2da2ead4897ca93c3f1ba139"
+"checksum lockchain-core 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)" = "986baeef299b8deb0e1312f434e537a3d1764921719e3bab3d0f6944a7967fcd"
 "checksum lockchain-files 0.7.0 (registry+https://github.com/rust-lang/crates.io-index)" = "38e9e6701d6a0282a6910c26f3f465e9456658362a13836dcc798014f55d1e9d"
 "checksum lockchain-http 0.0.0 (registry+https://github.com/rust-lang/crates.io-index)" = "cfef9fc7585ca94e9f5294854d208914fbff1bbd85a7f47a3e335665b08df302"
 "checksum log 0.3.9 (registry+https://github.com/rust-lang/crates.io-index)" = "e19e8d5c34a3e0e2223db8e060f9e8264aeeb5c5fc64a4ee9965c062211c024b"
