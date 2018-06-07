@@ -948,7 +948,7 @@ dependencies = [
 
 [[package]]
 name = "lockchain-http"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "actix 0.5.7 (registry+https://github.com/rust-lang/crates.io-index)",
  "actix-web 0.6.11 (registry+https://github.com/rust-lang/crates.io-index)",
