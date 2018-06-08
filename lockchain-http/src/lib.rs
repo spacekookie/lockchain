@@ -35,18 +35,18 @@ pub fn start_server<T: 'static + Body>(iface: &str, port: &str) {
     server::new(|| {
         App::new()
             .resource("/vault", |r| r.f(handlers::create_vault))
-            .resource("/vault/{vault-id}", |r| r.f(handlers::update_vault))
-            .resource("/vault/{vault-id}", |r| r.f(handlers::delete_vault))
-            .resource("/vault/{vault-id}/records/{record-id}", |r| {
+            .resource("/vault/{vaultid}", |r| r.f(handlers::update_vault))
+            .resource("/vault/{vaultid}", |r| r.f(handlers::delete_vault))
+            .resource("/vault/{vaultid}/records/{recordid}", |r| {
                 r.f(handlers::get_record::<T>)
             })
-            .resource("/vault/{vault-id}/records", |r| {
+            .resource("/vault/{vaultid}/records", |r| {
                 r.f(handlers::create_record)
             })
-            .resource("/vault/{vault-id}/records/{record-id}", |r| {
+            .resource("/vault/{vaultid}/records/{recordid}", |r| {
                 r.f(handlers::update_record)
             })
-            .resource("/vault/{vault-id}/records/{record-id}", |r| {
+            .resource("/vault/{vaultid}/records/{recordid}", |r| {
                 r.f(handlers::delete_record)
             })
             .resource("/authenticate", |r| r.f(handlers::authenticate))
