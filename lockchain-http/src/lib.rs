@@ -13,13 +13,14 @@
 
 #[macro_use]
 extern crate serde_derive;
+extern crate env_logger;
 extern crate serde;
 
 extern crate actix_web as actix;
 extern crate lockchain_core as lockchain;
 
 use actix::{server, App};
-use lockchain::traits::Body;
+use lockchain::traits::{Body, Vault};
 
 mod handlers;
 mod model;
@@ -31,18 +32,20 @@ pub use model::CarrierMessage;
 /// The payload type is defined by the generic parameter provided and can
 /// either be just the encrypted message body, or the decrypted message
 /// body which is available via the lockchain-crypto crate
-pub fn start_server<T: 'static + Body>(iface: &str, port: &str) {
+pub fn start_server<B, V>(iface: &str, port: &str)
+where
+    B: 'static + Body,
+    V: 'static + Vault<B>,
+{
     server::new(|| {
         App::new()
             .resource("/vault", |r| r.f(handlers::create_vault))
             .resource("/vault/{vaultid}", |r| r.f(handlers::update_vault))
             .resource("/vault/{vaultid}", |r| r.f(handlers::delete_vault))
             .resource("/vault/{vaultid}/records/{recordid}", |r| {
-                r.f(handlers::get_record::<T>)
+                r.f(handlers::get_record::<B>)
             })
-            .resource("/vault/{vaultid}/records", |r| {
-                r.f(handlers::create_record)
-            })
+            .resource("/vault/{vaultid}/records", |r| r.f(handlers::create_record))
             .resource("/vault/{vaultid}/records/{recordid}", |r| {
                 r.f(handlers::update_record)
             })

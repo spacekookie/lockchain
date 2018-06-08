@@ -6,6 +6,8 @@ use lockchain::{traits::Body, Record};
 use model::CarrierMessage;
 
 /// PUT /vault
+/// 
+/// 
 pub fn create_vault(_req: HttpRequest) -> impl Responder {
     format!("Unimplemented!")
 }
