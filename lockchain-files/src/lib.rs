@@ -27,7 +27,7 @@ impl<T: Body> DataVault<T> {
 }
 
 impl<T: Body> Vault<T> for DataVault<T> {
-    fn new(name: &str, location: &str) -> Self {
+    fn new(name: &str, location: &str) -> DataVault<T> {
         Self {
             records: HashMap::new(),
             fs: Filesystem::create(location, name),

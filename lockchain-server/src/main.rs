@@ -4,7 +4,18 @@ extern crate lockchain_http as http;
 
 extern crate clap;
 
+use files::*;
+use http::*;
+use lockchain::traits::*;
+use lockchain::EncryptedBody;
+
+fn foo() -> DataVault<EncryptedBody> {
+    DataVault::new("name", "location")
+}
 
 fn main() {
-    println!("Hello, world!");
+    let server = create_server(foo());
+    server.run();
+
+    println!("After the server died!");
 }

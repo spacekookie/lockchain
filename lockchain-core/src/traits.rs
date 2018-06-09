@@ -22,7 +22,7 @@ use serde_json::{self, Error as SerdeError};
 /// data module.
 ///
 /// This allows working with both encrypted and cleartext data bodies.
-pub trait Body: DeserializeOwned + Serialize {
+pub trait Body: DeserializeOwned + Serialize + Send {
     ///Get the value of a field from this body
     fn get_field(&self, key: &str) -> Option<&Payload>;
     /// Set the value of a field
@@ -87,7 +87,7 @@ pub trait Loading {
 /// crate.
 ///
 /// The body backend is being being generic with the `Body` trait.
-pub trait Vault<T>
+pub trait Vault<T>: Send
 where
     T: Body,
 {
