@@ -1,7 +1,7 @@
 [package]
 name = "lockchain-files"
 description = "Filesystem storage backend for lockchain vaults"
-version = "0.7.0"
+version = "0.7.1"
 authors = ["Katharina Fey <kookie@spacekookie.de>"]
 
 documentation = "https://docs.rs/lockchain-files"
@@ -10,4 +10,4 @@ readme = "README.md"
 license = "MIT/X11 OR Apache-2.0"
 
 [dependencies]
-lockchain-core = { path = "../lockchain-core", version = "0.7.0" }
+lockchain-core = { version = "0.7.2", path = "../lockchain-core" }
