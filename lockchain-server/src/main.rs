@@ -1,12 +1,14 @@
-extern crate lockchain_core;
-extern crate lockchain_files;
-extern crate lockchain_http;
+//! Core lockchain application server
 
 extern crate clap;
 
-// use lockchain_core::{traits::*, EncryptedBody};
-// use lockchain_http::create_server;
-// use lockchain_files::DataVault;
+extern crate lockchain_core as core;
+extern crate lockchain_files as files;
+extern crate lockchain_http as http;
+
+// use core::{traits::*, EncryptedBody};
+// use files::DataVault;
+// use http::create_server;
 
 fn main() {
 

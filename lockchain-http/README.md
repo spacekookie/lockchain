@@ -5,16 +5,86 @@ A plug and play http interface layer for various lockchain components.
 
 ## API Reference
 
-This document will move
+This document will move.
+
+All JSON payloads also include an `error` field that is set in case of errors, if no other data is set.
+
+```json
+{
+    error: ["Prose error description", 5 /* error code*/ ],
+    data: {
+        /* Whatever the data is – depending on endpoint */
+    }
+}
+```
+
+#### GET /api
+
+Get information about this API endpoint. Information is received in JSON format and include the following fields.
+
+`verison`: The API version
+`providers`: An array with type providers. This includes the Vault and Body implementation specifics.
+`hostname`: Optional value which specifies the server name
+
+#### GET /vault
+
+Get a list of vaults known to this system, possibly only returning a single value
+
+`vaults`: List of vault names that are available to work with
+`count`: The number of vaults available
 
 #### PUT /vault
+
+Create a new vault. Payloads
+
+`name`: The name of the vault
+`location`: The location of a vault, left to the implementation specifics 
+
 #### POST /vault/{id}
+
+Update metadata about a vault that already exists. Will return an error if it doesn't
+
 #### DELETE /vault/{id}
 
+Delete a vault; a second transaction is required to confirm, after all users were logged-out
+
 #### GET /vault/{vault id}/records/{record id}
+
+Get a specific record from a vault. Only available if authenticated
+
 #### PUT /vault/{vault id}/records
+
+Add a new record to a vault. Only available if authenticated
+
 #### POST /vault/{vault id}/records/{record id}
+
+Update data inside an existing record. Only available if authenticated
+
 #### DELETE /vault/{vault id}/records/{record id}
 
+Delete a record. Only available if authenticated
+
+#### GET /users
+
+Get a list of available users
+
+#### PUT /users
+
+Create a new user
+
+#### DELETE /users/{id}
+
+Delete a user. Only available if authenticated as THAT user.
+
+In the future, admin users (and priviledge hirarchies might be added)
+
 #### PUT /authenticate
+
+Authenticate as a specific user
+
+`username`: The user to authenticate as
+`password`: The user passphrase to use for authentication (different from the encryption passphrase)
+
 #### PUT /de-authenticate
+
+Called to end an active session.
