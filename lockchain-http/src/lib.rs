@@ -23,39 +23,57 @@ mod handlers;
 mod model;
 // pub use model::CarrierMessage;
 
-
 use actix_web::{server, App};
 use lockchain::traits::{Body, Vault};
 use std::sync::{Arc, Mutex};
 
-/// Starts a new lockchain server for a certain payload type
-///
-/// The payload type is defined by the generic parameter provided and can
-/// either be just the encrypted message body, or the decrypted message
-/// body which is available via the lockchain-crypto crate
-/// 
 /// Create a new lockchain-http server for a vault state
-/// 
-/// 
+///
+/// Lifetime wise, vault needs to long as long as the server, which is returned to
+/// call `run()` on. Make sure this is done in a thread, to not block your
+/// mainapplication context
+///
+/// Additionally, provide a address bind and port string to bind to.
+///
+/// ## Example
+///
+/// ```norun
+/// use lockchain_core::{traits::*, EncryptedBody};
+/// use lockchain_http::create_server;
+/// use lockchain_files::DataVault;
+///
+/// let server = create_server(
+///     "localhost",
+///     "8080",
+///     DataVault::<EncryptedBody>::new("name", "some-location"),
+/// ).run();
+/// ```
 pub fn create_server<B: Body + 'static>(
+    bind: &str,
+    port: &str,
     state: impl Vault<B> + 'static,
 ) -> server::HttpServer<App<Arc<Mutex<impl Vault<B> + 'static>>>> {
     let state = Arc::new(Mutex::new(state));
 
     server::new(move || {
-        vec![App::with_state(Arc::clone(&state))
-        
-            .resource("/vault", |r| r.f(handlers::create_vault))
-            .resource("/vault/{vaultid}", |r| r.f(handlers::update_vault))
-            .resource("/vault/{vaultid}", |r| r.f(handlers::delete_vault))
-            .resource("/vault/{vaultid}/records/{recordid}", |r| { r.f(handlers::get_record) })
-            .resource("/vault/{vaultid}/records", |r| r.f(handlers::create_record))
-            .resource("/vault/{vaultid}/records/{recordid}", |r| { r.f(handlers::update_record) })
-            .resource("/vault/{vaultid}/records/{recordid}", |r| { r.f(handlers::delete_record) })
-            .resource("/authenticate", |r| r.f(handlers::authenticate))
-            .resource("/deauthenticate", |r| r.f(handlers::deauthenticate))
-        
+        vec![
+            App::with_state(Arc::clone(&state))
+                .resource("/vault", |r| r.f(handlers::create_vault))
+                .resource("/vault/{vaultid}", |r| r.f(handlers::update_vault))
+                .resource("/vault/{vaultid}", |r| r.f(handlers::delete_vault))
+                .resource("/vault/{vaultid}/records/{recordid}", |r| {
+                    r.f(handlers::get_record)
+                })
+                .resource("/vault/{vaultid}/records", |r| r.f(handlers::create_record))
+                .resource("/vault/{vaultid}/records/{recordid}", |r| {
+                    r.f(handlers::update_record)
+                })
+                .resource("/vault/{vaultid}/records/{recordid}", |r| {
+                    r.f(handlers::delete_record)
+                })
+                .resource("/authenticate", |r| r.f(handlers::authenticate))
+                .resource("/deauthenticate", |r| r.f(handlers::deauthenticate)),
         ]
-    }).bind("localhost:8080")
+    }).bind(format!("{}:{}", bind, port))
         .expect("Oh no!")
 }

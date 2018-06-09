@@ -1,20 +1,19 @@
-extern crate lockchain_core as lockchain;
-extern crate lockchain_files as files;
-extern crate lockchain_http as http;
+extern crate lockchain_core;
+extern crate lockchain_files;
+extern crate lockchain_http;
 
 extern crate clap;
 
-use files::*;
-use http::*;
-use lockchain::traits::*;
-use lockchain::EncryptedBody;
-
-fn foo() -> DataVault<EncryptedBody> {
-    DataVault::new("name", "location")
-}
-
 fn main() {
-    let server = create_server(foo());
+    use lockchain_core::{traits::*, EncryptedBody};
+    use lockchain_http::create_server;
+    use lockchain_files::DataVault;
+
+    let server = create_server(
+        "localhost",
+        "8080",
+        DataVault::<EncryptedBody>::new("name", "location"),
+    );
     server.run();
 
     println!("After the server died!");
