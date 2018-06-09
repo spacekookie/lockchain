@@ -1,10 +1,10 @@
-//! API data models
+//! Data models specific to the lockchain API
 
 use lockchain::errors::Error as LockError;
-use serde::{Serialize, de::DeserializeOwned};
+use serde::{de::DeserializeOwned, Serialize};
 
-/// A generic container that json wraps lockchain-types
-/// 
+/// A generic container that json/error wraps lockchain-types
+///
 /// This is heavily used in the lockchain-REST API and can be utilised
 /// to send both encrypted and cleartext data via the API endpoint, using
 /// the same code.

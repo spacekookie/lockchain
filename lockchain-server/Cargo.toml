@@ -8,4 +8,5 @@ lockchain-core = { path = "../lockchain-core" }
 lockchain-files ={ path = "../lockchain-files" }
 lockchain-http = { path = "../lockchain-http" }
 
-clap = "*"
+clap = "2.0"
+insult = "2.0.3"
