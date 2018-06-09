@@ -11,8 +11,8 @@ All JSON payloads also include an `error` field that is set in case of errors, i
 
 ```json
 {
-    error: ["Prose error description", 5 /* error code*/ ],
-    data: {
+    "error": ["Prose error description", 5 /* error code*/ ],
+    "data": {
         /* Whatever the data is – depending on endpoint */
     }
 }
@@ -22,23 +22,23 @@ All JSON payloads also include an `error` field that is set in case of errors, i
 
 Get information about this API endpoint. Information is received in JSON format and include the following fields.
 
-`verison`: The API version
-`providers`: An array with type providers. This includes the Vault and Body implementation specifics.
-`hostname`: Optional value which specifies the server name
+- `verison`: The API version
+- `providers`: An array with type providers. This includes the Vault and Body implementation specifics.
+- `hostname`: Optional value which specifies the server name
 
 #### GET /vault
 
 Get a list of vaults known to this system, possibly only returning a single value
 
-`vaults`: List of vault names that are available to work with
-`count`: The number of vaults available
+- `vaults`: List of vault names that are available to work with
+- `count`: The number of vaults available
 
 #### PUT /vault
 
 Create a new vault. Payloads
 
-`name`: The name of the vault
-`location`: The location of a vault, left to the implementation specifics 
+- `name`: The name of the vault
+- `location`: The location of a vault, left to the implementation specifics 
 
 #### POST /vault/{id}
 
@@ -82,8 +82,8 @@ In the future, admin users (and priviledge hirarchies might be added)
 
 Authenticate as a specific user
 
-`username`: The user to authenticate as
-`password`: The user passphrase to use for authentication (different from the encryption passphrase)
+- `username`: The user to authenticate as
+- `password`: The user passphrase to use for authentication (different from the encryption passphrase)
 
 #### PUT /de-authenticate
 
