@@ -801,12 +801,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 name = "lockchain-client"
 version = "0.0.0"
 dependencies = [
- "lockchain-core 0.7.2",
+ "lockchain-core 0.8.0",
 ]
 
 [[package]]
 name = "lockchain-core"
-version = "0.7.2"
+version = "0.8.0"
 dependencies = [
  "base64 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "bcrypt 0.2.0 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -822,7 +822,7 @@ dependencies = [
 name = "lockchain-crypto"
 version = "0.7.0"
 dependencies = [
- "lockchain-core 0.7.2",
+ "lockchain-core 0.8.0",
  "miscreant 0.3.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -832,7 +832,7 @@ dependencies = [
 name = "lockchain-files"
 version = "0.7.1"
 dependencies = [
- "lockchain-core 0.7.2",
+ "lockchain-core 0.8.0",
 ]
 
 [[package]]
@@ -843,7 +843,7 @@ dependencies = [
  "actix-web 0.6.12 (registry+https://github.com/rust-lang/crates.io-index)",
  "env_logger 0.5.10 (registry+https://github.com/rust-lang/crates.io-index)",
  "futures 0.1.21 (registry+https://github.com/rust-lang/crates.io-index)",
- "lockchain-core 0.7.2",
+ "lockchain-core 0.8.0",
  "serde 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
  "serde_derive 1.0.66 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
@@ -854,7 +854,7 @@ version = "0.1.0"
 dependencies = [
  "clap 2.31.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "insult 2.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
- "lockchain-core 0.7.2",
+ "lockchain-core 0.8.0",
  "lockchain-files 0.7.1",
  "lockchain-http 0.2.1",
 ]
