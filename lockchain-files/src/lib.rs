@@ -6,7 +6,7 @@
 extern crate lockchain_core as lcc;
 
 use lcc::traits::{Body, Vault};
-use lcc::{Payload, Record};
+use lcc::{Payload, Record, MetaDomain};
 use std::collections::HashMap;
 
 mod fs;
@@ -85,5 +85,21 @@ impl<T: Body> Vault<T> for DataVault<T> {
 
     fn get_data(&self, record: &str, key: &str) -> Option<&Payload> {
         self.records.get(record)?.get_data(key)
+    }
+
+    fn meta_add_domain(&mut self, domain: &str) -> Option<()> {
+        None
+    }
+
+    fn meta_pull_domain(&mut self, domain: &str) -> Option<Vec<MetaDomain>> {
+        None
+    }
+
+    fn meta_set(&mut self, domain: &str, name: &str, data: Payload) -> Option<()> {
+        None
+    }
+
+    fn meta_get(&mut self, domain: &str, name: &str) -> Option<Payload> {
+        None
     }
 }

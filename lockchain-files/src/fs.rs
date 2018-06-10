@@ -20,7 +20,7 @@ pub struct Filesystem {
 pub enum FileType {
     /// A data record file
     Record,
-    /// A vault/ zser metadata file
+    /// A MetaDomain file
     Metadata,
     /// A simple checksum file
     Checksum,
@@ -52,6 +52,7 @@ impl Filesystem {
     pub fn fetch<T: AutoEncoder>(&self, types: FileType) -> Result<Vec<T>, Box<Error>> {
         Ok(fs::read_dir(match types {
             FileType::Record => self.root.join("records"),
+            FileType::Metadata => self.root.join("metadata"),
             _ => self.root.join("."),
         })?.into_iter()
             .filter_map(|r| r.ok())
@@ -68,14 +69,16 @@ impl Filesystem {
     }
 
     pub fn pull<T: AutoEncoder>(&self, types: FileType, id: &str) -> Result<T, Box<Error>> {
-        Ok(T::decode(&File::open(self.root.join(&format!(
-            "{}.{}",
-            id,
-            match types {
-                FileType::Record => "record",
-                _ => "dat",
-            }
-        )))?.get_string()?)?)
+        Ok(T::decode(
+            &File::open(self.root.join(&format!(
+                "{}.{}",
+                id,
+                match types {
+                    FileType::Record => "record",
+                    _ => "dat",
+                }
+            )))?.get_string()?,
+        )?)
     }
 
     pub fn sync<T: AutoEncoder>(

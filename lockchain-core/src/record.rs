@@ -11,7 +11,7 @@
 
 use chrono::{DateTime, Local};
 use std::collections::BTreeMap;
-use traits::{Body, AutoEncoder};
+use traits::{AutoEncoder, Body};
 
 /// An enum that wraps around all possible data types to store
 /// as the value of a vault record.
@@ -20,10 +20,16 @@ use traits::{Body, AutoEncoder};
 /// data representation itself (i.e. text, number or sub data-tree)
 #[derive(Debug, Eq, PartialEq, Clone, Serialize, Deserialize)]
 pub enum Payload {
+    /// A simple (variable) text
     Text(String),
+    /// A boolean (true, false)
     Boolean(bool),
+    /// A 64bit, signed number
     Number(i64),
+    /// A tree of String names, mapped to payloads
     BTreeMap(BTreeMap<String, Payload>),
+    /// A list of various payloads
+    List(Vec<Payload>),
 }
 
 /// The public header of a record
