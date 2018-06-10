@@ -13,7 +13,7 @@
 
 use record::{EncryptedBody, Header, Payload, Record};
 use serde::{de::DeserializeOwned, Serialize};
-use users::User;
+use meta::MetaDomain;
 
 use base64;
 use serde_json::{self, Error as SerdeError};
@@ -41,11 +41,6 @@ pub trait LoadRecord<T: Body> {
     fn body() -> T {
         unimplemented!()
     }
-}
-
-pub trait UserLogin {
-    /// Login a user and return it with a token
-    fn login(name: &str, password: &str, salt: &str) -> Option<User>;
 }
 
 /// A set of utility function that need to be implemented in order
@@ -111,6 +106,17 @@ where
     fn add_data(&mut self, record: &str, key: &str, data: Payload) -> Option<()>;
     /// Get the (latest) value of a specific record data field
     fn get_data(&self, record: &str, key: &str) -> Option<&Payload>;
+    /// Adds a domain space to the metadata store inside the vault
+    ///
+    /// A domain is a collection metadata files that can be
+    /// returned with a single pull request
+    fn meta_add_domain(&mut self, domain: &str) -> Option<()>;
+    /// Returns all records from a meta domain
+    fn meta_pull_domain(&mut self, domain: &str) -> Option<Vec<MetaDomain>>;
+    /// Set the value of a field inside a domain. Field names **must not** collide
+    fn meta_set(&mut self, domain: &str, name: &str, data: Payload) -> Option<()>;
+    /// Get the value of a (unique) field inside a domain
+    fn meta_get(&mut self, domain: &str, name: &str) -> Option<Payload>;
 }
 
 /// Auto-implement this trait to serialise types to json

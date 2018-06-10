@@ -16,9 +16,9 @@ extern crate rand;
 pub mod errors;
 pub mod traits;
 pub mod crypto;
-mod users;
+mod meta;
 mod record;
 
 pub use self::crypto::PackedData;
 pub use self::record::{Header, Payload, Record, EncryptedBody};
-pub use self::users::User;
+pub use self::meta::MetaDomain;

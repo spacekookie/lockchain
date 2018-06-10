@@ -10,6 +10,9 @@
 //!
 //! Ideally this shim-layer version should be the same as the `lockchain-core` it binds
 //! against, however especially during development this won't always be the case.
+//!
+//! **Note**: API endpoint documentation can be found
+//! [here](https://github.com/spacekookie/lockchain/tree/master/lockchain-http#api-reference)
 
 #[macro_use]
 extern crate serde_derive;
@@ -23,7 +26,7 @@ mod handlers;
 mod model;
 pub use model::CarrierMessage;
 
-use actix_web::{server, App};
+use actix_web::{http, server, App};
 use lockchain::traits::{Body, Vault};
 use std::sync::{Arc, Mutex};
 
@@ -58,7 +61,9 @@ pub fn create_server<B: Body + 'static>(
     server::new(move || {
         vec![
             App::with_state(Arc::clone(&state))
-                .resource("/vault", |r| r.f(handlers::create_vault))
+                .resource("/vault", |r| {
+                    r.method(http::Method::PUT).with(handlers::create_vault)
+                })
                 .resource("/vault/{vaultid}", |r| r.f(handlers::update_vault))
                 .resource("/vault/{vaultid}", |r| r.f(handlers::delete_vault))
                 .resource("/vault/{vaultid}/records/{recordid}", |r| {

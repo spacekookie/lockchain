@@ -12,6 +12,8 @@ use std::sync::{Arc, Mutex};
 type HttpRequestState<T> = HttpRequest<Arc<Mutex<T>>>;
 
 /// PUT /vault
+/// 
+/// Check the documentation for more information about how to provide payloads
 pub fn create_vault<B: Body>(_req: HttpRequestState<impl Vault<B>>) -> impl Responder {
     format!("Unimplemented!")
 }

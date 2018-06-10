@@ -86,6 +86,7 @@ pub mod random {
         return vec;
 
     }
+    
     /// A small utility wraper around bcrypt to allow
     /// easy password checking.
     pub mod passwd {

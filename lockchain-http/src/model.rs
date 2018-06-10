@@ -14,3 +14,10 @@ pub struct CarrierMessage<T: Serialize + DeserializeOwned> {
     #[serde(bound(deserialize = "T: Serialize + DeserializeOwned"))]
     pub data: Option<T>,
 }
+
+/// Fields provided when creating a new vault
+#[derive(Serialize, Deserialize)]
+pub struct VaultCreate {
+    name: String,
+    location: String,
+}

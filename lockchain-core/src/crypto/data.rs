@@ -1,10 +1,10 @@
 use traits::AutoEncoder;
 
-/// Represents some encrypted packed data
+/// Representation of encrypted data as an enecoded format
 /// 
-/// Includes nonce, vault iv and blob. This abstraction
-/// is important to be able to send encrypted records across
-/// a network.
+/// Includes all cryptographic state primitives that are
+/// required to send the data over a network and decrypt on
+/// the other side of a pipe.
 #[derive(Serialize, Deserialize)]
 pub struct PackedData {
     pub nonce: Vec<u8>,
