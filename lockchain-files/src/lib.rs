@@ -113,15 +113,15 @@ impl<T: Body> Vault<T> for DataVault<T> {
         }
     }
 
-    fn meta_pull_domain(&mut self, domain: &str) -> Option<MetaDomain> {
+    fn meta_pull_domain(&mut self, domain: &str) -> Option<&MetaDomain> {
         self.metadata.get(domain)
     }
 
     fn meta_set(&mut self, domain: &str, name: &str, data: Payload) -> Option<()> {
-        None
+        self.metadata.get_mut(domain)?.set_field(name, data)
     }
 
     fn meta_get(&mut self, domain: &str, name: &str) -> Option<Payload> {
-        None
+        Some(self.metadata.get(domain)?.get_field(name)?.clone())
     }
 }
