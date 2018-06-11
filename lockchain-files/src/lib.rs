@@ -27,6 +27,7 @@ impl<T: Body> DataVault<T> {
         self.fs.scaffold();
         self
     }
+
 }
 
 impl<T: Body> Vault<T> for DataVault<T> {
@@ -72,11 +73,9 @@ impl<T: Body> Vault<T> for DataVault<T> {
     }
 
     fn sync(&mut self) {
-        println!("{:#?}", self.metadata);
         self.fs
             .sync::<Record<T>>(&self.records, FileType::Record)
             .unwrap();
-
         self.fs
             .sync::<MetaDomain>(&self.metadata, FileType::Metadata)
             .unwrap();

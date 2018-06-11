@@ -11,7 +11,7 @@ license = "MIT/X11 OR Apache-2.0"
 
 
 [dependencies]
-lockchain-core = { version = "0.8.0", path = "../lockchain-core" }
+lockchain-core = { version = "0.8.1", path = "../lockchain-core" }
 env_logger = "0.5"
 
 # Serialisation stack
