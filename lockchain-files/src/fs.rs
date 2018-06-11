@@ -9,6 +9,7 @@ use std::{
     fs::{self, File, OpenOptions as OO}, path::PathBuf,
 };
 
+#[derive(Debug)]
 pub struct Filesystem {
     name: String,
     path: String,
@@ -90,10 +91,21 @@ impl Filesystem {
     {
         data.into_iter()
             .map(|(k, v)| (k, v.encode().ok()))
-            .map(|(k, v)| (self.root.join(format!("{}.{}", k, file_ending!(types))), v))
+            .map(|(k, v)| {
+                (
+                    match types {
+                        FileType::Record => self.root.join("records"),
+                        FileType::Metadata => self.root.join("metadata"),
+                        _ => self.root.join("."),
+                    }.join(format!("{}.{}", k, file_ending!(types))),
+                    v,
+                )
+            })
             .filter(|(_, v)| v.is_some())
             .map(|(k, v)| (k, v.unwrap()))
-            .map(|(path, data): (PathBuf, String)| (OO::new().write(true).open(path), data))
+            .map(|(path, data): (PathBuf, String)| {
+                (OO::new().create(true).write(true).open(path), data)
+            })
             .filter(|(path, _)| path.is_ok())
             .map(|(file, data)| (file.unwrap(), data))
             .for_each(|(mut file, data)| {

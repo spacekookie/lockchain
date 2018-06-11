@@ -25,7 +25,7 @@ use traits::{AutoEncoder, Body};
 ///
 /// It implements a series of traits which means it's possible to easily
 /// interact with to store data.
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct MetaDomain {
     /// The name of this meta domain
     name: String,
@@ -63,7 +63,9 @@ impl Body for MetaDomain {
     }
 
     fn set_field(&mut self, key: &str, value: Payload) -> Option<()> {
-        self.body.insert(key.into(), value).map(|_| ())
+        self.body
+            .insert(key.into(), value)
+            .map_or(Some(()), |_| Some(()))
     }
 
     /// Not implemented, always returns None

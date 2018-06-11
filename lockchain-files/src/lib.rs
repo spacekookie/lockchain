@@ -8,11 +8,13 @@ extern crate lockchain_core as lcc;
 use lcc::traits::{Body, Vault};
 use lcc::{MetaDomain, Payload, Record};
 use std::collections::HashMap;
+use std::fmt::Debug;
 
 mod fs;
 use fs::{FileType, Filesystem};
 
 /// Represents a vault on disk
+#[derive(Debug)]
 pub struct DataVault<T: Body> {
     records: HashMap<String, Record<T>>,
     metadata: HashMap<String, MetaDomain>,
@@ -70,6 +72,7 @@ impl<T: Body> Vault<T> for DataVault<T> {
     }
 
     fn sync(&mut self) {
+        println!("{:#?}", self.metadata);
         self.fs
             .sync::<Record<T>>(&self.records, FileType::Record)
             .unwrap();
