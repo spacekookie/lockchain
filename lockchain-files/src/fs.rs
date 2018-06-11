@@ -26,6 +26,16 @@ pub enum FileType {
     Checksum,
 }
 
+macro_rules! file_ending {
+    ($type:expr) => {
+        match $type {
+            FileType::Record => "record",
+            FileType::Metadata => "meta",
+            _ => "dat",
+        }
+    };
+}
+
 impl Filesystem {
     pub fn create(path: &str, name: &str) -> Filesystem {
         let mut buffer = PathBuf::new();
@@ -70,37 +80,17 @@ impl Filesystem {
 
     pub fn pull<T: AutoEncoder>(&self, types: FileType, id: &str) -> Result<T, Box<Error>> {
         Ok(T::decode(
-            &File::open(self.root.join(&format!(
-                "{}.{}",
-                id,
-                match types {
-                    FileType::Record => "record",
-                    _ => "dat",
-                }
-            )))?.get_string()?,
+            &File::open(self.root.join(&format!("{}.{}", id, file_ending!(types))))?.get_string()?,
         )?)
     }
 
-    pub fn sync<T: AutoEncoder>(
-        &self,
-        data: &HashMap<String, T>,
-        types: FileType,
-    ) -> Result<(), Box<Error>> {
+    pub fn sync<T>(&self, data: &HashMap<String, T>, types: FileType) -> Result<(), Box<Error>>
+    where
+        T: AutoEncoder,
+    {
         data.into_iter()
             .map(|(k, v)| (k, v.encode().ok()))
-            .map(|(k, v)| {
-                (
-                    self.root.join(format!(
-                        "{}.{}",
-                        k,
-                        match types {
-                            FileType::Record => "record",
-                            _ => "dat",
-                        }
-                    )),
-                    v,
-                )
-            })
+            .map(|(k, v)| (self.root.join(format!("{}.{}", k, file_ending!(types))), v))
             .filter(|(_, v)| v.is_some())
             .map(|(k, v)| (k, v.unwrap()))
             .map(|(path, data): (PathBuf, String)| (OO::new().write(true).open(path), data))

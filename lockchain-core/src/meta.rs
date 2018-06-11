@@ -33,10 +33,22 @@ pub struct MetaDomain {
 }
 
 impl MetaDomain {
+    /// Create a new domain space struct
+    pub fn new<S>(name: S) -> Self
+    where
+        S: Into<String>,
+    {
+        Self {
+            name: name.into(),
+            body: HashMap::new(),
+        }
+    }
+
     /// Return the domain name for easy comparison
     pub fn name(&self) -> &str {
         &self.name
     }
+
     /// Get the number of items in this domain
     pub fn size(&self) -> usize {
         self.body.len()

@@ -6,7 +6,7 @@
 extern crate lockchain_core as lcc;
 
 use lcc::traits::{Body, Vault};
-use lcc::{Payload, Record, MetaDomain};
+use lcc::{MetaDomain, Payload, Record};
 use std::collections::HashMap;
 
 mod fs;
@@ -15,6 +15,7 @@ use fs::{FileType, Filesystem};
 /// Represents a vault on disk
 pub struct DataVault<T: Body> {
     records: HashMap<String, Record<T>>,
+    metadata: HashMap<String, MetaDomain>,
     fs: Filesystem,
 }
 
@@ -30,6 +31,7 @@ impl<T: Body> Vault<T> for DataVault<T> {
     fn new(name: &str, location: &str) -> DataVault<T> {
         Self {
             records: HashMap::new(),
+            metadata: HashMap::new(),
             fs: Filesystem::create(location, name),
         }.initialize()
     }
@@ -37,6 +39,8 @@ impl<T: Body> Vault<T> for DataVault<T> {
     /// Caches all files from disk to memory
     fn fetch(&mut self) {
         self.records.clear();
+        self.metadata.clear();
+
         self.fs
             .fetch::<Record<T>>(FileType::Record)
             .unwrap()
@@ -44,6 +48,15 @@ impl<T: Body> Vault<T> for DataVault<T> {
             .map(|rec| (rec.header.name.clone(), rec))
             .for_each(|x| {
                 self.records.insert(x.0, x.1);
+            });
+
+        self.fs
+            .fetch::<MetaDomain>(FileType::Metadata)
+            .unwrap()
+            .into_iter()
+            .map(|rec| (rec.name().into(), rec))
+            .for_each(|x| {
+                self.metadata.insert(x.0, x.1);
             });
     }
 
@@ -59,6 +72,10 @@ impl<T: Body> Vault<T> for DataVault<T> {
     fn sync(&mut self) {
         self.fs
             .sync::<Record<T>>(&self.records, FileType::Record)
+            .unwrap();
+
+        self.fs
+            .sync::<MetaDomain>(&self.metadata, FileType::Metadata)
             .unwrap();
     }
 
@@ -88,11 +105,16 @@ impl<T: Body> Vault<T> for DataVault<T> {
     }
 
     fn meta_add_domain(&mut self, domain: &str) -> Option<()> {
-        None
+        if self.metadata.contains_key(domain) {
+            None
+        } else {
+            self.metadata.insert(domain.into(), MetaDomain::new(domain));
+            Some(())
+        }
     }
 
-    fn meta_pull_domain(&mut self, domain: &str) -> Option<Vec<MetaDomain>> {
-        None
+    fn meta_pull_domain(&mut self, domain: &str) -> Option<MetaDomain> {
+        self.metadata.get(domain)
     }
 
     fn meta_set(&mut self, domain: &str, name: &str, data: Payload) -> Option<()> {

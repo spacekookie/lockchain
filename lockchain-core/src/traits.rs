@@ -11,9 +11,9 @@
 //! compilation work without external crates but not calling
 //! functions at runtime.
 
+use meta::MetaDomain;
 use record::{EncryptedBody, Header, Payload, Record};
 use serde::{de::DeserializeOwned, Serialize};
-use meta::MetaDomain;
 
 use base64;
 use serde_json::{self, Error as SerdeError};
@@ -112,7 +112,7 @@ where
     /// returned with a single pull request
     fn meta_add_domain(&mut self, domain: &str) -> Option<()>;
     /// Returns all records from a meta domain
-    fn meta_pull_domain(&mut self, domain: &str) -> Option<Vec<MetaDomain>>;
+    fn meta_pull_domain(&mut self, domain: &str) -> Option<MetaDomain>;
     /// Set the value of a field inside a domain. Field names **must not** collide
     fn meta_set(&mut self, domain: &str, name: &str, data: Payload) -> Option<()>;
     /// Get the value of a (unique) field inside a domain
