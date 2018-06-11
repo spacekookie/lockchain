@@ -21,4 +21,4 @@ mod record;
 
 pub use self::crypto::PackedData;
 pub use self::record::{Header, Payload, Record, EncryptedBody};
-pub use self::meta::MetaDomain;
+pub use self::meta::{MetaDomain, VaultMetadata};

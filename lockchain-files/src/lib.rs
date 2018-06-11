@@ -6,9 +6,8 @@
 extern crate lockchain_core as lcc;
 
 use lcc::traits::{Body, Vault};
-use lcc::{MetaDomain, Payload, Record};
+use lcc::{MetaDomain, Payload, Record, VaultMetadata};
 use std::collections::HashMap;
-use std::fmt::Debug;
 
 mod fs;
 use fs::{FileType, Filesystem};
@@ -16,6 +15,7 @@ use fs::{FileType, Filesystem};
 /// Represents a vault on disk
 #[derive(Debug)]
 pub struct DataVault<T: Body> {
+    meta_info: (String, String),
     records: HashMap<String, Record<T>>,
     metadata: HashMap<String, MetaDomain>,
     fs: Filesystem,
@@ -27,16 +27,24 @@ impl<T: Body> DataVault<T> {
         self.fs.scaffold();
         self
     }
-
 }
 
 impl<T: Body> Vault<T> for DataVault<T> {
     fn new(name: &str, location: &str) -> DataVault<T> {
         Self {
+            meta_info: (name.into(), location.into()),
             records: HashMap::new(),
             metadata: HashMap::new(),
             fs: Filesystem::create(location, name),
         }.initialize()
+    }
+
+    fn metadata(&self) -> VaultMetadata {
+        VaultMetadata {
+            name: self.meta_info.0.clone(),
+            location: self.meta_info.1.clone(),
+            size: self.records.len(),
+        }
     }
 
     /// Caches all files from disk to memory

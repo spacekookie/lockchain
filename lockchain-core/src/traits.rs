@@ -11,7 +11,7 @@
 //! compilation work without external crates but not calling
 //! functions at runtime.
 
-use meta::MetaDomain;
+use meta::{MetaDomain, VaultMetadata};
 use record::{EncryptedBody, Header, Payload, Record};
 use serde::{de::DeserializeOwned, Serialize};
 
@@ -88,6 +88,8 @@ where
 {
     /// A shared constructor for all vault implementations
     fn new(name: &str, location: &str) -> Self;
+    /// Get basic vault metadata
+    fn metadata(&self) -> VaultMetadata;
     /// Fetch metadata headers for all records
     fn fetch(&mut self);
     /// Pull a specific record from the backend

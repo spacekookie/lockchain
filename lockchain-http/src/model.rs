@@ -15,9 +15,25 @@ pub struct CarrierMessage<T: Serialize + DeserializeOwned> {
     pub data: Option<T>,
 }
 
+/// **Returns** Api information
+#[derive(Serialize, Deserialize)]
+pub struct ApiInformation {
+    pub version: String,
+    pub providers: Vec<String>,
+    pub hostname: Option<String>,
+    pub supported: String,
+}
+
+/// **Returns** List existing vaults
+#[derive(Serialize, Deserialize)]
+pub struct VaultList {
+    pub vaults: Vec<String>,
+    pub count: usize,
+}
+
 /// Fields provided when creating a new vault
 #[derive(Serialize, Deserialize)]
 pub struct VaultCreate {
-    name: String,
-    location: String,
+    pub name: String,
+    pub location: String,
 }

@@ -8,6 +8,13 @@ use record::Payload;
 use std::collections::HashMap;
 use traits::{AutoEncoder, Body};
 
+/// A simple representation of metadata for a vault or vault section
+pub struct VaultMetadata {
+    pub name: String,
+    pub location: String,
+    pub size: usize,
+}
+
 /// A metadomain is a simplified version of a cleartext record.
 ///
 /// It is not encoded in special ways, it is not used in any way

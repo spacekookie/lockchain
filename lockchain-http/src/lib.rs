@@ -62,6 +62,9 @@ pub fn create_server<B: Body + 'static>(
         vec![
             App::with_state(Arc::clone(&state))
                 .resource("/vault", |r| {
+                    r.method(http::Method::GET).with(handlers::get_vaults)
+                })
+                .resource("/vault", |r| {
                     r.method(http::Method::PUT).with(handlers::create_vault)
                 })
                 .resource("/vault/{vaultid}", |r| r.f(handlers::update_vault))
@@ -77,7 +80,8 @@ pub fn create_server<B: Body + 'static>(
                     r.f(handlers::delete_record)
                 })
                 .resource("/authenticate", |r| r.f(handlers::authenticate))
-                .resource("/deauthenticate", |r| r.f(handlers::deauthenticate)),
+                .resource("/deauthenticate", |r| r.f(handlers::deauthenticate))
+                .resource("/api", |r| r.f(handlers::api_data)),
         ]
     }).bind(format!("{}:{}", bind, port))
         .expect("Oh no!")
