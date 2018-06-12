@@ -25,13 +25,16 @@ extern crate actix_web;
 extern crate lockchain_core as lockchain;
 
 mod handlers;
-mod state;
-mod model;
-pub use model::CarrierMessage;
+pub mod model;
+pub mod state;
 
 use actix_web::{http, server, App};
 use lockchain::traits::{Body, Vault};
+use state::ApiState;
 use std::sync::{Arc, Mutex};
+
+/// A simple rename of the long generic types that are returned for a new server
+pub type HttpApi<V> = server::HttpServer<App<Arc<Mutex<V>>>>;
 
 /// Create a new lockchain-http server for a vault state
 ///
@@ -54,11 +57,11 @@ use std::sync::{Arc, Mutex};
 ///     DataVault::<EncryptedBody>::new("name", "some-location"),
 /// ).run();
 /// ```
-pub fn create_server<B: Body + 'static>(
-    bind: &str,
-    port: &str,
-    state: impl Vault<B> + 'static,
-) -> server::HttpServer<App<Arc<Mutex<impl Vault<B> + 'static>>>> {
+pub fn create_server<B, V>(bind: &str, port: &str, state: ApiState<B, V>) -> HttpApi<ApiState<B, V>>
+where
+    B: Body + 'static,
+    V: Vault<B> + 'static,
+{
     let state = Arc::new(Mutex::new(state));
 
     server::new(move || {

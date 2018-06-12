@@ -37,3 +37,11 @@ pub struct VaultCreate {
     pub name: String,
     pub location: String,
 }
+
+/// Response to creating a new vault
+#[derive(Serialize, Deserialize)]
+pub struct VaultCreateResponse {
+    pub name: String,
+    pub created: bool,
+    pub error: Option<String>,
+}
