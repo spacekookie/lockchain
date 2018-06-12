@@ -7,6 +7,7 @@ use lockchain::{
 
 use model::*;
 
+use std::intrinsics;
 use std::sync::{Arc, Mutex};
 
 type HttpRequestState<T> = HttpRequest<Arc<Mutex<T>>>;
@@ -25,7 +26,11 @@ pub fn get_vaults<B: Body>(req: HttpRequestState<impl Vault<B>>) -> impl Respond
 /// PUT /vault
 ///
 /// Check the documentation for more information about how to provide payloads
-pub fn create_vault<B: Body>(_req: HttpRequestState<impl Vault<B>>) -> impl Responder {
+pub fn create_vault<B, V>(_req: HttpRequestState<V>) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
     format!("Unimplemented!")
 }
 
@@ -40,10 +45,14 @@ pub fn delete_vault<B: Body>(_req: HttpRequestState<impl Vault<B>>) -> impl Resp
 }
 
 /// GET /vault/{vault-id}/records/{record-id}
-pub fn get_record<B: Body>(
-    _req: HttpRequestState<impl Vault<B>>,
-) -> Result<Json<CarrierMessage<Record<B>>>> {
-    unimplemented!()
+pub fn get_record<B, V>(req: HttpRequestState<V>) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    format!("Unimplemented!")
+
+    
 
     // Ok(Json(CarrierMessage {
     //     error: Ok(()),
@@ -79,10 +88,13 @@ pub fn deauthenticate<B: Body>(_req: HttpRequestState<impl Vault<B>>) -> impl Re
 /// GET /api
 ///
 /// Check the documentation for more information about how to provide payloads
-pub fn api_data<B: Body>(_: HttpRequestState<impl Vault<B>>) -> impl Responder {
+pub fn api_data<B: Body, V: Vault<B>>(_: HttpRequestState<V>) -> impl Responder {
     Json(ApiInformation {
         version: "1.0".into(),
-        providers: vec!["FileVault".into(), "EncryptedBody".into()],
+        providers: vec![
+            unsafe { intrinsics::type_name::<V>() }.into(),
+            unsafe { intrinsics::type_name::<B>() }.into(),
+        ],
         hostname: None,
         supported: "1.0".into(),
     })

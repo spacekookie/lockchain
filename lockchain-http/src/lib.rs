@@ -14,6 +14,8 @@
 //! **Note**: API endpoint documentation can be found
 //! [here](https://github.com/spacekookie/lockchain/tree/master/lockchain-http#api-reference)
 
+#![feature(core_intrinsics)]
+
 #[macro_use]
 extern crate serde_derive;
 extern crate env_logger;
@@ -23,6 +25,7 @@ extern crate actix_web;
 extern crate lockchain_core as lockchain;
 
 mod handlers;
+mod state;
 mod model;
 pub use model::CarrierMessage;
 
@@ -61,22 +64,24 @@ pub fn create_server<B: Body + 'static>(
     server::new(move || {
         vec![
             App::with_state(Arc::clone(&state))
-                .resource("/vault", |r| {
+                .resource("/vaults", |r| {
                     r.method(http::Method::GET).with(handlers::get_vaults)
                 })
-                .resource("/vault", |r| {
+                .resource("/vaults", |r| {
                     r.method(http::Method::PUT).with(handlers::create_vault)
                 })
-                .resource("/vault/{vaultid}", |r| r.f(handlers::update_vault))
-                .resource("/vault/{vaultid}", |r| r.f(handlers::delete_vault))
-                .resource("/vault/{vaultid}/records/{recordid}", |r| {
+                .resource("/vaults/{vaultid}", |r| r.f(handlers::update_vault))
+                .resource("/vaults/{vaultid}", |r| r.f(handlers::delete_vault))
+                .resource("/vaults/{vaultid}/records/{recordid}", |r| {
                     r.f(handlers::get_record)
                 })
-                .resource("/vault/{vaultid}/records", |r| r.f(handlers::create_record))
-                .resource("/vault/{vaultid}/records/{recordid}", |r| {
+                .resource("/vaults/{vaultid}/records", |r| {
+                    r.f(handlers::create_record)
+                })
+                .resource("/vaults/{vaultid}/records/{recordid}", |r| {
                     r.f(handlers::update_record)
                 })
-                .resource("/vault/{vaultid}/records/{recordid}", |r| {
+                .resource("/vaults/{vaultid}/records/{recordid}", |r| {
                     r.f(handlers::delete_record)
                 })
                 .resource("/authenticate", |r| r.f(handlers::authenticate))
