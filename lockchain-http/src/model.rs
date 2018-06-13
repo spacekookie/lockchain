@@ -15,6 +15,13 @@ pub struct CarrierMessage<T: Serialize + DeserializeOwned> {
     pub data: Option<T>,
 }
 
+/// A simple message that describes an invalid operation
+#[derive(Serialize, Deserialize)]
+pub struct OperationFailed {
+    pub reason: String,
+    pub code: u32,
+}
+
 /// **Returns** Api information
 #[derive(Serialize, Deserialize)]
 pub struct ApiInformation {

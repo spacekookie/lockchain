@@ -29,8 +29,10 @@ where
     B: Body,
     V: Vault<B>,
 {
-    vaults: HashMap<String, Option<V>>,
-    _phantom: PhantomData<B>,
+    #[doc(hidden)]
+    pub vaults: HashMap<String, Option<V>>,
+    #[doc(hidden)]
+    pub _phantom: PhantomData<B>,
 
     /// Signal if the API handlers are allowed outside their working dir
     pub bound_scope: bool,

@@ -8,14 +8,16 @@ extern crate lockchain_http as http;
 
 use core::{traits::*, EncryptedBody};
 use files::DataVault;
-use http::create_server;
+use http::{create_server, state::ApiState};
 
 fn main() {
-    let server = create_server(
-        "localhost",
-        "8080",
-        DataVault::<EncryptedBody>::new("name", "location"),
-    );
+    let state = ApiState::<EncryptedBody, DataVault<EncryptedBody>> {
+        bound_scope: true,
+        working_dir: ".".into(),
+        ..Default::default()
+    };
+
+    let server = create_server("localhost", "9999", state);
     server.run();
 
     // println!("After the server died!");

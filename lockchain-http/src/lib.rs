@@ -68,11 +68,11 @@ where
         vec![
             App::with_state(Arc::clone(&state))
                 .resource("/vaults", |r| {
-                    r.method(http::Method::GET).with(handlers::get_vaults)
+                        r.method(http::Method::GET).with(handlers::get_vaults);
+                        r.method(http::Method::PUT).with(handlers::create_vault);
                 })
-                .resource("/vaults", |r| {
-                    r.method(http::Method::PUT).with(handlers::create_vault)
-                })
+                // .resource("/vaults", |r| {
+                // })
                 .resource("/vaults/{vaultid}", |r| r.f(handlers::update_vault))
                 .resource("/vaults/{vaultid}", |r| r.f(handlers::delete_vault))
                 .resource("/vaults/{vaultid}/records/{recordid}", |r| {

@@ -59,7 +59,10 @@ where
     B: Body,
     V: Vault<B>,
 {
-    format!("Unimplemented!")
+    Json(OperationFailed {
+        reason: "Not implemented".into(),
+        code: 255,
+    })
 }
 
 /// DELETE /vault/{vault-id}
@@ -68,7 +71,10 @@ where
     B: Body,
     V: Vault<B>,
 {
-    format!("Unimplemented!")
+    Json(OperationFailed {
+        reason: "Not implemented".into(),
+        code: 255,
+    })
 }
 
 /// GET /vault/{vault-id}/records/{record-id}
@@ -77,7 +83,10 @@ where
     B: Body,
     V: Vault<B>,
 {
-    format!("Unimplemented!")
+    Json(OperationFailed {
+        reason: "Not implemented".into(),
+        code: 255,
+    })
 
     // Ok(Json(CarrierMessage {
     //     error: Ok(()),
@@ -91,7 +100,10 @@ where
     B: Body,
     V: Vault<B>,
 {
-    format!("Unimplemented!")
+    Json(OperationFailed {
+        reason: "Not implemented".into(),
+        code: 255,
+    })
 }
 
 /// POST /vault/{vault-id}/records/{record-id}
@@ -100,7 +112,10 @@ where
     B: Body,
     V: Vault<B>,
 {
-    format!("Unimplemented!")
+    Json(OperationFailed {
+        reason: "Not implemented".into(),
+        code: 255,
+    })
 }
 
 /// DELETE /vault/{vault-id}/records/{record-id}
@@ -109,7 +124,10 @@ where
     B: Body,
     V: Vault<B>,
 {
-    format!("Unimplemented!")
+    Json(OperationFailed {
+        reason: "Not implemented".into(),
+        code: 255,
+    })
 }
 
 /// PUT /authenticate
@@ -118,7 +136,10 @@ where
     B: Body,
     V: Vault<B>,
 {
-    format!("Unimplemented!")
+    Json(OperationFailed {
+        reason: "Not implemented".into(),
+        code: 255,
+    })
 }
 
 /// PUT /de-authenticate
@@ -127,7 +148,10 @@ where
     B: Body,
     V: Vault<B>,
 {
-    format!("Unimplemented!")
+    Json(OperationFailed {
+        reason: "Not implemented".into(),
+        code: 255,
+    })
 }
 
 /// GET /api
