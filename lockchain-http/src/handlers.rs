@@ -78,12 +78,14 @@ where
 }
 
 /// GET /vault/{vault-id}/records/{record-id}
-pub fn get_record<B, V>((item, req): (Json<GetRecord>, HttpRequestState<ApiState<B, V>>) -> impl Responder
+pub fn get_record<B, V>(
+    (item, req): (Json<VaultCreate>, HttpRequestState<ApiState<B, V>>),
+) -> impl Responder
 where
     B: Body,
     V: Vault<B>,
 {
-    let state = req.state().lock().unwrap();
+    let mut state = req.state().lock().unwrap();
     let vault = state.get_vault("");
 
     Json(OperationFailed {

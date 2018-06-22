@@ -71,12 +71,10 @@ where
                         r.method(http::Method::GET).with(handlers::get_vaults);
                         r.method(http::Method::PUT).with(handlers::create_vault);
                 })
-                // .resource("/vaults", |r| {
-                // })
                 .resource("/vaults/{vaultid}", |r| r.f(handlers::update_vault))
                 .resource("/vaults/{vaultid}", |r| r.f(handlers::delete_vault))
                 .resource("/vaults/{vaultid}/records/{recordid}", |r| {
-                    r.f(handlers::get_record)
+                    r.method(http::Method::GET).with(handlers::get_record);
                 })
                 .resource("/vaults/{vaultid}/records", |r| {
                     r.f(handlers::create_record)

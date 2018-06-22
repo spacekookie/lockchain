@@ -59,7 +59,7 @@ where
     }
 
     pub fn get_vault(&mut self, name: &str) -> Option<&mut V> {
-        self.vaults.get_mut(name)
+        self.vaults.get_mut(name)?.as_mut()
     }
 }
 
