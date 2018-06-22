@@ -57,6 +57,10 @@ where
     pub fn add_vault(&mut self, name: &str, vault: V) {
         self.vaults.insert(name.into(), Some(vault));
     }
+
+    pub fn get_vault(&mut self, name: &str) -> Option<&mut V> {
+        self.vaults.get_mut(name)
+    }
 }
 
 impl<B, V> Default for ApiState<B, V>

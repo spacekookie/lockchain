@@ -45,6 +45,14 @@ pub struct VaultCreate {
     pub location: String,
 }
 
+/// Query to get a record
+#[derive(Serialize, Deserialize)]
+pub struct GetRecord {
+    pub name: String,
+    pub range: Option<(u32, u32),
+}
+
+
 /// Response to creating a new vault
 #[derive(Serialize, Deserialize)]
 pub struct VaultCreateResponse {

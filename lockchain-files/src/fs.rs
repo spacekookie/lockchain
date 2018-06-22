@@ -1,4 +1,13 @@
-//! Utility module which handles filesystem writes
+//! Filesystem abstraction for various data types
+//! 
+//! All operations return io::Result<()> to indicate errors
+//! and functions that have multiple file endpoints will return
+//! a folded error list to indicate which ops were successful
+//! and which failed.
+//! 
+//! There is also a `From<Vec<?>> for Result<?>` implementation
+//! which will return either `Ok(())` or the first error in the list
+//! of operations.
 
 use lcc::traits::AutoEncoder;
 
@@ -27,6 +36,7 @@ pub enum FileType {
     Checksum,
 }
 
+/// Construct a file ending for a specific match result
 macro_rules! file_ending {
     ($type:expr) => {
         match $type {
