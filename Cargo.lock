@@ -236,12 +236,12 @@ name = "lockchain-cli"
 version = "0.1.0"
 dependencies = [
  "clap 2.31.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "lockchain-core 0.2.0",
+ "lockchain-core 0.2.1",
 ]
 
 [[package]]
 name = "lockchain-core"
-version = "0.2.0"
+version = "0.2.1"
 dependencies = [
  "base64 0.8.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "blake2 0.7.1 (registry+https://github.com/rust-lang/crates.io-index)",
