@@ -1,7 +1,7 @@
 [package]
 name = "lockchain-core"
 description = "The core library that handles lockchain vaults and records"
-docs = "https://docs.rs/lockchain-core"
+docs = "https://docs.rs/lockchain-core/0.2.1/"
 website = "https://github.com/spacekookie/lockchain/tree/master/lockchain-core"
 readme = "README.md"
 license = "MIT/X11 OR Apache-2.0"
