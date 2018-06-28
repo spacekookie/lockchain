@@ -18,3 +18,5 @@ base64 = "0.8"
 bcrypt = "0.2"
 rand = "0.4"
 blake2 = "0.7"
+
+keybob = "0.3"

@@ -8,7 +8,7 @@ use miscreant::aead::{Aes256Siv, Algorithm};
 use super::databody::DataBody;
 
 use lcc::crypto::random;
-use lcc::crypto::{Key, KEY_LENGTH};
+use lcc::crypto::{Key, KeyType};
 
 impl Encryptable for DataBody {}
 
@@ -21,30 +21,32 @@ pub struct AesEngine {
 impl AesEngine {
     /// Generate new key and encryption engine
     pub fn generate() -> Self {
-        let key = Key::generate();
+        let key = Key::new(KeyType::Aes256);
+        let len = key.len();
         Self {
-            ctx: Aes256Siv::new(&key.to_slice()),
+            ctx: Aes256Siv::new(&key.as_slice()),
             _key: key,
-            iv: random::bytes(KEY_LENGTH),
+            iv: random::bytes(len),
         }
     }
     /// Generate an Aes context from password
     pub fn from_pw(pw: &str, salt: &str) -> Self {
-        let key = Key::from_password(pw, salt);
+        let key = Key::from_pw(KeyType::Aes256, pw, salt);
+        let len = key.len();
         Self {
-            ctx: Aes256Siv::new(&key.to_slice()),
+            ctx: Aes256Siv::new(&key.as_slice()),
             _key: key,
-            iv: random::bytes(KEY_LENGTH),
+            iv: random::bytes(len),
         }
     }
 
     /// Load a packed data object which contains an Aes context
     pub fn load(packed: PackedData, pw: &str, salt: &str) -> Option<Self> {
         let mut temp = Self::from_pw(pw, salt);
-        let k = Key::decode(&String::from_utf8(temp.decrypt_primitive(&packed)?).ok()?).ok()?;
+        let k: Key = Key::decode(&String::from_utf8(temp.decrypt_primitive(&packed)?).ok()?).ok()?;
 
         Some(Self {
-            ctx: Aes256Siv::new(&k.to_slice()),
+            ctx: Aes256Siv::new(&k.as_slice()),
             _key: k,
             iv: packed.iv,
         })
@@ -52,7 +54,7 @@ impl AesEngine {
 
     /// Serialise the current context to save it somewhere
     pub fn save(&mut self) -> PackedData {
-        let k = self._key.to_vec();
+        let k = self._key.as_slice().into();
         self.encrypt_primitive(&k)
     }
 
@@ -70,16 +72,19 @@ impl AesEngine {
 
     fn decrypt_primitive(&mut self, packed: &PackedData) -> Option<Vec<u8>> {
         let iv = &self.iv.as_slice();
-        Some(self.ctx
-            .open(packed.nonce.as_slice(), iv, packed.data.as_slice())
-            .ok()?)
+        Some(
+            self.ctx
+                .open(packed.nonce.as_slice(), iv, packed.data.as_slice())
+                .ok()?,
+        )
     }
 }
 
 impl EncryptionHandler<DataBody> for AesEngine {
     fn encrypt(&mut self, item: DataBody) -> EncryptedBody {
         let ser = item.encode().unwrap();
-        let data = self.encrypt_primitive(&ser.as_bytes().to_vec())
+        let data = self
+            .encrypt_primitive(&ser.as_bytes().to_vec())
             .encode()
             .unwrap();
         EncryptedBody { data }

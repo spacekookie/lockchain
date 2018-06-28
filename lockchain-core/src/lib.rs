@@ -12,10 +12,12 @@ extern crate bcrypt;
 extern crate base64;
 extern crate blake2;
 extern crate rand;
+extern crate keybob;
 
 pub mod errors;
 pub mod traits;
 pub mod crypto;
+pub mod users;
 mod meta;
 mod record;
 
