@@ -1,4 +1,9 @@
+//! Implements an Aes256Siv encryption engine
 //!
+//! Can be initialised from scratch or with a pw/salt
+//! combintaion which derives a key via the `keybob` crate.
+//!
+//! Implements
 
 use lcc::traits::{AutoEncoder, Encryptable, EncryptionHandler};
 use lcc::{EncryptedBody, PackedData};
@@ -29,6 +34,7 @@ impl AesEngine {
             iv: random::bytes(len),
         }
     }
+
     /// Generate an Aes context from password
     pub fn from_pw(pw: &str, salt: &str) -> Self {
         let key = Key::from_pw(KeyType::Aes256, pw, salt);
