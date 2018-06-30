@@ -17,6 +17,7 @@ use serde::{de::DeserializeOwned, Serialize};
 
 use base64;
 use serde_json::{self, Error as SerdeError};
+use std::error::Error;
 
 /// A Body trait that can be implemented to hook into the generic Record
 /// data module.
@@ -43,8 +44,18 @@ pub trait LoadRecord<T: Body> {
     }
 }
 
-/// A set of utility function that need to be implemented in order
-/// for a type to be encryptable or decryptable.
+/// This is purely a marker trait for encryptable types
+///
+/// Indicates that a type should be handlable by an encryption
+/// engine, also relying on the auto encoder functionality.
+///
+/// Additional functions might be added to this trait further down
+/// the road but for now, it's really just a marker that you can easily
+/// implement for any type that's also `AutoEncoder`
+///
+/// ```rust, norun
+/// impl Encryptable for YourSpecialType {}
+/// ```
 pub trait Encryptable: AutoEncoder {}
 
 /// A base trait that describes the basic functionality of
@@ -60,15 +71,31 @@ where
     fn decrypt(&mut self, item: EncryptedBody) -> Option<T>;
 }
 
-/// A trait that abstracts file or record loading for
-/// any backend which wants to implement storage functions
-pub trait Loading {
-    fn load(_path: &str) -> Box<Self> {
-        unimplemented!()
+/// An abstract file loading utility trait
+///
+/// Any type that implements `FileIO` also has to be
+/// `AutoEncoder` in order to be storable. This trait implements
+/// common file I/O operations, assuming that any type using it
+/// will then provide the required utility functions.
+pub trait FileIO: AutoEncoder {
+    /// Load a type from a file path
+    fn load(path: &str) -> Result<Self, Box<Error>> {
+        use std::fs;
+        fs::read_to_string(path)
+            .and_then(|s| Self::decode(&s).map_err(|e| e.into()))
+            .map_err(|e| e.into())
     }
 
-    fn save(&mut self, _path: &str) {
-        unimplemented!()
+    /// Store a type to a file path
+    fn save(&self, path: &str) -> Result<(), Box<Error>> {
+        use std::fs::OpenOptions;
+        use std::io::Write;
+
+        let mut file = OpenOptions::new().write(true).create(true).open(path)?;
+        let content = self.encode()?;
+        file.write_all(content.as_bytes())?;
+
+        Ok(())
     }
 }
 
