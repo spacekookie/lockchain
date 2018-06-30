@@ -17,7 +17,8 @@ mod auth;
 pub use self::auth::Token;
 
 use crypto::{encoding, hashing};
-use traits::AutoEncoder;
+use std::collections::HashMap;
+use {meta::MetaDomain, traits::AutoEncoder};
 
 /// Specifies access to a resource
 #[derive(Serialize, Deserialize)]
@@ -39,12 +40,23 @@ pub enum Role {
 }
 
 /// A generic user representation
+///
+/// A user has an identify check built in that can verify a passphrase
+/// but is ultimately only a metadata item for a API layer. Any layer is
+/// free to disregard these access rights (as such, they should not be
+/// considered security, only obscurity/ management control)
+///
+/// A company might not want allow non-admins to create new vaults or
+/// users to delete records. This does not cryptographically stop anyone
+/// from breaking into the company server, swapping the source code and
+/// changing the rules!
+///
+/// An user can have multiple role-access pairs
 #[derive(Serialize, Deserialize)]
 pub struct User {
     name: String,
     pw_hash: String,
-    role: Role,
-    access: Vec<Access>,
+    rights: Vec<(Access, Role)>,
 }
 
 impl User {
@@ -53,10 +65,65 @@ impl User {
         Self {
             name: name.into(),
             pw_hash: encoding::base64_encode(&hashing::blake2(pw, name).to_vec()),
-            role: Role::Reader,
-            access: Vec::new(),
+            rights: Vec::new(),
         }
+    }
+    /// Verify a user password input
+    pub fn verify(&self, pw: &str) -> bool {
+        self.pw_hash == encoding::base64_encode(&hashing::blake2(pw, &self.name).to_vec())
     }
 }
 
 impl AutoEncoder for User {}
+
+/// A utility structure that loads user data
+/// from a metadata store backend
+#[derive(Serialize, Deserialize)]
+pub struct UserStore {
+    /// A map between username – user item
+    users: HashMap<String, User>,
+}
+
+impl UserStore {
+    pub fn get_user(&self, name: &str) -> Option<&User> {
+        self.users.get(name)
+    }
+}
+
+impl AutoEncoder for UserStore {}
+
+/// Allow users to turn MetaDomains
+/// that *are* userstores into a UserStore easily
+///
+/// Will `panic!` if called on a non UserStore
+impl From<MetaDomain> for UserStore {
+    fn from(md: MetaDomain) -> Self {
+        use Payload;
+        Self {
+            users: md
+                .all()
+                .iter()
+                .map(|(k, v)| {
+                    (
+                        k.clone(),
+                        match v {
+                            Payload::Text(s) => User::decode(s).unwrap(),
+                            _ => unreachable!(),
+                        },
+                    )
+                })
+                .collect(),
+        }
+    }
+}
+
+impl From<UserStore> for MetaDomain {
+    fn from(us: UserStore) -> Self {
+        MetaDomain::new("userstore").fill(
+            us.users
+                .iter()
+                .map(|(name, user)| (name.clone(), ::Payload::Text(user.encode().unwrap())))
+                .collect(),
+        )
+    }
+}

@@ -51,6 +51,19 @@ impl MetaDomain {
         }
     }
 
+    /// Return a MetaDomain that is filled with pre-existing data
+    pub fn fill(self, new_body: HashMap<String, Payload>) -> Self {
+        Self {
+            body: new_body,
+            ..self
+        }
+    }
+
+    /// Return a read-only reference to the entire body
+    pub fn all(&self) -> &HashMap<String, Payload> {
+        &self.body
+    }
+
     /// Return the domain name for easy comparison
     pub fn name(&self) -> &str {
         &self.name

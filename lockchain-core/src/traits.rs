@@ -115,6 +115,8 @@ where
     fn meta_add_domain(&mut self, domain: &str) -> Option<()>;
     /// Returns all records from a meta domain
     fn meta_pull_domain(&mut self, domain: &str) -> Option<&MetaDomain>;
+    /// Entirely replace a meta domain in the store
+    fn meta_push_domain(&mut self, domain: MetaDomain) -> Option<()>;
     /// Set the value of a field inside a domain. Field names **must not** collide
     fn meta_set(&mut self, domain: &str, name: &str, data: Payload) -> Option<()>;
     /// Get the value of a (unique) field inside a domain
