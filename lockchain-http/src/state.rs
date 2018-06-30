@@ -1,4 +1,4 @@
-use lockchain::traits::{AutoEncoder, Body, Vault};
+use lockchain::traits::{AutoEncoder, Body, FileIO, Vault};
 use lockchain::users::{User, UserStore};
 
 use std::collections::HashMap;
@@ -82,10 +82,13 @@ where
     B: Body,
     V: Vault<B>,
 {
+    #[allow(unconditional_recursion)]
     fn default() -> Self {
         Self {
             _phantom: PhantomData,
             bound_scope: true,
+            vaults: HashMap::new(),
+            users: Default::default(),
             ..Default::default()
         }
     }
@@ -98,6 +101,7 @@ struct SerializedState {
 }
 
 impl AutoEncoder for SerializedState {}
+impl FileIO for SerializedState {}
 
 /// Implements the transform from in-memory to on-disk
 impl<'state, B, V> From<&'state ApiState<B, V>> for SerializedState

@@ -53,6 +53,45 @@ where
     })
 }
 
+pub fn delete_vault<B, V>(
+    (item, req): (Json<VaultCreate>, HttpRequestState<ApiState<B, V>>),
+) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    Json(OperationFailed {
+        reason: "Not implemented".into(),
+        code: 255,
+    })
+}
+
+pub fn scope_vault<B, V>(
+    (item, req): (Json<VaultCreate>, HttpRequestState<ApiState<B, V>>),
+) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    Json(OperationFailed {
+        reason: "Not implemented".into(),
+        code: 255,
+    })
+}
+
+pub fn unscope_vault<B, V>(
+    (item, req): (Json<VaultCreate>, HttpRequestState<ApiState<B, V>>),
+) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    Json(OperationFailed {
+        reason: "Not implemented".into(),
+        code: 255,
+    })
+}
+
 /// POST /vault/{vault-id}
 pub fn update_vault<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
 where
@@ -65,8 +104,19 @@ where
     })
 }
 
-/// DELETE /vault/{vault-id}
-pub fn delete_vault<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
+pub fn get_all_records<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    Json(OperationFailed {
+        reason: "Not implemented".into(),
+        code: 255,
+    })
+}
+
+/// PUT /vault/{vault-id}/records
+pub fn create_record<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
 where
     B: Body,
     V: Vault<B>,
@@ -97,18 +147,6 @@ where
     //     error: Ok(()),
     //     data: Some(Record::new("name", "category", vec!["test", "foo"])),
     // }))
-}
-
-/// PUT /vault/{vault-id}/records
-pub fn create_record<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
-where
-    B: Body,
-    V: Vault<B>,
-{
-    Json(OperationFailed {
-        reason: "Not implemented".into(),
-        code: 255,
-    })
 }
 
 /// POST /vault/{vault-id}/records/{record-id}
@@ -149,6 +187,30 @@ where
 
 /// PUT /de-authenticate
 pub fn deauthenticate<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    Json(OperationFailed {
+        reason: "Not implemented".into(),
+        code: 255,
+    })
+}
+
+/// PUT /de-authenticate
+pub fn register<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    Json(OperationFailed {
+        reason: "Not implemented".into(),
+        code: 255,
+    })
+}
+
+/// PUT /de-authenticate
+pub fn get_all_users<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
 where
     B: Body,
     V: Vault<B>,

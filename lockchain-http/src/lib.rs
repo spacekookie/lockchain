@@ -31,6 +31,7 @@ pub mod state;
 use actix_web::{http, server, App};
 use lockchain::traits::{Body, Vault};
 use state::ApiState;
+use std::error::Error;
 use std::sync::{Arc, Mutex};
 
 /// A simple rename of the long generic types that are returned for a new server
@@ -57,7 +58,11 @@ pub type HttpApi<V> = server::HttpServer<App<Arc<Mutex<V>>>>;
 ///     DataVault::<EncryptedBody>::new("name", "some-location"),
 /// ).run();
 /// ```
-pub fn create_server<B, V>(bind: &str, port: &str, state: ApiState<B, V>) -> HttpApi<ApiState<B, V>>
+pub fn create_server<B, V>(
+    bind: &str,
+    port: &str,
+    state: ApiState<B, V>,
+) -> Result<HttpApi<ApiState<B, V>>, Box<Error>>
 where
     B: Body + 'static,
     V: Vault<B> + 'static,
@@ -68,27 +73,59 @@ where
         vec![
             App::with_state(Arc::clone(&state))
                 .resource("/vaults", |r| {
-                        r.method(http::Method::GET).with(handlers::get_vaults);
-                        r.method(http::Method::PUT).with(handlers::create_vault);
+                    // Get existing vaults
+                    r.method(http::Method::GET).with(handlers::get_vaults);
+
+                    // Create new vault (if authorised)
+                    r.method(http::Method::PUT).with(handlers::create_vault);
+
+                    // Delete entire vault (if authorised)
+                    r.method(http::Method::DELETE).with(handlers::delete_vault);
                 })
-                .resource("/vaults/{vaultid}", |r| r.f(handlers::update_vault))
-                .resource("/vaults/{vaultid}", |r| r.f(handlers::delete_vault))
-                .resource("/vaults/{vaultid}/records/{recordid}", |r| {
-                    r.method(http::Method::GET).with(handlers::get_record);
+                .resource("/vaults/scope", |r| {
+                    // Bring an existing vault into scope (if authorised)
+                    r.method(http::Method::PUT).with(handlers::scope_vault);
+                    // Remove an existing vault from API scope (if authorised)
+                    r.method(http::Method::DELETE).with(handlers::unscope_vault);
+                })
+                .resource("/vaults/{vaultid}", |r| {
+                    // Update vault metadata (access rights, users, indices, etc)
+                    r.method(http::Method::POST).with(handlers::update_vault)
                 })
                 .resource("/vaults/{vaultid}/records", |r| {
-                    r.f(handlers::create_record)
+                    // Get the vault record index (omits records without access)
+                    r.method(http::Method::GET).with(handlers::get_all_records);
+                    // Create a new record (if authorised) in the vault
+                    r.method(http::Method::PUT).with(handlers::create_record);
                 })
                 .resource("/vaults/{vaultid}/records/{recordid}", |r| {
-                    r.f(handlers::update_record)
+                    // Get a specific record from a vault
+                    r.method(http::Method::GET).with(handlers::get_record);
+                    // Update a specific record
+                    r.method(http::Method::POST).with(handlers::update_record);
+                    // Delete a specific record from a vault
+                    r.method(http::Method::DELETE).with(handlers::delete_record);
                 })
-                .resource("/vaults/{vaultid}/records/{recordid}", |r| {
-                    r.f(handlers::delete_record)
+                .resource("/users/login", |r| {
+                    // Request a new auth token
+                    r.method(http::Method::POST).with(handlers::authenticate)
                 })
-                .resource("/authenticate", |r| r.f(handlers::authenticate))
-                .resource("/deauthenticate", |r| r.f(handlers::deauthenticate))
-                .resource("/api", |r| r.f(handlers::api_data)),
+                .resource("/users/logout", |r| {
+                    // Hand-in active auth token
+                    r.method(http::Method::POST).with(handlers::deauthenticate)
+                })
+                .resource("/users/register", |r| {
+                    // Register a new user (if allowed)
+                    r.method(http::Method::POST).with(handlers::register);
+                })
+                .resource("/users/", |r| {
+                    // Get all available users
+                    r.method(http::Method::GET).with(handlers::get_all_users);
+                })
+                .resource("/api", |r| {
+                    r.method(http::Method::GET).with(handlers::api_data);
+                }),
         ]
     }).bind(format!("{}:{}", bind, port))
-        .expect("Oh no!")
+        .map_err(|e| e.into())
 }
