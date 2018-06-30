@@ -127,6 +127,11 @@ impl<T: Body> Vault<T> for DataVault<T> {
         self.metadata.get(domain)
     }
 
+    fn meta_push_domain(&mut self, domain: MetaDomain) -> Option<()> {
+        self.metadata.insert(domain.name().into(), domain);
+        Some(())
+    }
+
     fn meta_set(&mut self, domain: &str, name: &str, data: Payload) -> Option<()> {
         self.metadata.get_mut(domain)?.set_field(name, data)
     }
