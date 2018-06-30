@@ -90,7 +90,7 @@ impl<T: Body> Record<T> {
 
     /// Attempt to set a key to a certain value
     pub fn add_data(&mut self, key: &str, value: Payload) -> Option<()> {
-        (self.body.as_mut()?).set_field(key, value)?;
+        (self.body.as_mut()?).set_field(key, value);
         Some(())
     }
 

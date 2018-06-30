@@ -128,8 +128,10 @@ impl<T: Body> Vault<T> for DataVault<T> {
     }
 
     fn meta_push_domain(&mut self, domain: MetaDomain) -> Option<()> {
-        self.metadata.insert(domain.name().into(), domain);
-        Some(())
+        self.metadata
+            .insert(domain.name().into(), domain)
+            .map_or((), |_| ()) // We don't care about `None`
+            .into()
     }
 
     fn meta_set(&mut self, domain: &str, name: &str, data: Payload) -> Option<()> {

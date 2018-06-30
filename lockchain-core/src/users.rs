@@ -88,6 +88,18 @@ impl UserStore {
     pub fn get_user(&self, name: &str) -> Option<&User> {
         self.users.get(name)
     }
+
+    pub fn get_all(&self) -> &HashMap<String, User> {
+        &self.users
+    }
+}
+
+impl Default for UserStore {
+    fn default() -> Self {
+        Self {
+            users: HashMap::new(),
+        }
+    }
 }
 
 impl AutoEncoder for UserStore {}

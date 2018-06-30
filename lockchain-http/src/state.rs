@@ -1,4 +1,6 @@
 use lockchain::traits::{AutoEncoder, Body, Vault};
+use lockchain::users::{User, UserStore};
+
 use std::collections::HashMap;
 use std::marker::PhantomData;
 use std::path::PathBuf;
@@ -32,6 +34,8 @@ where
     #[doc(hidden)]
     pub vaults: HashMap<String, Option<V>>,
     #[doc(hidden)]
+    pub users: UserStore,
+    #[doc(hidden)]
     pub _phantom: PhantomData<B>,
 
     /// Signal if the API handlers are allowed outside their working dir
@@ -45,6 +49,16 @@ where
     B: Body,
     V: Vault<B>,
 {
+    /// Load an existing API state from an encoded string
+    pub fn load(encoded: &str) -> Option<Self> {
+        SerializedState::decode(encoded).ok().map(|s| s.into())
+    }
+
+    /// Store an in-memory API state to an encoded string
+    pub fn store(&self) -> String {
+        SerializedState::from(self).encode().ok().unwrap()
+    }
+
     /// Return a list of string slices for each vault in scope
     pub fn vaults(&self) -> Vec<&str> {
         self.vaults.iter().map(|(k, _)| k.as_str()).collect()
@@ -70,10 +84,9 @@ where
 {
     fn default() -> Self {
         Self {
-            vaults: Default::default(),
             _phantom: PhantomData,
             bound_scope: true,
-            working_dir: Default::default(),
+            ..Default::default()
         }
     }
 }
@@ -81,17 +94,18 @@ where
 #[derive(Serialize, Deserialize)]
 struct SerializedState {
     vaults: Vec<String>,
+    users: Vec<User>,
 }
 
 impl AutoEncoder for SerializedState {}
 
 /// Implements the transform from in-memory to on-disk
-impl<B, V> From<ApiState<B, V>> for SerializedState
+impl<'state, B, V> From<&'state ApiState<B, V>> for SerializedState
 where
     B: Body,
     V: Vault<B>,
 {
-    fn from(me: ApiState<B, V>) -> Self {
+    fn from(me: &'state ApiState<B, V>) -> Self {
         Self {
             vaults: me
                 .vaults
@@ -100,6 +114,7 @@ where
                     acc.push(k);
                     acc
                 }),
+            users: me.users.get_all().iter().map(|(_, v)| v).collect(),
         }
     }
 }
