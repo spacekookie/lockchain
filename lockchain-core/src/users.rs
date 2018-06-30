@@ -21,7 +21,7 @@ use std::collections::HashMap;
 use {meta::MetaDomain, traits::AutoEncoder};
 
 /// Specifies access to a resource
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub enum Access {
     /// Allows specific access to an entire API
     Api,
@@ -32,7 +32,7 @@ pub enum Access {
 }
 
 /// Specifies the capabilities of a user
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub enum Role {
     Reader,
     Editor,
@@ -52,7 +52,7 @@ pub enum Role {
 /// changing the rules!
 ///
 /// An user can have multiple role-access pairs
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct User {
     name: String,
     pw_hash: String,

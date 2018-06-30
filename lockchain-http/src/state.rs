@@ -107,14 +107,8 @@ where
 {
     fn from(me: &'state ApiState<B, V>) -> Self {
         Self {
-            vaults: me
-                .vaults
-                .into_iter()
-                .fold(Vec::new(), |mut acc: Vec<String>, (k, v)| {
-                    acc.push(k);
-                    acc
-                }),
-            users: me.users.get_all().iter().map(|(_, v)| v).collect(),
+            vaults: me.vaults.iter().map(|(k, _)| k.clone()).collect(),
+            users: me.users.get_all().iter().map(|(_, v)| v.clone()).collect(),
         }
     }
 }
@@ -127,13 +121,7 @@ where
 {
     fn from(me: SerializedState) -> Self {
         Self {
-            vaults: me.vaults.into_iter().fold(
-                HashMap::new(),
-                |mut acc: HashMap<String, Option<V>>, k| {
-                    acc.insert(k, None);
-                    acc
-                },
-            ),
+            vaults: me.vaults.into_iter().map(|k| (k, None)).collect(),
             _phantom: PhantomData,
             ..Default::default()
         }
