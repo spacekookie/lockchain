@@ -1,4 +1,4 @@
-//! Data models specific to the lockchain API
+
 
 use lockchain::errors::Error as LockError;
 use serde::{de::DeserializeOwned, Serialize};
@@ -36,20 +36,6 @@ pub struct ApiInformation {
 pub struct VaultList {
     pub vaults: Vec<String>,
     pub count: usize,
-}
-
-/// Fields provided when creating a new vault
-#[derive(Serialize, Deserialize)]
-pub struct VaultCreate {
-    pub name: String,
-    pub location: String,
-}
-
-/// Query to get a record
-#[derive(Serialize, Deserialize)]
-pub struct GetRecord {
-    pub name: String,
-    pub range: Option<(u32, u32)>,
 }
 
 /// Response to creating a new vault

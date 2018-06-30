@@ -1,11 +1,11 @@
 //! Definition of the core lockchain API
 
-use actix_web::{HttpRequest, Json, Responder, Result};
+use actix_web::{HttpRequest, Json, Responder};
 use lockchain::{
     traits::{Body, Vault}, Record,
 };
 
-use model::*;
+use models::{inputs::*, responses::*};
 use state::ApiState;
 
 use std::intrinsics;

@@ -25,7 +25,7 @@ extern crate actix_web;
 extern crate lockchain_core as lockchain;
 
 mod handlers;
-pub mod model;
+pub mod models;
 pub mod state;
 
 use actix_web::{http, server, App};

@@ -16,7 +16,7 @@
 mod auth;
 pub use self::auth::Token;
 
-use crypto::{encoding, hashing};
+use crypto::{encoding, hashing, random};
 use std::collections::HashMap;
 use {meta::MetaDomain, traits::AutoEncoder};
 
@@ -57,6 +57,7 @@ pub struct User {
     name: String,
     pw_hash: String,
     rights: Vec<(Access, Role)>,
+    token: Option<String>,
 }
 
 impl User {
@@ -66,11 +67,21 @@ impl User {
             name: name.into(),
             pw_hash: encoding::base64_encode(&hashing::blake2(pw, name).to_vec()),
             rights: Vec::new(),
+            token: None,
         }
     }
     /// Verify a user password input
     pub fn verify(&self, pw: &str) -> bool {
         self.pw_hash == encoding::base64_encode(&hashing::blake2(pw, &self.name).to_vec())
+    }
+
+    /// Generate a token unique to this user (or return the existing one)
+    pub fn token(&mut self) -> String {
+        if self.token.is_none() {
+            self.token = Some(encoding::base64_encode(&random::bytes(256)));
+        }
+
+        self.token.as_ref().unwrap().clone()
     }
 }
 
