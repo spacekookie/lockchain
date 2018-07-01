@@ -13,8 +13,8 @@
 //! `User` is also a serialisable struct which contains important
 //! data to load and store them into a metadata store.
 
-mod auth;
-pub use self::auth::Token;
+mod tokens;
+pub use self::tokens::Token;
 
 use crypto::{encoding, hashing, random};
 use std::collections::HashMap;

@@ -178,3 +178,15 @@ impl Base64AutoEncoder for String {
         String::from_utf8(base64::decode(base64).unwrap()).unwrap()
     }
 }
+
+impl Base64AutoEncoder for Vec<u8> {
+    /// Automatically encode this string to base64
+    fn to_base64(&self) -> String {
+        base64::encode(self)
+    }
+
+    /// Craft a string from an existing base64 string slice
+    fn from_base64(base64: &str) -> String {
+        String::from_utf8(base64::decode(base64).unwrap()).unwrap()
+    }
+}

@@ -1,5 +1,4 @@
 use lockchain::traits::{AutoEncoder, Body, FileIO, Vault};
-use lockchain::users::{User, UserStore};
 
 use std::collections::HashMap;
 use std::marker::PhantomData;
@@ -34,14 +33,14 @@ where
     #[doc(hidden)]
     pub vaults: HashMap<String, Option<V>>,
     #[doc(hidden)]
-    pub users: UserStore,
-    #[doc(hidden)]
     pub _phantom: PhantomData<B>,
 
     /// Signal if the API handlers are allowed outside their working dir
     pub bound_scope: bool,
     /// Provide a working directory
     pub working_dir: PathBuf,
+    /// Completely disabe administrative actions
+    pub administrative: bool,
 }
 
 impl<B, V> ApiState<B, V>
@@ -88,7 +87,7 @@ where
             _phantom: PhantomData,
             bound_scope: true,
             vaults: HashMap::new(),
-            users: Default::default(),
+            administrative: false,
             ..Default::default()
         }
     }
@@ -97,7 +96,6 @@ where
 #[derive(Serialize, Deserialize)]
 struct SerializedState {
     vaults: Vec<String>,
-    users: Vec<User>,
 }
 
 impl AutoEncoder for SerializedState {}
@@ -112,7 +110,6 @@ where
     fn from(me: &'state ApiState<B, V>) -> Self {
         Self {
             vaults: me.vaults.iter().map(|(k, _)| k.clone()).collect(),
-            users: me.users.get_all().iter().map(|(_, v)| v.clone()).collect(),
         }
     }
 }

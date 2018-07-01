@@ -14,11 +14,12 @@ fn main() {
     let state = ApiState::<EncryptedBody, DataVault<EncryptedBody>> {
         bound_scope: true,
         working_dir: ".".into(),
+
+        // This is a dangerous option
+        administrative: true,
         ..Default::default()
     };
 
     let server = create_server("localhost", "9999", state);
-    server.run();
-
-    // println!("After the server died!");
+    server.unwrap().run();
 }
