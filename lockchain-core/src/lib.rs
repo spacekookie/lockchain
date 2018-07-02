@@ -21,9 +21,7 @@ pub mod crypto;
 pub mod users;
 mod meta;
 mod record;
-mod auth;
 
 pub use self::crypto::PackedData;
 pub use self::record::{Header, Payload, Record, EncryptedBody};
 pub use self::meta::{MetaDomain, VaultMetadata};
-pub use self::auth::pam_authenticate;

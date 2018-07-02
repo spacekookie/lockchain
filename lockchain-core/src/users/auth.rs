@@ -3,10 +3,10 @@
 //! The way a user is authenticated is via the `lockchain` group
 //! and a simple writing/ deleting of a lock file.
 
-use nix::sys::wait::*;
-use nix::unistd::{fork, ForkResult};
+// use nix::sys::wait::*;
+// use nix::unistd::{fork, ForkResult};
 
-use pam_auth::{self, Authenticator, PamError, Result as PamResult};
+// use pam_auth::{self, Authenticator, PamError, Result as PamResult};
 
 #[derive(Debug)]
 pub enum AuthError {
