@@ -76,10 +76,3 @@ pub struct Authenticate {
 pub struct Deauthenticate {
     pub token: String,
 }
-
-#[derive(Serialize, Deserialize)]
-pub struct Register {
-    pub username: String,
-    pub password: String,
-    pub requested_role: Option<Role>,
-}

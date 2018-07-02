@@ -1,7 +1,5 @@
-
-
-use lockchain::errors::Error as LockError;
 use serde::{de::DeserializeOwned, Serialize};
+use std::error::Error;
 
 /// A generic container that json/error wraps lockchain-types
 ///
@@ -9,8 +7,13 @@ use serde::{de::DeserializeOwned, Serialize};
 /// to send both encrypted and cleartext data via the API endpoint, using
 /// the same code.
 #[derive(Serialize, Deserialize)]
-pub struct CarrierMessage<T: Serialize + DeserializeOwned> {
-    pub error: Result<(), LockError>,
+pub struct CarrierMessage<T, E>
+where
+    T: Serialize + DeserializeOwned,
+    E: Error + Serialize + DeserializeOwned,
+{
+    #[serde(bound(deserialize = "E: Serialize + DeserializeOwned"))]
+    pub error: Result<(), E>,
     #[serde(bound(deserialize = "T: Serialize + DeserializeOwned"))]
     pub data: Option<T>,
 }
@@ -20,6 +23,13 @@ pub struct CarrierMessage<T: Serialize + DeserializeOwned> {
 pub struct OperationFailed {
     pub reason: String,
     pub code: u32,
+}
+
+/// Message that returns a token
+#[derive(Serialize, Deserialize)]
+pub struct TokenMessage {
+    pub username: String,
+    pub token: String,
 }
 
 /// **Returns** Api information

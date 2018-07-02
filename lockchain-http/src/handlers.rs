@@ -174,43 +174,38 @@ where
 }
 
 /// PUT /authenticate
-pub fn authenticate<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
+pub fn authenticate<B, V>(
+    (item, req): (Json<Authenticate>, HttpRequestState<ApiState<B, V>>),
+) -> impl Responder
 where
     B: Body,
     V: Vault<B>,
 {
-    Json(OperationFailed {
-        reason: "Not implemented".into(),
-        code: 255,
+    use lockchain::users::*;
+    let Authenticate { username, password } = item.into_inner();
+
+    Json(match pam_authenticate(&username, &password) {
+        Ok(()) => CarrierMessage {
+            error: Ok(()),
+            data: Some(TokenMessage {
+                username,
+                token: String::new(),
+            }),
+        },
+        Err(e) => CarrierMessage {
+            error: Err(e.into()),
+            data: Some(OperationFailed {
+                reason: "Meh!".into(),
+                code: 1,
+            }),
+        },
     })
 }
 
 /// PUT /de-authenticate
-pub fn deauthenticate<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
-where
-    B: Body,
-    V: Vault<B>,
-{
-    Json(OperationFailed {
-        reason: "Not implemented".into(),
-        code: 255,
-    })
-}
-
-/// PUT /de-authenticate
-pub fn register<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
-where
-    B: Body,
-    V: Vault<B>,
-{
-    Json(OperationFailed {
-        reason: "Not implemented".into(),
-        code: 255,
-    })
-}
-
-/// PUT /de-authenticate
-pub fn get_all_users<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
+pub fn deauthenticate<B, V>(
+    (item, req): (Json<Deauthenticate>, HttpRequestState<ApiState<B, V>>),
+) -> impl Responder
 where
     B: Body,
     V: Vault<B>,

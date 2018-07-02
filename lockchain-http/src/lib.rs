@@ -114,14 +114,6 @@ where
                     // Hand-in active auth token
                     r.method(http::Method::POST).with(handlers::deauthenticate)
                 })
-                .resource("/users/register", |r| {
-                    // Register a new user (if allowed)
-                    r.method(http::Method::POST).with(handlers::register);
-                })
-                .resource("/users/", |r| {
-                    // Get all available users
-                    r.method(http::Method::GET).with(handlers::get_all_users);
-                })
                 .resource("/api", |r| {
                     r.method(http::Method::GET).with(handlers::api_data);
                 }),

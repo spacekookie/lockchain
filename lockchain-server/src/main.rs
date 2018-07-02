@@ -6,7 +6,7 @@ extern crate lockchain_core as core;
 extern crate lockchain_files as files;
 extern crate lockchain_http as http;
 
-use core::{traits::*, EncryptedBody};
+use core::EncryptedBody;
 use files::DataVault;
 use http::{create_server, state::ApiState};
 

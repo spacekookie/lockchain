@@ -6,7 +6,7 @@
 // use nix::sys::wait::*;
 // use nix::unistd::{fork, ForkResult};
 
-// use pam_auth::{self, Authenticator, PamError, Result as PamResult};
+use pam_auth::{self, Authenticator, PamError, Result as PamResult};
 
 #[derive(Debug)]
 pub enum AuthError {
@@ -30,7 +30,7 @@ pub enum AuthError {
 /// yet due to issues in the `pam-auth` dependency.
 #[allow(unused_variables)]
 pub fn pam_authenticate(username: &str, password: &str) -> Result<(), AuthError> {
-    Err(AuthError::FailedPAM)
+    // Err(AuthError::FailedPAM)
 
 
     // match fork().map_err(|_| AuthError::FailedFork)? {
@@ -41,33 +41,35 @@ pub fn pam_authenticate(username: &str, password: &str) -> Result<(), AuthError>
     //     ForkResult::Child => {
     // let mut auth = Authenticator::new("lockchain").ok_or(AuthError::FailedPAM)?;
 
-    // use std::error::Error;
-    // let service = "login";
+    use std::error::Error;
+    let service = "lockchain-core";
 
-    // println!("Username: {}", username);
-    // println!("Password: {}", password);
-    // println!("Service:  {}", service);
+    println!("Username: {}", username);
+    println!("Password: {}", password);
+    println!("Service:  {}", service);
 
-    // let mut auth = Authenticator::new(service).unwrap();
-    // auth.set_credentials(username, password);
+    let mut auth = Authenticator::new(service).unwrap();
+    auth.set_credentials(username, password);
 
-    // match auth.authenticate() {
-    //     Ok(()) => println!("authenticate() OK!"),
-    //     Err(e) => {
-    //         println!("authenticate() FAILED!");
-    //         println!("{}", e.description());
-    //         println!("{:#?}", e.cause());
-    //     }
-    // }
+    match auth.authenticate() {
+        Ok(()) => println!("authenticate() OK!"),
+        Err(e) => {
+            println!("authenticate() FAILED!");
+            println!("{}", e.description());
+            println!("{:#?}", e.cause());
+        }
+    }
 
-    // match auth.open_session() {
-    //     Ok(()) => println!("open_session() OK!"),
-    //     Err(e) => {
-    //         println!("open_session() FAILED!");
-    //         println!("{}", e.description());
-    //         println!("{:#?}", e.cause());
-    //     }
-    // }
+    match auth.open_session() {
+        Ok(()) => println!("open_session() OK!"),
+        Err(e) => {
+            println!("open_session() FAILED!");
+            println!("{}", e.description());
+            println!("{:#?}", e.cause());
+        }
+    }
+
+    Ok(())
 
     // auth.set_credentials(username, password);
     // auth.authenticate().map_err(|_| AuthError::InvalidUser)?;
