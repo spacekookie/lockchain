@@ -8,9 +8,12 @@
 //! turning a `VaultAlreadyExists` failure to
 //! a `FailedInitialise`.
 
+use std::error;
+use std::fmt::{Display, Formatter, Result};
+
 /// A collection of common error codes that can be
 /// returned by lockchain API functions
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum Error {
     /// Creating a vault where one already exists
     VaultAlreadyExists,
@@ -34,4 +37,27 @@ pub enum Error {
     UnknownFailure,
     // #[hidden_docs]
     __NonExhaustive,
+}
+
+impl error::Error for Error {}
+
+impl Display for Error {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        write!(
+            f,
+            "{}",
+            match self {
+                Error::VaultAlreadyExists => "Vault already exists",
+                Error::InvalidPath => "Path invalid",
+                Error::InvalidName => "Name invalid",
+                Error::InvalidCryptoLayer => "Cryptography layer incompatible",
+                Error::FailedCrypto => "Failed cryptographic operation",
+                Error::FailedSelfTest => "Failed self text",
+                Error::FailedLoading => "Failed to load",
+                Error::FailedInitalise => "Failed to initialise",
+                Error::FailedCreation => "Failed to create",
+                _ => "Unknown failure",
+            }
+        )
+    }
 }

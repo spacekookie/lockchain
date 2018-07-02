@@ -1,5 +1,7 @@
+use lockchain::errors::Error as LockError;
 use serde::{de::DeserializeOwned, Serialize};
 use std::error::Error;
+use std::fmt::{Debug, Display};
 
 /// A generic container that json/error wraps lockchain-types
 ///
@@ -7,22 +9,22 @@ use std::error::Error;
 /// to send both encrypted and cleartext data via the API endpoint, using
 /// the same code.
 #[derive(Serialize, Deserialize)]
-pub struct CarrierMessage<T, E>
+pub struct CarrierMessage<T>
 where
     T: Serialize + DeserializeOwned,
-    E: Error + Serialize + DeserializeOwned,
 {
-    #[serde(bound(deserialize = "E: Serialize + DeserializeOwned"))]
-    pub error: Result<(), E>,
+    pub error: Result<(), LockError>,
     #[serde(bound(deserialize = "T: Serialize + DeserializeOwned"))]
     pub data: Option<T>,
 }
+
+// pub trait SerialError: Sized + Error + Serialize + DeserializeOwned + Debug + Display {}
 
 /// A simple message that describes an invalid operation
 #[derive(Serialize, Deserialize)]
 pub struct OperationFailed {
     pub reason: String,
-    pub code: u32,
+    pub error: Box<String>,
 }
 
 /// Message that returns a token
@@ -46,12 +48,4 @@ pub struct ApiInformation {
 pub struct VaultList {
     pub vaults: Vec<String>,
     pub count: usize,
-}
-
-/// Response to creating a new vault
-#[derive(Serialize, Deserialize)]
-pub struct VaultCreateResponse {
-    pub name: String,
-    pub created: bool,
-    pub error: Option<String>,
 }

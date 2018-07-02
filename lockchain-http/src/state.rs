@@ -1,6 +1,6 @@
 use lockchain::traits::{AutoEncoder, Body, FileIO, Vault};
 
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 use std::marker::PhantomData;
 use std::path::PathBuf;
 
@@ -34,7 +34,8 @@ where
     pub vaults: HashMap<String, Option<V>>,
     #[doc(hidden)]
     pub _phantom: PhantomData<B>,
-
+    #[doc(hidden)]
+    pub tokens: HashSet<String>,
     /// Signal if the API handlers are allowed outside their working dir
     pub bound_scope: bool,
     /// Provide a working directory
@@ -87,6 +88,7 @@ where
             _phantom: PhantomData,
             bound_scope: true,
             vaults: HashMap::new(),
+            tokens: HashSet::new(),
             administrative: false,
             ..Default::default()
         }
