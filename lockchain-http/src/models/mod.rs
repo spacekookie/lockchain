@@ -20,3 +20,15 @@ pub enum Response{
     /// Returns a list of all vaults
     Vaults(responses::VaultList),
 }
+
+#[derive(Debug, Serialize, Deserialize, Copy, Clone, Eq, PartialEq)]
+pub struct NoneError;
+impl Error for NoneError {}
+
+use std::fmt::{Display, Formatter, Result};
+
+impl Display for NoneError {
+    fn fmt(&self, f: &mut Formatter) -> Result {
+        write!(f, "<None>")
+    }
+}

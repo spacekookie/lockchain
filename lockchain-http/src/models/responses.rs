@@ -1,7 +1,5 @@
 use lockchain::errors::Error as LockError;
 use serde::{de::DeserializeOwned, Serialize};
-use std::error::Error;
-use std::fmt::{Debug, Display};
 
 /// A generic container that json/error wraps lockchain-types
 ///
@@ -18,13 +16,18 @@ where
     pub data: Option<T>,
 }
 
-// pub trait SerialError: Sized + Error + Serialize + DeserializeOwned + Debug + Display {}
-
 /// A simple message that describes an invalid operation
+/// 
+/// `explain()` can return a localised string, that provides
+/// more details than the error itself.
+/// 
+/// `LockError` is a generic type provided by `lockchain-core`
+/// which is meant to represent any type of error that can
+/// occur in the lockchain ecosystem.
 #[derive(Serialize, Deserialize)]
 pub struct OperationFailed {
-    pub reason: String,
-    pub error: Box<String>,
+    pub explain: String,
+    pub error: LockError,
 }
 
 /// Message that returns a token

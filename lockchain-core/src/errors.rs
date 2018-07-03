@@ -10,11 +10,17 @@
 
 use std::error;
 use std::fmt::{Display, Formatter, Result};
+// use serde::{Serialize, de::DeserializeOwned};
 
 /// A collection of common error codes that can be
 /// returned by lockchain API functions
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Error {
+    /// Provide an extended range for errors
+    Extended {
+        name: String,
+        into: (),
+    },
     /// Creating a vault where one already exists
     VaultAlreadyExists,
     /// When providing an invalid path
