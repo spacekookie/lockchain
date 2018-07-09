@@ -7,14 +7,7 @@
 // use nix::unistd::{fork, ForkResult};
 
 use pam_auth::Authenticator;
-
-#[derive(Debug)]
-pub enum AuthError {
-    FailedFork,
-    FailedPAM,
-    InvalidUser,
-    UserNotAuthorised,
-}
+use errors::AuthError;
 
 /// Simple way to authenticate a user for administrative actions
 ///

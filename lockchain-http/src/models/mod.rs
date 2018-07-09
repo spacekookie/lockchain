@@ -3,12 +3,10 @@
 pub mod inputs;
 pub mod responses;
 
-use serde::{de::DeserializeOwned, Serialize};
-use std::error::Error;
-
 /// A wrapper model for various API response types
 #[derive(Serialize, Deserialize)]
-pub enum Response{
+pub enum Response
+{
     /// Indicate general success of an operation
     Success,
     /// Indicate a failure of some kind

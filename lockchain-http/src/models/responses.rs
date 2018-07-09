@@ -17,15 +17,16 @@ where
 }
 
 /// A simple message that describes an invalid operation
-/// 
+///
 /// `explain()` can return a localised string, that provides
 /// more details than the error itself.
-/// 
+///
 /// `LockError` is a generic type provided by `lockchain-core`
 /// which is meant to represent any type of error that can
 /// occur in the lockchain ecosystem.
 #[derive(Serialize, Deserialize)]
-pub struct OperationFailed {
+pub struct OperationFailed
+{
     pub explain: String,
     pub error: LockError,
 }

@@ -15,8 +15,9 @@
 
 mod auth;
 mod tokens;
+pub use self::auth::pam_authenticate;
 pub use self::tokens::Token;
-pub use self::auth::{AuthError, pam_authenticate};
+pub use errors::AuthError;
 
 use crypto::{encoding, hashing, random};
 use std::collections::HashMap;

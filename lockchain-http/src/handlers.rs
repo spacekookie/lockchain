@@ -1,17 +1,17 @@
-// //! Definition of the core lockchain API
+//! Definition of the core lockchain API
 
-// use actix_web::{HttpRequest, Json, Responder};
-// use lockchain::{
-//     traits::{Body, Vault}, Record,
-// };
+use actix_web::{HttpRequest, Json, Responder};
+use lockchain::{
+    traits::{Body, Vault}, Record,
+};
 
-// use models::{inputs::*, responses::*, NoneError, Response};
-// use state::ApiState;
+use models::{inputs::*, responses::*, NoneError, Response};
+use state::ApiState;
 
-// use std::intrinsics;
-// use std::sync::{Arc, Mutex};
+use std::intrinsics;
+use std::sync::{Arc, Mutex};
 
-// type HttpRequestState<T> = HttpRequest<Arc<Mutex<T>>>;
+type HttpRequestState<T> = HttpRequest<Arc<Mutex<T>>>;
 
 // /// GET /vault
 // ///
@@ -183,6 +183,29 @@
 //         error: LockError::UnknownFailure.into(),
 //     })
 // }
+
+#[allow(dead_code)]
+pub fn foo<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    use lockchain::errors::Error as LockError;
+    use models::{NoneError, Response};
+    let a = 5;
+
+    match a {
+        5 => Json(Response::Failure::<LockError>(OperationFailed {
+            explain: "BOOOOM!".into(),
+            error: LockError::FailedSelfTest,
+        })),
+        _ => Json(Response::Success::<LockError>),
+    }
+
+    // } else {
+    // Json(Response::Success::<NoneError>)
+    // }
+}
 
 // /// PUT /authenticate
 // pub fn authenticate<B, V>(
