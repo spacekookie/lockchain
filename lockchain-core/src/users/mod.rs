@@ -24,7 +24,7 @@ use std::collections::HashMap;
 use {meta::MetaDomain, traits::AutoEncoder};
 
 /// Specifies access to a resource
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Hash, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub enum Access {
     /// Allows specific access to an entire API
     Api,
@@ -35,7 +35,7 @@ pub enum Access {
 }
 
 /// Specifies the capabilities of a user
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub enum Role {
     Reader,
     Editor,
@@ -59,7 +59,7 @@ pub enum Role {
 pub struct User {
     name: String,
     pw_hash: String,
-    rights: Vec<(Access, Role)>,
+    rights: HashMap<Access, Role>,
     token: Option<String>,
 }
 
@@ -69,7 +69,7 @@ impl User {
         Self {
             name: name.into(),
             pw_hash: encoding::base64_encode(&hashing::blake2(pw, name).to_vec()),
-            rights: Vec::new(),
+            rights: HashMap::new(),
             token: None,
         }
     }
@@ -77,7 +77,6 @@ impl User {
     pub fn verify(&self, pw: &str) -> bool {
         self.pw_hash == encoding::base64_encode(&hashing::blake2(pw, &self.name).to_vec())
     }
-
     /// Generate a token unique to this user (or return the existing one)
     pub fn token(&mut self) -> String {
         if self.token.is_none() {
@@ -85,6 +84,16 @@ impl User {
         }
 
         self.token.as_ref().unwrap().clone()
+    }
+    /// Verify that a user is allowed access to a piece of data
+    ///
+    /// `None` means "no access of any kind"
+    pub fn has_access(&self, item: Access) -> Option<Role> {
+        self.rights.get(&item).map(|i| i.clone())
+    }
+    /// Modify access to an item for a role or create a new access entry
+    pub fn give_access(&mut self, item: Access, role: Role) {
+        self.rights.insert(item, role);
     }
 }
 
@@ -121,10 +130,9 @@ impl AutoEncoder for UserStore {}
 /// Allow users to turn MetaDomains
 /// that *are* userstores into a UserStore easily
 ///
-/// Will `panic!` if called on a non UserStore
+/// Will most likely `panic!` if called on a non UserStore
 impl From<MetaDomain> for UserStore {
     fn from(md: MetaDomain) -> Self {
-        use Payload;
         Self {
             users: md
                 .all()
@@ -133,7 +141,7 @@ impl From<MetaDomain> for UserStore {
                     (
                         k.clone(),
                         match v {
-                            Payload::Text(s) => User::decode(s).unwrap(),
+                            ::Payload::Text(s) => User::decode(s).unwrap(),
                             _ => unreachable!(),
                         },
                     )
