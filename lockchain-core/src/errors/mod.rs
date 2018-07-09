@@ -22,6 +22,11 @@ use std::fmt::{Display, Formatter, Result};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Error {
+    /// A common "unknown" type for errors
+    /// that can't be associated with a type or
+    /// simply need to be stubbed until more
+    /// information is available.
+    Unknown, 
     /// A basic vault operation error
     Vault(VaultError),
     /// Errors occuring during authentication

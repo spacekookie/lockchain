@@ -71,52 +71,52 @@ where
 
     server::new(move || {
         vec![
-            // App::with_state(Arc::clone(&state))
-            //     .resource("/vaults", |r| {
-            //         // Get existing vaults
-            //         r.method(http::Method::GET).with(handlers::get_vaults);
+            App::with_state(Arc::clone(&state))
+                .resource("/vaults", |r| {
+                    // Get existing vaults
+                    r.method(http::Method::GET).with(handlers::get_vaults);
 
-            //         // Create new vault (if authorised)
-            //         r.method(http::Method::PUT).with(handlers::create_vault);
+                    // Create new vault (if authorised)
+                    r.method(http::Method::PUT).with(handlers::create_vault);
 
-            //         // Delete entire vault (if authorised)
-            //         r.method(http::Method::DELETE).with(handlers::delete_vault);
-            //     })
-            //     .resource("/vaults/scope", |r| {
-            //         // Bring an existing vault into scope (if authorised)
-            //         r.method(http::Method::PUT).with(handlers::scope_vault);
-            //         // Remove an existing vault from API scope (if authorised)
-            //         r.method(http::Method::DELETE).with(handlers::unscope_vault);
-            //     })
-            //     .resource("/vaults/{vaultid}", |r| {
-            //         // Update vault metadata (access rights, users, indices, etc)
-            //         r.method(http::Method::POST).with(handlers::update_vault)
-            //     })
-            //     .resource("/vaults/{vaultid}/records", |r| {
-            //         // Get the vault record index (omits records without access)
-            //         r.method(http::Method::GET).with(handlers::get_all_records);
-            //         // Create a new record (if authorised) in the vault
-            //         r.method(http::Method::PUT).with(handlers::create_record);
-            //     })
-            //     .resource("/vaults/{vaultid}/records/{recordid}", |r| {
-            //         // Get a specific record from a vault
-            //         r.method(http::Method::GET).with(handlers::get_record);
-            //         // Update a specific record
-            //         r.method(http::Method::POST).with(handlers::update_record);
-            //         // Delete a specific record from a vault
-            //         r.method(http::Method::DELETE).with(handlers::delete_record);
-            //     })
-            //     .resource("/users/login", |r| {
-            //         // Request a new auth token
-            //         r.method(http::Method::POST).with(handlers::authenticate)
-            //     })
-            //     .resource("/users/logout", |r| {
-            //         // Hand-in active auth token
-            //         r.method(http::Method::POST).with(handlers::deauthenticate)
-            //     })
-            //     .resource("/api", |r| {
-            //         r.method(http::Method::GET).with(handlers::api_data);
-            //     }),
+                    // Delete entire vault (if authorised)
+                    r.method(http::Method::DELETE).with(handlers::delete_vault);
+                })
+                .resource("/vaults/scope", |r| {
+                    // Bring an existing vault into scope (if authorised)
+                    r.method(http::Method::PUT).with(handlers::scope_vault);
+                    // Remove an existing vault from API scope (if authorised)
+                    r.method(http::Method::DELETE).with(handlers::unscope_vault);
+                })
+                .resource("/vaults/{vaultid}", |r| {
+                    // Update vault metadata (access rights, users, indices, etc)
+                    r.method(http::Method::POST).with(handlers::update_vault)
+                })
+                .resource("/vaults/{vaultid}/records", |r| {
+                    // Get the vault record index (omits records without access)
+                    r.method(http::Method::GET).with(handlers::get_all_records);
+                    // Create a new record (if authorised) in the vault
+                    r.method(http::Method::PUT).with(handlers::create_record);
+                })
+                .resource("/vaults/{vaultid}/records/{recordid}", |r| {
+                    // Get a specific record from a vault
+                    r.method(http::Method::GET).with(handlers::get_record);
+                    // Update a specific record
+                    r.method(http::Method::POST).with(handlers::update_record);
+                    // Delete a specific record from a vault
+                    r.method(http::Method::DELETE).with(handlers::delete_record);
+                })
+                .resource("/users/login", |r| {
+                    // Request a new auth token
+                    r.method(http::Method::POST).with(handlers::authenticate)
+                })
+                .resource("/users/logout", |r| {
+                    // Hand-in active auth token
+                    r.method(http::Method::POST).with(handlers::deauthenticate)
+                })
+                .resource("/api", |r| {
+                    r.method(http::Method::GET).with(handlers::api_data);
+                }),
         ]
     }).bind(format!("{}:{}", bind, port))
         .map_err(|e| e.into())
