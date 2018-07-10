@@ -102,8 +102,14 @@ impl User {
 
 impl AutoEncoder for User {}
 
-/// A utility structure that loads user data
-/// from a metadata store backend
+/// A utility structure that manages users and can be derived 
+/// from/into a metadata object. By default this process uses
+/// base64 encoding.
+/// 
+/// The workflow for this is to create a new `UserStore`, add
+/// users and then use `meta_push_domain` and give it the 
+/// `UserStore::into()` which is then encoded automatically.
+/// The reverse action works the same way
 #[derive(Serialize, Deserialize)]
 pub struct UserStore {
     /// A map between username – user item
