@@ -141,4 +141,8 @@ impl<T: Body> Vault<T> for DataVault<T> {
     fn meta_get(&mut self, domain: &str, name: &str) -> Option<Payload> {
         Some(self.metadata.get(domain)?.get_field(name)?.clone())
     }
+
+    fn meta_exists(&self, domain: &str) -> bool {
+        self.metadata.contains_key(domain)
+    }
 }

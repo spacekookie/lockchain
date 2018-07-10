@@ -75,10 +75,8 @@ where
                 .resource("/vaults", |r| {
                     // Get existing vaults
                     r.method(http::Method::GET).with(handlers::get_vaults);
-
                     // Create new vault (if authorised)
                     r.method(http::Method::PUT).with(handlers::create_vault);
-
                     // Delete entire vault (if authorised)
                     r.method(http::Method::DELETE).with(handlers::delete_vault);
                 })
@@ -115,31 +113,32 @@ where
                 })
                 .resource("/vaults/{vaultid}/metadata/{metaid}", |r| {
                     // Get a specific metadata field
-                    r.method(http::Method::GET).with(handlers::get_all_records);
+                    r.method(http::Method::GET).with(handlers::get_metadata);
                     // Update a specific metadata field
-                    r.method(http::Method::POST).with(handlers::get_all_records);
+                    r.method(http::Method::POST).with(handlers::update_metadata);
                 })
                 .resource("/vaults/{vaultid}/register", |r| {
                     // Register a new user in a vault (with a registry token)
-                    r.method(http::Method::POST).with(handlers::deauthenticate)
+                    r.method(http::Method::POST).with(handlers::vault_register)
                 })
                 .resource("/vaults/{vaultid}/login", |r| {
                     // Login as a user for this vault
-                    r.method(http::Method::POST).with(handlers::authenticate)
+                    r.method(http::Method::POST).with(handlers::vault_login)
                 })
                 .resource("/vaults/{vaultid}/logout", |r| {
                     // Logout, closing an existing session
-                    r.method(http::Method::POST).with(handlers::deauthenticate)
+                    r.method(http::Method::POST).with(handlers::vault_logout)
                 })
                 .resource("/users/login", |r| {
                     // Request a new auth token
-                    r.method(http::Method::POST).with(handlers::authenticate)
+                    r.method(http::Method::POST).with(handlers::login)
                 })
                 .resource("/users/logout", |r| {
                     // Hand-in active auth token
-                    r.method(http::Method::POST).with(handlers::deauthenticate)
+                    r.method(http::Method::POST).with(handlers::logout)
                 })
                 .resource("/api", |r| {
+                    // Get information about this API endpoint
                     r.method(http::Method::GET).with(handlers::api_data);
                 }),
         ]

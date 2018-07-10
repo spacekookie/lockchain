@@ -148,6 +148,8 @@ where
     fn meta_set(&mut self, domain: &str, name: &str, data: Payload) -> Option<()>;
     /// Get the value of a (unique) field inside a domain
     fn meta_get(&mut self, domain: &str, name: &str) -> Option<Payload>;
+    /// Check if a metadomain exists, regardless of data or depth
+    fn meta_exists(&self, domain: &str) -> bool;
 }
 
 /// Auto-implement this trait to serialise types to json

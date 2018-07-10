@@ -32,7 +32,7 @@ pub struct VaultMetadata {
 ///
 /// It implements a series of traits which means it's possible to easily
 /// interact with to store data.
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone, Eq, PartialEq)]
 pub struct MetaDomain {
     /// The name of this meta domain
     name: String,

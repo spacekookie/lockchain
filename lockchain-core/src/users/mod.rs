@@ -21,7 +21,10 @@ pub use errors::AuthError;
 
 use crypto::{encoding, hashing, random};
 use std::collections::HashMap;
-use {meta::MetaDomain, traits::AutoEncoder};
+use {
+    meta::MetaDomain,
+    traits::{AutoEncoder, Base64AutoEncoder},
+};
 
 /// Specifies access to a resource
 #[derive(Hash, Serialize, Deserialize, Clone, PartialEq, Eq)]
@@ -115,6 +118,11 @@ impl UserStore {
     pub fn get_all(&self) -> &HashMap<String, User> {
         &self.users
     }
+
+    pub fn add(&mut self, user: User) -> Option<()> {
+        self.users.insert(user.name.clone(), user);
+        Some(())
+    }
 }
 
 impl Default for UserStore {
@@ -141,7 +149,7 @@ impl From<MetaDomain> for UserStore {
                     (
                         k.clone(),
                         match v {
-                            ::Payload::Text(s) => User::decode(s).unwrap(),
+                            ::Payload::Text(s) => User::decode(&String::from_base64(s)).unwrap(),
                             _ => unreachable!(),
                         },
                     )
@@ -156,7 +164,12 @@ impl From<UserStore> for MetaDomain {
         MetaDomain::new("userstore").fill(
             us.users
                 .iter()
-                .map(|(name, user)| (name.clone(), ::Payload::Text(user.encode().unwrap())))
+                .map(|(name, user)| {
+                    (
+                        name.clone(),
+                        ::Payload::Text(user.encode().unwrap().to_base64()),
+                    )
+                })
                 .collect(),
         )
     }

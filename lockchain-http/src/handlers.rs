@@ -165,8 +165,85 @@ where
     })
 }
 
+pub fn get_all_metadata<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    Json(OperationFailed {
+        explain: "Not implemented".into(),
+        error: LockError::Unknown,
+    })
+}
+
+pub fn put_metadata<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    Json(OperationFailed {
+        explain: "Not implemented".into(),
+        error: LockError::Unknown,
+    })
+}
+
+pub fn get_metadata<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    Json(OperationFailed {
+        explain: "Not implemented".into(),
+        error: LockError::Unknown,
+    })
+}
+
+pub fn update_metadata<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    Json(OperationFailed {
+        explain: "Not implemented".into(),
+        error: LockError::Unknown,
+    })
+}
+
+pub fn vault_register<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    Json(OperationFailed {
+        explain: "Not implemented".into(),
+        error: LockError::Unknown,
+    })
+}
+
+pub fn vault_login<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    Json(OperationFailed {
+        explain: "Not implemented".into(),
+        error: LockError::Unknown,
+    })
+}
+
+pub fn vault_logout<B, V>(_req: HttpRequestState<ApiState<B, V>>) -> impl Responder
+where
+    B: Body,
+    V: Vault<B>,
+{
+    Json(OperationFailed {
+        explain: "Not implemented".into(),
+        error: LockError::Unknown,
+    })
+}
+
 /// PUT /authenticate
-pub fn authenticate<B, V>(
+pub fn login<B, V>(
     (item, req): (Json<Authenticate>, HttpRequestState<ApiState<B, V>>),
 ) -> impl Responder
 where
@@ -196,7 +273,7 @@ where
 }
 
 /// PUT /de-authenticate
-pub fn deauthenticate<B, V>(
+pub fn logout<B, V>(
     (item, req): (Json<Deauthenticate>, HttpRequestState<ApiState<B, V>>),
 ) -> impl Responder
 where
