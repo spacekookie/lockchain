@@ -106,6 +106,31 @@ where
                     // Delete a specific record from a vault
                     r.method(http::Method::DELETE).with(handlers::delete_record);
                 })
+                .resource("/vaults/{vaultid}/metadata", |r| {
+                    // Get a metadata index of things available. To retrieve an item
+                    // a vault registry token needs to be provided which is checked
+                    r.method(http::Method::GET).with(handlers::get_all_metadata);
+                    // Create a new metadata domain (requires admin rights)
+                    r.method(http::Method::PUT).with(handlers::put_metadata);
+                })
+                .resource("/vaults/{vaultid}/metadata/{metaid}", |r| {
+                    // Get a specific metadata field
+                    r.method(http::Method::GET).with(handlers::get_all_records);
+                    // Update a specific metadata field
+                    r.method(http::Method::POST).with(handlers::get_all_records);
+                })
+                .resource("/vaults/{vaultid}/register", |r| {
+                    // Register a new user in a vault (with a registry token)
+                    r.method(http::Method::POST).with(handlers::deauthenticate)
+                })
+                .resource("/vaults/{vaultid}/login", |r| {
+                    // Login as a user for this vault
+                    r.method(http::Method::POST).with(handlers::authenticate)
+                })
+                .resource("/vaults/{vaultid}/logout", |r| {
+                    // Logout, closing an existing session
+                    r.method(http::Method::POST).with(handlers::deauthenticate)
+                })
                 .resource("/users/login", |r| {
                     // Request a new auth token
                     r.method(http::Method::POST).with(handlers::authenticate)
