@@ -909,14 +909,14 @@ dependencies = [
 
 [[package]]
 name = "lockchain-files"
-version = "0.9.0"
+version = "0.9.1-alpha.0"
 dependencies = [
  "lockchain-core 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
 name = "lockchain-http"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "actix 0.5.8 (registry+https://github.com/rust-lang/crates.io-index)",
  "actix-web 0.6.15 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -934,8 +934,8 @@ dependencies = [
  "clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "insult 2.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "lockchain-core 0.9.1-alpha.0",
- "lockchain-files 0.9.0",
- "lockchain-http 0.3.0",
+ "lockchain-files 0.9.1-alpha.0",
+ "lockchain-http 0.4.0",
 ]
 
 [[package]]
