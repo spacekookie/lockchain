@@ -5,7 +5,7 @@ documentation = "https://docs.rs/lockchain-crypto"
 homepage = "https://github.com/spacekookie/lockchain/tree/master/lockchain-crypto"
 readme = "README.md"
 license = "MIT/X11 OR Apache-2.0"
-version = "0.7.1"
+version = "0.8.0"
 authors = ["Katharina Fey <kookie@spacekookie.de>"]
 
 [dependencies]
