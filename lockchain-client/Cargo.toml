@@ -10,4 +10,4 @@ readme = "README.md"
 license = "MIT/X11 OR Apache-2.0"
 
 [dependencies]
-lockchain-core = { version = "0.8.0", path = "../lockchain-core" }
+lockchain-core = { version = "0.9.0", path = "../lockchain-core" }
