@@ -899,7 +899,7 @@ dependencies = [
 
 [[package]]
 name = "lockchain-crypto"
-version = "0.8.0"
+version = "0.8.1-alpha.0"
 dependencies = [
  "lockchain-core 0.9.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "miscreant 0.4.0-beta2 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -909,7 +909,7 @@ dependencies = [
 
 [[package]]
 name = "lockchain-files"
-version = "0.7.2"
+version = "0.8.0"
 dependencies = [
  "lockchain-core 0.9.1-alpha.0",
 ]
@@ -934,7 +934,7 @@ dependencies = [
  "clap 2.32.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "insult 2.0.3 (registry+https://github.com/rust-lang/crates.io-index)",
  "lockchain-core 0.9.1-alpha.0",
- "lockchain-files 0.7.2",
+ "lockchain-files 0.8.0",
  "lockchain-http 0.3.0",
 ]
 
