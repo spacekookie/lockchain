@@ -13,10 +13,12 @@ mod keys {
     impl AutoEncoder for KeyType {}
 }
 
-pub mod passwords;
+// pub mod passwords;
 pub mod encoding;
+pub mod keystore;
 pub mod hashing;
 pub mod random;
 
 pub use self::data::PackedData;
+pub use self::keystore::KeyStore;
 pub use self::keys::{Key, KeyType};

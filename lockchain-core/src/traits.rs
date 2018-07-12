@@ -141,7 +141,7 @@ where
     /// returned with a single pull request
     fn meta_add_domain(&mut self, domain: &str) -> Option<()>;
     /// Returns all records from a meta domain
-    fn meta_pull_domain(&mut self, domain: &str) -> Option<&MetaDomain>;
+    fn meta_pull_domain(&self, domain: &str) -> Option<&MetaDomain>;
     /// Entirely replace a meta domain in the store
     fn meta_push_domain(&mut self, domain: MetaDomain) -> Option<()>;
     /// Set the value of a field inside a domain. Field names **must not** collide

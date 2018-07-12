@@ -123,7 +123,7 @@ impl<T: Body> Vault<T> for DataVault<T> {
         }
     }
 
-    fn meta_pull_domain(&mut self, domain: &str) -> Option<&MetaDomain> {
+    fn meta_pull_domain(&self, domain: &str) -> Option<&MetaDomain> {
         self.metadata.get(domain)
     }
 

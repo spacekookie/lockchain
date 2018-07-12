@@ -29,21 +29,23 @@ use {
 /// Specifies access to a resource
 #[derive(Hash, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub enum Access {
-    /// Allows specific access to an entire API
-    Api,
     /// Allows access to vault metadata & index files
-    Vault(String),
+    Vault(Role),
     /// Allows access to a record resource inside a vault
-    Record(String, String),
+    Record(Role, String),
 }
 
+impl AutoEncoder for Access {}
+
 /// Specifies the capabilities of a user
-#[derive(Serialize, Deserialize, Clone, PartialEq, Eq)]
+#[derive(Hash, Serialize, Deserialize, Clone, PartialEq, Eq)]
 pub enum Role {
     Reader,
     Editor,
     Admin,
 }
+
+impl AutoEncoder for Role {}
 
 /// A generic user representation
 ///
@@ -102,21 +104,38 @@ impl User {
 
 impl AutoEncoder for User {}
 
-/// A utility structure that manages users and can be derived 
+/// A utility structure that manages users and can be derived
 /// from/into a metadata object. By default this process uses
 /// base64 encoding.
-/// 
+///
 /// The workflow for this is to create a new `UserStore`, add
-/// users and then use `meta_push_domain` and give it the 
+/// users and then use `meta_push_domain` and give it the
 /// `UserStore::into()` which is then encoded automatically.
 /// The reverse action works the same way
 #[derive(Serialize, Deserialize)]
 pub struct UserStore {
     /// A map between username – user item
     users: HashMap<String, User>,
+    registry: HashMap<String, Vec<Access>>,
 }
 
 impl UserStore {
+    /// Generate a sign-up token for a new user which needs to be
+    /// provided in order for them to create an account.
+    pub fn get_token(&mut self, access: Vec<Access>) -> String {
+        let token = ::crypto::encoding::base64_encode(&::crypto::random::bytes(128));
+        self.registry.insert(
+            token.clone(),
+            if access.is_empty() {
+                vec![Access::Vault(Role::Reader)]
+            } else {
+                access
+            },
+        );
+
+        token
+    }
+
     pub fn get_user(&self, name: &str) -> Option<&User> {
         self.users.get(name)
     }
@@ -135,6 +154,7 @@ impl Default for UserStore {
     fn default() -> Self {
         Self {
             users: HashMap::new(),
+            registry: HashMap::new(),
         }
     }
 }
@@ -145,10 +165,10 @@ impl AutoEncoder for UserStore {}
 /// that *are* userstores into a UserStore easily
 ///
 /// Will most likely `panic!` if called on a non UserStore
-impl From<MetaDomain> for UserStore {
-    fn from(md: MetaDomain) -> Self {
+impl From<(MetaDomain, MetaDomain)> for UserStore {
+    fn from((users, registry): (MetaDomain, MetaDomain)) -> Self {
         Self {
-            users: md
+            users: users
                 .all()
                 .iter()
                 .map(|(k, v)| {
@@ -161,22 +181,60 @@ impl From<MetaDomain> for UserStore {
                     )
                 })
                 .collect(),
+            registry: registry
+                .all()
+                .iter()
+                .map(|(k, v)| {
+                    (
+                        k.clone(),
+                        match v {
+                            ::Payload::List(regs) => regs
+                                .iter()
+                                .map(|reg| {
+                                    Access::decode(&String::from_base64(match reg {
+                                        ::Payload::Text(s) => s,
+                                        _ => unreachable!(),
+                                    })).unwrap()
+                                })
+                                .collect(),
+                            _ => unreachable!(),
+                        },
+                    )
+                })
+                .collect(),
         }
     }
 }
 
-impl From<UserStore> for MetaDomain {
+impl From<UserStore> for (MetaDomain, MetaDomain) {
     fn from(us: UserStore) -> Self {
-        MetaDomain::new("userstore").fill(
-            us.users
-                .iter()
-                .map(|(name, user)| {
-                    (
-                        name.clone(),
-                        ::Payload::Text(user.encode().unwrap().to_base64()),
-                    )
-                })
-                .collect(),
+        (
+            MetaDomain::new("userstore").fill(
+                us.users
+                    .iter()
+                    .map(|(name, user)| {
+                        (
+                            name.clone(),
+                            ::Payload::Text(user.encode().unwrap().to_base64()),
+                        )
+                    })
+                    .collect(),
+            ),
+            MetaDomain::new("registry").fill(
+                us.registry
+                    .iter()
+                    .map(|(name, reg)| {
+                        (
+                            name.clone(),
+                            ::Payload::List(
+                                reg.iter()
+                                    .map(|reg| ::Payload::Text(reg.encode().unwrap().to_base64()))
+                                    .collect(),
+                            ),
+                        )
+                    })
+                    .collect(),
+            ),
         )
     }
 }

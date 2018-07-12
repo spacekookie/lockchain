@@ -13,20 +13,22 @@ fn main() {
         let name = env::args().nth(2).unwrap();
 
         let mut vault: DataVault<EncryptedBody> = DataVault::new(&name, &path);
-        let mut store = match vault.meta_pull_domain("userstore") {
-            Some(m) => m.clone().into(),
+        let mut store = match (
+            vault.meta_pull_domain("userstore"),
+            vault.meta_pull_domain("registry"),
+        ) {
+            (Some(users), Some(registry)) => (users.clone(), registry.clone()).into(),
             _ => UserStore::default(),
         };
 
         /* Some users of our vault have the same password :S */
         store.add(User::register("alice", "password"));
-        store.add(User::register("bob", "password"));
-        store.add(User::register("carol", "password"));
-        store.add(User::register("darius", "password"));
-        store.add(User::register("elena", "password"));
-        store.add(User::register("farah", "password"));
+        let token = store.get_token(vec!());
 
-        vault.meta_push_domain(store.into());
+        let (users, registry) = store.into();
+
+        vault.meta_push_domain(users);
+        vault.meta_push_domain(registry);
         vault.sync();
     } else {
         eprintln!("Usage: create <path> <name> [FLAGS] (there are no flags)")
