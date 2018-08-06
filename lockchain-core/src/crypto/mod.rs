@@ -2,7 +2,6 @@
 //! 
 //! 
 
-mod data;
 
 /// We re-export keybob's API here
 mod keys {
@@ -13,11 +12,11 @@ mod keys {
     impl AutoEncoder for KeyType {}
 }
 
-// pub mod passwords;
-pub mod encoding;
+mod data;
+mod utils;
+pub use utils::*;
 pub mod keystore;
-pub mod hashing;
-pub mod random;
+pub mod store;
 
 pub use self::data::PackedData;
 pub use self::keystore::KeyStore;

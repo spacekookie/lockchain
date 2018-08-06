@@ -1,4 +1,10 @@
-//! A utility keystore module for the lockchain ecosystem
+//! A keystore is a specific implementation of a metadata store
+//! 
+//! At it's core it provides three simple functions
+//! 
+//! - Adding keys for a user
+//! - Removing keys
+//! - Retrieving keys
 
 use traits::{AutoEncoder, Base64AutoEncoder};
 use {crypto::Key, meta::MetaDomain};

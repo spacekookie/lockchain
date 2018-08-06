@@ -82,6 +82,12 @@ impl User {
     pub fn verify(&self, pw: &str) -> bool {
         self.pw_hash == encoding::base64_encode(&hashing::blake2(pw, &self.name).to_vec())
     }
+    /// Provides a hook to use second-factor authentication to authorise
+    /// 
+    /// This is meant to be used with an external Yubikey
+    pub fn second_auth_verify(&mut self) -> bool {
+        unimplemented!()
+    }
     /// Generate a token unique to this user (or return the existing one)
     pub fn token(&mut self) -> String {
         if self.token.is_none() {
