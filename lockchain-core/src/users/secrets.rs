@@ -1,5 +1,7 @@
+use traits::AutoEncoder;
 
 /// Specifies the type of secret that's used to derive a vault user secret
+#[derive(Serialize, Deserialize)]
 pub enum SecretType {
     /// A simple password
     Plain,
@@ -8,6 +10,8 @@ pub enum SecretType {
     /// Signing a user password with the id of a yubikey
     Combine,
 }
+
+impl AutoEncoder for SecretType {}
 
 /// The backing secret for user authentication
 /// 
@@ -19,7 +23,10 @@ pub enum SecretType {
 /// might be supported to verify operations. For example, a `Keyfile`
 /// secret can deposit the entire public key in the `content` field, 
 /// then use asymmetric operations to verify operations more thoroughly.
+#[derive(Serialize, Deserialize)]
 pub struct UserSecret {
-    type: SecretType,
+    tt: SecretType,
     content: String,
 }
+
+impl AutoEncoder for UserSecret {}

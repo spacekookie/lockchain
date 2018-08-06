@@ -14,10 +14,19 @@
 //! data to load and store them into a metadata store.
 
 mod auth;
+mod rights;
 mod tokens;
+mod keystore;
+
+mod store;
+mod secrets;
+
 pub use self::auth::pam_authenticate;
+pub use self::keystore::KeyStore;
 pub use self::tokens::Token;
+
 pub use errors::AuthError;
+pub use self::rights::{Access, Role};
 
 use crypto::{encoding, hashing, random};
 use std::collections::HashMap;
@@ -25,27 +34,6 @@ use {
     meta::MetaDomain,
     traits::{AutoEncoder, Base64AutoEncoder},
 };
-
-/// Specifies access to a resource
-#[derive(Hash, Serialize, Deserialize, Clone, PartialEq, Eq)]
-pub enum Access {
-    /// Allows access to vault metadata & index files
-    Vault(Role),
-    /// Allows access to a record resource inside a vault
-    Record(Role, String),
-}
-
-impl AutoEncoder for Access {}
-
-/// Specifies the capabilities of a user
-#[derive(Hash, Serialize, Deserialize, Clone, PartialEq, Eq)]
-pub enum Role {
-    Reader,
-    Editor,
-    Admin,
-}
-
-impl AutoEncoder for Role {}
 
 /// A generic user representation
 ///
@@ -83,7 +71,7 @@ impl User {
         self.pw_hash == encoding::base64_encode(&hashing::blake2(pw, &self.name).to_vec())
     }
     /// Provides a hook to use second-factor authentication to authorise
-    /// 
+    ///
     /// This is meant to be used with an external Yubikey
     pub fn second_auth_verify(&mut self) -> bool {
         unimplemented!()

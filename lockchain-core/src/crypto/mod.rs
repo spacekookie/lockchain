@@ -13,11 +13,10 @@ mod keys {
 }
 
 mod data;
-mod utils;
-pub use utils::*;
-pub mod keystore;
-pub mod store;
+pub mod encoding;
+pub mod random;
+pub mod hashing;
 
 pub use self::data::PackedData;
-pub use self::keystore::KeyStore;
 pub use self::keys::{Key, KeyType};
+pub use users::KeyStore;
