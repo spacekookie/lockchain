@@ -14,6 +14,7 @@
 use meta::{MetaDomain, VaultMetadata};
 use record::{EncryptedBody, Header, Payload, Record};
 use serde::{de::DeserializeOwned, Serialize};
+use users::Token;
 
 use base64;
 use serde_json::{self, Error as SerdeError};
@@ -63,6 +64,7 @@ pub trait Encryptable: AutoEncoder {}
 ///
 /// Encryption is never done directly on the bodies, only via
 /// this scheduler type with the help of the [[Encryptable]] trait.
+#[deprecated]
 pub trait EncryptionHandler<T>
 where
     T: Encryptable + AutoEncoder + Body,
@@ -99,22 +101,36 @@ pub trait FileIO: AutoEncoder {
     }
 }
 
-/// Trait for an in-memory representation of a lockchain vault.
+/// A comprehensive trait describing a generic vault
 ///
-/// By itself it represents vault metadata (name, users, location)
-/// as well as a list of record headers.
+/// It describes the workflow around a vault, no matter how it
+/// is implemented or what backing storage it's using.
 ///
-/// To provide on-disk functionality it requires the `-storage`
-/// trait library and for encrypted file access the `-crypto`
-/// crate.
+/// A vault is, at it's core, a collection of records and a collcetion
+/// of metadata items, including users, keys and autherisation info. Both
+/// the userstore and keystore are implemented via the metadata
+/// system, which is a simplification of a record.
 ///
-/// The body backend is being being generic with the `Body` trait.
-pub trait Vault<T>: Send
+/// The vault API **is stateful** which means that a user needs to be
+/// authenticated to aquire a token which is then used to verify all
+/// future transactions. In case the vault is in-memory only, the
+/// authentication will need to be backed by some persistence layer
+/// (i.e. lockchain-files)
+///
+///
+pub trait Vault<T>: Send + LoadRecord<T>
 where
     T: Body,
 {
     /// A shared constructor for all vault implementations
     fn new(name: &str, location: &str) -> Self;
+    /// Load and open an existing vault
+    fn load(name: &str, location: &str) -> Self;
+    /// Unlock the vault for a specific user
+    fn authenticate(&mut self, username: &str, secret: &str) -> Token;
+    /// End a specific user session
+    fn deauthenticate(&mut self, username: &str, _: Token);
+
     /// Get basic vault metadata
     fn metadata(&self) -> VaultMetadata;
     /// Fetch metadata headers for all records
@@ -123,6 +139,7 @@ where
     fn pull(&mut self, name: &str);
     /// Sync all changes back to the backend
     fn sync(&mut self);
+
     /// Get a complete record from this vault
     fn get_record(&self, name: &str) -> Option<&Record<T>>;
     /// Probe if a record is contained
@@ -131,14 +148,13 @@ where
     fn add_record(&mut self, key: &str, category: &str, tags: Vec<&str>);
     /// Delete a record from this vault
     fn delete_record(&mut self, record: &str) -> Option<Record<T>>;
+
     /// Add data to an existing record, overwriting existing fields
     fn add_data(&mut self, record: &str, key: &str, data: Payload) -> Option<()>;
     /// Get the (latest) value of a specific record data field
     fn get_data(&self, record: &str, key: &str) -> Option<&Payload>;
+
     /// Adds a domain space to the metadata store inside the vault
-    ///
-    /// A domain is a collection metadata files that can be
-    /// returned with a single pull request
     fn meta_add_domain(&mut self, domain: &str) -> Option<()>;
     /// Returns all records from a meta domain
     fn meta_pull_domain(&self, domain: &str) -> Option<&MetaDomain>;

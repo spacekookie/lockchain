@@ -1,11 +1,11 @@
 use crypto::random;
+use traits::AutoEncoder;
 
 const TOK_SIZE: usize = 64;
 
 /// An authentication token that can be compared in constant time
 /// 
 /// ```
-/// 
 /// use lockchain_core::users::auth::Token;
 /// let t1 = Token::new();
 /// let t2 = Token::new();

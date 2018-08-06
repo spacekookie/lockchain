@@ -3,7 +3,6 @@
 //! The way a user is authenticated is via the `lockchain` group
 //! and a simple writing/ deleting of a lock file.
 
-use pam_auth::Authenticator;
 use errors::AuthError;
 
 /// Simple way to authenticate a user for administrative actions
@@ -23,7 +22,6 @@ pub fn pam_authenticate(username: &str, password: &str) -> Result<(), AuthError>
     unimplemented!()
 }
 
-/// Tbd...
-pub fn yubikey_authenticate(username: &str, yubi_id: &str) -> Result<(), AuthError> {
-    unimplemented!()
-}
+// pub fn yubikey_authenticate(username: &str, yubi_id: &str) -> Result<(), AuthError> {
+//     unimplemented!()
+// }
