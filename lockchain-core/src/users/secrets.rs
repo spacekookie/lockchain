@@ -1,3 +1,5 @@
+//! A secrets type module that wraps around some user content with metadata
+
 use traits::AutoEncoder;
 
 /// Specifies the type of secret that's used to derive a vault user secret

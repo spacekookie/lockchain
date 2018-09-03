@@ -5,8 +5,8 @@
 
 extern crate lockchain_core as lcc;
 
-use lcc::traits::{Body, Vault};
-use lcc::{MetaDomain, Payload, Record, VaultMetadata};
+use lcc::traits::{Body, LoadRecord, Vault};
+use lcc::{users::Token, MetaDomain, Payload, Record, VaultMetadata};
 use std::collections::HashMap;
 
 mod fs;
@@ -29,6 +29,8 @@ impl<T: Body> DataVault<T> {
     }
 }
 
+impl<T: Body> LoadRecord<T> for DataVault<T> {}
+
 impl<T: Body> Vault<T> for DataVault<T> {
     fn new(name: &str, location: &str) -> DataVault<T> {
         Self {
@@ -37,6 +39,18 @@ impl<T: Body> Vault<T> for DataVault<T> {
             metadata: HashMap::new(),
             fs: Filesystem::create(location, name),
         }.initialize()
+    }
+
+    fn load(name: &str, location: &str) -> Self {
+        unimplemented!()
+    }
+
+    fn authenticate(&mut self, username: &str, secret: &str) -> Token {
+        unimplemented!()
+    }
+
+    fn deauthenticate(&mut self, username: &str, _: Token) {
+        unimplemented!()
     }
 
     fn metadata(&self) -> VaultMetadata {

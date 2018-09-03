@@ -5,12 +5,17 @@
 //! - Adding keys for a user
 //! - Removing keys
 //! - Retrieving keys
+//! 
+//! **This module is meant to be used by lockchain-library implementations**
+
+#![deprecated(since="0.10.0", note="Use the `userstore::UserStore` structure instead")]
 
 use traits::{AutoEncoder, Base64AutoEncoder};
 use {crypto::Key, meta::MetaDomain};
 
 use std::collections::HashMap;
 
+/// A utility wrapper around a Username -> Key collection
 #[derive(Serialize, Deserialize)]
 pub struct KeyStore {
     keys: HashMap<String, Key>,

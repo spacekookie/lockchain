@@ -1,21 +1,21 @@
 # lockchain
 
-A modern, cross-platform and extendable secrets manager.
+A modern, cross-platform and extendable secrets manager toolchain.
 
-## To own the libs
+`lockchain` is a series of interconnecting libraries, 
+that provide common functionality
+for secrets, key and password managers.
+They are written in Rust, 
+a fast and low-level, 
+memory-safe systems language
+created by Mozilla.
 
-This library ecosystem is made of three main parts.
-
- - `lockchain-core` Common types shared between both `secret` and `default` operation modes.
- - `lockchain-files` load vaults, decode files and work with encrypted streams.
- - `lockchain-crypto` attach crypto handlers to vaults as a middleware to decrypt data.
-
-This enables a few different configurations.
-
-- `lockchain-server` uses `lockchain-core` and `lockchain-files` to serve encrypted files to various front-ends (maybe even on the same machine)
-- `lockchain-client` uses `lockchain-core` and `lockchain-crypto` to decrypt received data from a server and use it in a front-end application.
-
-Additionally there is `lockchain-http` which provides an easy to use RESTful API to use for browser extentions or client-side logic which can't rely on local cryptography. 
+At it's centre, 
+`lockchain-core` provides common interfaces, utilities and modules
+that can be used by both central `lockchain` libraries
+as well as external user code
+to build robust systems
+and extend on existing ones.
 
 **There are some graphical representations below**
 

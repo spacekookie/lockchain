@@ -11,7 +11,7 @@
 //!
 //! At it's centre, `lockchain-core` defines storage traits. These come in a few
 //! forms, from `Vault`, being a very generic interface over what is meant as a
-//! secure storage collection, to `Record`, being an individual record in such a
+//! secure storage collection, to `Record`, being an individual entry in such a
 //! system. This means that both the nature of `Vault` and `Record` are generic
 //! implementation details, left to you to pick for your application, depending on
 //! what fits your needs.
@@ -21,7 +21,7 @@
 //! padded to generate AES encryption keys. It adds a user management layer that provides
 //! login, permissions as well as second-factor authentication (such as a yubikey). And it
 //! provides an easy to use keystore, which binds encrypted keys to user identities, so that
-//! encryption never has to be done outside of the users scope.
+//! decryption never has to be done outside of the users scope.
 //!
 //! ---
 //!
@@ -79,3 +79,10 @@ pub mod users;
 pub use self::crypto::PackedData;
 pub use self::meta::{MetaDomain, VaultMetadata};
 pub use self::record::{EncryptedBody, Header, Payload, Record};
+
+/// Export commonly used types via the prelude
+pub mod prelude {
+    pub use super::crypto::PackedData;
+    pub use super::meta::{MetaDomain, VaultMetadata};
+    pub use super::record::{EncryptedBody, Header, Payload, Record};
+}
