@@ -1,7 +1,11 @@
-use std::error::Error;
-use std::fmt;
-use std::time::SystemTime;
-use std::{fs::File, path::PathBuf, io};
+use std::{
+    error::Error,
+    fmt,
+    fs::{File, OpenOptions as OO},
+    io::{self, Write},
+    path::PathBuf,
+    time::SystemTime,
+};
 
 use semver::Version;
 use toml;
@@ -33,7 +37,7 @@ impl fmt::Display for ConfigError {
 impl Error for ConfigError {}
 
 /// The configuration describing a file vault
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Debug)]
 pub struct VaultConfig {
     /// A semver conforming version string
     pub version: String,
@@ -50,8 +54,13 @@ impl VaultConfig {
         }
     }
 
-    pub fn save(&self) -> Result<(), io::Error> {
+    pub fn save(&self, vault: &PathBuf) -> Result<(), io::Error> {
+        let mut cfg_path = vault.clone();
+        cfg_path.push("config.toml");
 
+        let t = toml::to_string(self).unwrap();
+        let mut f = OO::new().create(true).write(true).open(cfg_path)?;
+        f.write_all(t.as_bytes())?;
         Ok(())
     }
 

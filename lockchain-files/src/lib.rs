@@ -7,7 +7,7 @@
 //! This is great if a vault needs to be easily syncable
 //! or indexable by another tool.
 //! No clear-text secrets are ever written to disk.
-//! But can sometimes be held in memory cache
+//! But might be held in memory cache
 //! for a period of time.
 //!
 //! This backend is comparibly slow
@@ -85,6 +85,7 @@ pub use config::{VaultConfig, ConfigError};
 #[derive(Debug)]
 pub struct DataVault<T: Body> {
     meta_info: (String, String),
+    config: VaultConfig,
     records: HashMap<String, Record<T>>,
     metadata: HashMap<String, MetaDomain>,
     fs: Filesystem,
@@ -94,15 +95,16 @@ impl<T: Body> DataVault<T> {
     /// Small utility function to setup file structure
     fn initialize(self) -> Self {
         self.fs.scaffold();
+        self.config.save(&self.fs.root).unwrap();
         self
     }
 
     fn load(mut self) -> Option<Box<Self>> {
-        let config = match VaultConfig::load(&self.fs.root) {
+        self.config = match VaultConfig::load(&self.fs.root) {
             Ok(cfg) => cfg,
             _ => return None,
         };
-        
+
         Some(Box::new(self))
     }
 }
@@ -114,6 +116,7 @@ impl<T: Body> Vault<T> for DataVault<T> {
         Self {
             meta_info: (name.into(), location.into()),
             records: HashMap::new(),
+            config: VaultConfig::new(),
             metadata: HashMap::new(),
             fs: Filesystem::new(location, name),
         }.initialize()
@@ -128,6 +131,7 @@ impl<T: Body> Vault<T> for DataVault<T> {
         Self {
             meta_info: (name.into(), location.into()),
             records: HashMap::new(),
+            config: VaultConfig::new(),
             metadata: HashMap::new(),
             fs: Filesystem::new(location, name),
         }.load()
