@@ -125,7 +125,7 @@ where
     /// A shared constructor for all vault implementations
     fn new(name: &str, location: &str) -> Self;
     /// Load and open an existing vault
-    fn load(name: &str, location: &str) -> Self;
+    fn load(name: &str, location: &str) -> Option<Box<Self>>;
     /// Unlock the vault for a specific user
     fn authenticate(&mut self, username: &str, secret: &str) -> Token;
     /// End a specific user session
@@ -138,6 +138,12 @@ where
     /// Pull a specific record from the backend
     fn pull(&mut self, name: &str);
     /// Sync all changes back to the backend
+    /// 
+    /// Ultimately it's up to the backend to decide
+    /// how changes are synced.
+    /// It's free to ignore any sync requests
+    /// but they can still be made for backends
+    /// which explicitly promise sync requests compliance
     fn sync(&mut self);
 
     /// Get a complete record from this vault

@@ -1,5 +1,4 @@
 use crypto::random;
-use traits::AutoEncoder;
 
 const TOK_SIZE: usize = 64;
 

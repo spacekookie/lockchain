@@ -1,18 +1,87 @@
-//! A module that enables file management for vaults
+//! A persistence layer for lockchain vaults based on files
 //!
+//! This crate provides a filesystem backend
+//! which relies on keeping records in discrete files
+//! and folder structures.
 //!
+//! This is great if a vault needs to be easily syncable
+//! or indexable by another tool.
+//! No clear-text secrets are ever written to disk.
+//! But can sometimes be held in memory cache
+//! for a period of time.
+//!
+//! This backend is comparibly slow
+//! and should be avoided
+//! for performance critical applications.
+//! For such applications
+//! the blockstore is much more suited
+//! which represents a vault
+//! in a binary blob
+//! independant of the used filesystem.
+//!
+//! Part of the performance problems
+//! comes from locking the entire vault
+//! when doing operations,
+//! meaning that only
+//! one instance
+//! of a lockchain library
+//! can operate on it
+//! at the time
+//!
+//! ```
+//! my_vault/
+//!   config.toml
+//!   Lockfile
+//!   metadata/
+//!     userstore.meta
+//!     registry.meta
+//!   records/
+//!     <base64 hash 1>.rec
+//!     <base64 hash 2>.rec
+//!     <base64 hash 3>.rec
+//!   hashsums/
+//!     <base64 hash 1>.sum
+//!     <base64 hash 2>.sum
+//!     <base64 hash 3>.sum
+//! ```
 #![feature(non_modrs_mods)]
 
 extern crate lockchain_core as lcc;
+extern crate semver;
+extern crate toml;
+
+#[macro_use]
+extern crate serde_derive;
+extern crate serde;
 
 use lcc::traits::{Body, LoadRecord, Vault};
 use lcc::{users::Token, MetaDomain, Payload, Record, VaultMetadata};
 use std::collections::HashMap;
 
 mod fs;
-use fs::{FileType, Filesystem};
+mod utils;
+mod config;
 
-/// Represents a vault on disk
+use fs::{FileType, Filesystem};
+pub use config::{VaultConfig, ConfigError};
+
+
+/// Persistence mapper to a folder and file structure
+///
+/// Implements the `Vault` API in full,
+/// replicating all functionality in memory
+/// and never writing clear text data to disk.
+///
+/// The internal layout should not be assumed
+/// and isn't stabilised with the crate version
+/// (i.e. minor crate bumps can break vault compatibility
+/// as long as they remain API compatible).
+///
+/// The version of a vault is written in it's coniguration
+/// (which won't change – ever).
+///
+/// The vault folder is safe to copy around –
+/// all vault metadata is kept inside it.
 #[derive(Debug)]
 pub struct DataVault<T: Body> {
     meta_info: (String, String),
@@ -27,6 +96,15 @@ impl<T: Body> DataVault<T> {
         self.fs.scaffold();
         self
     }
+
+    fn load(mut self) -> Option<Box<Self>> {
+        let config = match VaultConfig::load(&self.fs.root) {
+            Ok(cfg) => cfg,
+            _ => return None,
+        };
+        
+        Some(Box::new(self))
+    }
 }
 
 impl<T: Body> LoadRecord<T> for DataVault<T> {}
@@ -37,12 +115,22 @@ impl<T: Body> Vault<T> for DataVault<T> {
             meta_info: (name.into(), location.into()),
             records: HashMap::new(),
             metadata: HashMap::new(),
-            fs: Filesystem::create(location, name),
+            fs: Filesystem::new(location, name),
         }.initialize()
     }
 
-    fn load(name: &str, location: &str) -> Self {
-        unimplemented!()
+    // Checking if a vault exists is basically checking it's config
+    // against the compatible version of this library.
+    //
+    // If it's compatible we can open the vault into memory
+    // (loading all required paths into the struct), then return it
+    fn load(name: &str, location: &str) -> Option<Box<Self>> {
+        Self {
+            meta_info: (name.into(), location.into()),
+            records: HashMap::new(),
+            metadata: HashMap::new(),
+            fs: Filesystem::new(location, name),
+        }.load()
     }
 
     fn authenticate(&mut self, username: &str, secret: &str) -> Token {

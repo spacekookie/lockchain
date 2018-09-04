@@ -1,13 +1,14 @@
+//! Merging `KeyStore` and `Userstore` into the same concept
+
 use super::rights::Access;
-use super::secrets::SecretType;
 use crypto::Key;
 use std::collections::HashMap;
 
-/// A thin user keystore
+/// A thin user UserStore
 ///
 /// It's implementation can manage multiple keys per user, of various
 /// types and constrained for limited access rights.
-pub struct KeyStore {
+pub struct UserStore {
     store: HashMap<String, StoreUser>,
 }
 
@@ -16,11 +17,11 @@ struct StoreUser {
     keys: HashMap<Access, Key>,
 }
 
-impl KeyStore {
-    /// Create a new, empty keystore
+impl UserStore {
+    /// Create a new, empty UserStore
     ///
     /// This is most likely *not* what you want. Instead, transform
-    /// a `MetaData` object into a keystore.
+    /// a `MetaData` object into a UserStore.
     pub fn new() -> Self {
         Self {
             store: HashMap::new(),

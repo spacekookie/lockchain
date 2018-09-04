@@ -21,7 +21,7 @@ mod tokens;
 mod keystore;
 
 mod secrets;
-mod userstore;
+pub mod userstore;
 
 pub use self::auth::pam_authenticate;
 pub use self::keystore::KeyStore;
@@ -31,7 +31,6 @@ pub use self::user::User;
 pub use errors::AuthError;
 pub use self::rights::{Access, Role};
 
-use crypto::{encoding, hashing, random};
 use std::collections::HashMap;
 use {
     meta::MetaDomain,
