@@ -12,27 +12,18 @@
 //!
 //! `User` is also a serialisable struct which contains important
 //! data to load and store them into a metadata store.
-#![allow(deprecated)]
 
 mod auth;
 mod user;
 mod rights;
 mod tokens;
-mod keystore;
 
 mod secrets;
 pub mod userstore;
 
 pub use self::auth::pam_authenticate;
-pub use self::keystore::KeyStore;
 pub use self::tokens::Token;
 pub use self::user::User;
 
 pub use errors::AuthError;
 pub use self::rights::{Access, Role};
-
-use std::collections::HashMap;
-use {
-    meta::MetaDomain,
-    traits::{AutoEncoder, Base64AutoEncoder},
-};

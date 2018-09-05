@@ -19,4 +19,3 @@ pub mod hashing;
 
 pub use self::data::PackedData;
 pub use self::keys::{Key, KeyType};
-pub use users::KeyStore;

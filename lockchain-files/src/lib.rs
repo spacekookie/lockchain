@@ -55,16 +55,19 @@ extern crate serde_derive;
 extern crate serde;
 
 use lcc::traits::{Body, LoadRecord, Vault};
-use lcc::{users::Token, MetaDomain, Payload, Record, VaultMetadata};
+use lcc::{
+    initialise::Generator,
+    users::{Access, Token},
+    MetaDomain, Payload, Record, VaultMetadata,
+};
 use std::collections::HashMap;
 
+mod config;
 mod fs;
 mod utils;
-mod config;
 
+pub use config::{ConfigError, VaultConfig};
 use fs::{FileType, Filesystem};
-pub use config::{VaultConfig, ConfigError};
-
 
 /// Persistence mapper to a folder and file structure
 ///
@@ -112,15 +115,30 @@ impl<T: Body> DataVault<T> {
 impl<T: Body> LoadRecord<T> for DataVault<T> {}
 
 impl<T: Body> Vault<T> for DataVault<T> {
-    fn new(name: &str, location: &str) -> DataVault<T> {
+    fn new(gen: Generator) -> DataVault<T> {
         Self {
-            meta_info: (name.into(), location.into()),
+            meta_info: (
+                gen.name.clone().unwrap().into(),
+                gen.location.clone().unwrap().into(),
+            ),
             records: HashMap::new(),
             config: VaultConfig::new(),
             metadata: HashMap::new(),
-            fs: Filesystem::new(location, name),
+            fs: Filesystem::new(&gen.location.unwrap(), &gen.name.unwrap()),
         }.initialize()
     }
+
+    fn create_user(
+        &mut self,
+        token: Token,
+        username: &str,
+        secret: &str,
+        access: Vec<Access>,
+    ) -> Result<(), ()> {
+        unimplemented!()
+    }
+
+    fn delete_user(&mut self, token: Token, username: &str) {}
 
     // Checking if a vault exists is basically checking it's config
     // against the compatible version of this library.

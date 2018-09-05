@@ -46,7 +46,7 @@ where
         (&item.location).into()
     };
 
-    state.add_vault(&item.name, V::new(&item.name, location.to_str().unwrap()));
+    // state.add_vault(&item.name, V::new(&item.name, location.to_str().unwrap()));
     Json(Response::Success)
 }
 
