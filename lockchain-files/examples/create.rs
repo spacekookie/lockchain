@@ -12,7 +12,9 @@ fn main() {
         let path = env::args().nth(1).unwrap();
         let name = env::args().nth(2).unwrap();
 
-        let _vault: DataVault<EncryptedBody> = DataVault::new(&name, &path);
+        let vault: DataVault<EncryptedBody> = DataVault::new(&name, &path);
+
+        
 
 
 

@@ -76,6 +76,8 @@ mod record;
 pub mod traits;
 pub mod users;
 
+mod initialise;
+
 pub use self::crypto::PackedData;
 pub use self::meta::{MetaDomain, VaultMetadata};
 pub use self::record::{EncryptedBody, Header, Payload, Record};

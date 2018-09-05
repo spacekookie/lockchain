@@ -11,10 +11,11 @@
 //! compilation work without external crates but not calling
 //! functions at runtime.
 
+use initialise::Generator;
 use meta::{MetaDomain, VaultMetadata};
 use record::{EncryptedBody, Header, Payload, Record};
 use serde::{de::DeserializeOwned, Serialize};
-use users::Token;
+use users::{Access, Token};
 
 use base64;
 use serde_json::{self, Error as SerdeError};
@@ -117,19 +118,28 @@ pub trait FileIO: AutoEncoder {
 /// authentication will need to be backed by some persistence layer
 /// (i.e. lockchain-files)
 ///
-///
 pub trait Vault<T>: Send + LoadRecord<T>
 where
     T: Body,
 {
-    /// A shared constructor for all vault implementations
-    fn new(name: &str, location: &str) -> Self;
+    /// Consumes a vault generator to construct a vault
+    fn new(cfg: Generator) -> Self;
     /// Load and open an existing vault
     fn load(name: &str, location: &str) -> Option<Box<Self>>;
     /// Unlock the vault for a specific user
     fn authenticate(&mut self, username: &str, secret: &str) -> Token;
     /// End a specific user session
     fn deauthenticate(&mut self, username: &str, _: Token);
+    /// Create a new user with a list of initial access rights
+    fn create_user(
+        &mut self,
+        token: Token,
+        username: &str,
+        secret: &str,
+        access: Vec<Access>,
+    ) -> Result<(), ()>;
+    /// Delete a user
+    fn delete_user(&mut self, token: Token, username: &str);
 
     /// Get basic vault metadata
     fn metadata(&self) -> VaultMetadata;
@@ -138,7 +148,7 @@ where
     /// Pull a specific record from the backend
     fn pull(&mut self, name: &str);
     /// Sync all changes back to the backend
-    /// 
+    ///
     /// Ultimately it's up to the backend to decide
     /// how changes are synced.
     /// It's free to ignore any sync requests
