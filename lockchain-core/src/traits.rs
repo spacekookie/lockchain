@@ -11,7 +11,8 @@
 //! compilation work without external crates but not calling
 //! functions at runtime.
 
-use initialise::Generator;
+use errors::VaultError;
+use init::Generator;
 use meta::{MetaDomain, VaultMetadata};
 use record::{EncryptedBody, Header, Payload, Record};
 use serde::{de::DeserializeOwned, Serialize};
@@ -123,9 +124,9 @@ where
     T: Body,
 {
     /// Consumes a vault generator to construct a vault
-    fn new(cfg: Generator) -> Self;
+    fn new(Generator) -> Result<Box<Self>, VaultError>;
     /// Load and open an existing vault
-    fn load(name: &str, location: &str) -> Option<Box<Self>>;
+    fn load(name: &str, location: &str) -> Result<Box<Self>, VaultError>;
     /// Unlock the vault for a specific user
     fn authenticate(&mut self, username: &str, secret: &str) -> Token;
     /// End a specific user session

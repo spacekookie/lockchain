@@ -1,4 +1,5 @@
 use traits::{Body, Vault};
+use errors::VaultError;
 
 /// Describes the internal permission layout of a vault
 pub enum VaultType {
@@ -69,7 +70,7 @@ impl Generator {
     }
 
     /// Finally call this function to construct the vault
-    pub fn finalise<V, B>(self) -> V
+    pub fn finalise<V, B>(self) -> Result<V, VaultError>
     where
         V: Vault<B>,
         B: Body,

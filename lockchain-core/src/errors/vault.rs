@@ -5,6 +5,10 @@ use std::fmt::{Display, Formatter, Result};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Error {
+    /// Indicates that **mandatory** fields in the
+    /// vault generator haven't been set – vault
+    /// constructor was never called.
+    IncompleteGenerator,
     /// A vault already exists with that path-id
     AlreadyExists,
     /// The provided path is invalid
