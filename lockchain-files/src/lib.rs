@@ -56,9 +56,8 @@ extern crate serde;
 
 use lcc::traits::{Body, LoadRecord, Vault};
 use lcc::{
-    initialise::Generator,
     users::{Access, Token},
-    MetaDomain, Payload, Record, VaultMetadata,
+    Generator, MetaDomain, Payload, Record, VaultMetadata,
 };
 use std::collections::HashMap;
 
