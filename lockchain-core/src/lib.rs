@@ -81,12 +81,12 @@ mod init;
 pub use self::crypto::PackedData;
 pub use self::meta::{MetaDomain, VaultMetadata};
 pub use self::record::{EncryptedBody, Header, Payload, Record};
-pub use self::init::Generator;
+pub use self::init::{VaultType, Generator};
 
 /// Export commonly used types via the prelude
 pub mod prelude {
     pub use super::crypto::PackedData;
     pub use super::meta::{MetaDomain, VaultMetadata};
     pub use super::record::{EncryptedBody, Header, Payload, Record};
-    pub use super::init::Generator;
+    pub use super::init::{VaultType, Generator};
 }

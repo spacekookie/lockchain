@@ -4,7 +4,7 @@ extern crate lockchain_files as files;
 use files::DataVault;
 use lcc::traits::Vault;
 use lcc::users::User;
-use lcc::{Generator, EncryptedBody, Payload, Record};
+use lcc::{EncryptedBody, Generator, Payload, Record, VaultType};
 use std::env;
 
 fn main() {
@@ -12,7 +12,13 @@ fn main() {
         let path = env::args().nth(1).unwrap();
         let name = env::args().nth(2).unwrap();
 
-        let mut vault: DataVault<EncryptedBody> = Generator::new().path(name, path).finalise();
+        let mut vault: DataVault<EncryptedBody> = Generator::new()
+            .path(name, path)
+            .user_type(VaultType::SoloUser {
+                username: "spacekookie".into(),
+                secret: "foobar3264".into(),
+            }).finalise()
+            .unwrap();
         vault.sync();
 
     // let vault: DataVault<EncryptedBody> = DataVault::new(&name, &path);

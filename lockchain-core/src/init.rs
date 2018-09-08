@@ -75,6 +75,6 @@ impl Generator {
         V: Vault<B>,
         B: Body,
     {
-        V::new(self)
+        V::new(self).map(|b| *b)
     }
 }

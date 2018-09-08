@@ -56,6 +56,7 @@ extern crate serde;
 
 use lcc::traits::{Body, LoadRecord, Vault};
 use lcc::{
+    errors::VaultError,
     users::{Access, Token},
     Generator, MetaDomain, Payload, Record, VaultMetadata,
 };
@@ -101,30 +102,32 @@ impl<T: Body> DataVault<T> {
         self
     }
 
-    fn load(mut self) -> Option<Box<Self>> {
+    fn load(mut self) -> Result<Box<Self>, VaultError> {
         self.config = match VaultConfig::load(&self.fs.root) {
             Ok(cfg) => cfg,
-            _ => return None,
+            _ => return Err(VaultError::FailedLoading),
         };
 
-        Some(Box::new(self))
+        Ok(Box::new(self))
     }
 }
 
 impl<T: Body> LoadRecord<T> for DataVault<T> {}
 
 impl<T: Body> Vault<T> for DataVault<T> {
-    fn new(gen: Generator) -> DataVault<T> {
-        Self {
-            meta_info: (
-                gen.name.clone().unwrap().into(),
-                gen.location.clone().unwrap().into(),
-            ),
-            records: HashMap::new(),
-            config: VaultConfig::new(),
-            metadata: HashMap::new(),
-            fs: Filesystem::new(&gen.location.unwrap(), &gen.name.unwrap()),
-        }.initialize()
+    fn new(gen: Generator) -> Result<Box<DataVault<T>>, VaultError> {
+        Ok(Box::new(
+            Self {
+                meta_info: (
+                    gen.name.clone().unwrap().into(),
+                    gen.location.clone().unwrap().into(),
+                ),
+                records: HashMap::new(),
+                config: VaultConfig::new(),
+                metadata: HashMap::new(),
+                fs: Filesystem::new(&gen.location.unwrap(), &gen.name.unwrap()),
+            }.initialize(),
+        ))
     }
 
     fn create_user(
@@ -144,7 +147,7 @@ impl<T: Body> Vault<T> for DataVault<T> {
     //
     // If it's compatible we can open the vault into memory
     // (loading all required paths into the struct), then return it
-    fn load(name: &str, location: &str) -> Option<Box<Self>> {
+    fn load(name: &str, location: &str) -> Result<Box<Self>, VaultError> {
         Self {
             meta_info: (name.into(), location.into()),
             records: HashMap::new(),
