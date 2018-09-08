@@ -57,17 +57,19 @@ extern crate serde;
 use lcc::traits::{Body, LoadRecord, Vault};
 use lcc::{
     errors::VaultError,
-    users::{Access, Token},
+    users::{Access, Token, UserStore},
     Generator, MetaDomain, Payload, Record, VaultMetadata,
 };
 use std::collections::HashMap;
 
 mod config;
 mod fs;
+mod userstore;
 mod utils;
 
 pub use config::{ConfigError, VaultConfig};
 use fs::{FileType, Filesystem};
+use userstore::UserStoreMapper;
 
 /// Persistence mapper to a folder and file structure
 ///
@@ -85,13 +87,13 @@ use fs::{FileType, Filesystem};
 ///
 /// The vault folder is safe to copy around –
 /// all vault metadata is kept inside it.
-#[derive(Debug)]
 pub struct DataVault<T: Body> {
     meta_info: (String, String),
     config: VaultConfig,
     records: HashMap<String, Record<T>>,
     metadata: HashMap<String, MetaDomain>,
     fs: Filesystem,
+    users: UserStoreMapper,
 }
 
 impl<T: Body> DataVault<T> {
@@ -126,6 +128,7 @@ impl<T: Body> Vault<T> for DataVault<T> {
                 config: VaultConfig::new(),
                 metadata: HashMap::new(),
                 fs: Filesystem::new(&gen.location.unwrap(), &gen.name.unwrap()),
+                users: UserStoreMapper::new(UserStore::new()),
             }.initialize(),
         ))
     }
@@ -154,6 +157,7 @@ impl<T: Body> Vault<T> for DataVault<T> {
             config: VaultConfig::new(),
             metadata: HashMap::new(),
             fs: Filesystem::new(location, name),
+            users: UserStoreMapper::new(UserStore::new()),
         }.load()
     }
 

@@ -19,11 +19,12 @@ mod rights;
 mod tokens;
 
 mod secrets;
-pub mod userstore;
+mod userstore;
 
 pub use self::auth::pam_authenticate;
 pub use self::tokens::Token;
 pub use self::user::User;
+pub use self::userstore::UserStore;
 
 pub use errors::AuthError;
 pub use self::rights::{Access, Role};
