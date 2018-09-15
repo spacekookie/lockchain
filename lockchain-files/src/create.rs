@@ -11,7 +11,7 @@ use lcc::{
 use std::collections::HashMap;
 
 use config::{ConfigError, VaultConfig};
-use fs::{FileType, Filesystem};
+use fs::Filesystem;
 use FileVault;
 
 impl<T: Body> FileVault<T> {

@@ -9,7 +9,7 @@
 //! which will return either `Ok(())` or the first error in the list
 //! of operations.
 
-use lcc::traits::AutoEncoder;
+use lcc::traits::{Body, AutoEncoder};
 
 use std::collections::HashMap;
 use std::error::Error;
@@ -20,37 +20,16 @@ use std::{
 };
 
 use utils::FileToString;
+use FileVault;
+
+mod primitive;
+use self::primitive::*;
 
 #[derive(Debug)]
 pub struct Filesystem {
     pub name: String,
     pub path: String,
     pub root: PathBuf,
-}
-
-/// A switching enum to determine what type of file to load
-#[allow(dead_code)]
-pub enum FileType {
-    /// A data record file
-    Record,
-    /// A MetaDomain file
-    Metadata,
-    /// A simple checksum file
-    Checksum,
-    #[doc(hidden)]
-    __NonExhaustive,
-}
-
-/// Construct a file ending for a specific match result
-macro_rules! file_ending {
-    ($type:expr) => {
-        match $type {
-            FileType::Record => "record",
-            FileType::Metadata => "meta",
-            FileType::Checksum => "sum",
-            _ => "dat",
-        }
-    };
 }
 
 impl Filesystem {
@@ -103,6 +82,13 @@ impl Filesystem {
             &File::open(self.root.join(&format!("{}.{}", id, file_ending!(types))))?
                 .get_string()?,
         )?)
+    }
+
+    pub fn sync_vault<T: Body>(&self, vault: &FileVault<T>) -> Result<(), io::Error> {
+        vault.config.save(&self.root)?;
+
+
+        unimplemented!()
     }
 
     /// Respond to a sync request

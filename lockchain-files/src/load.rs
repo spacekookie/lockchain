@@ -7,7 +7,7 @@ use std::collections::HashMap;
 
 use ::FileVault;
 use ::config::{VaultConfig, ConfigError};
-use ::fs::{Filesystem, FileType};
+use ::fs::Filesystem;
 
 
 impl<T: Body> FileVault<T> {

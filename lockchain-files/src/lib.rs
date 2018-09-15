@@ -6,8 +6,6 @@
 //!
 //! All further documentation can be found in `FileVault`
 
-#![feature(non_modrs_mods)]
-
 extern crate lockchain_core as lcc;
 extern crate semver;
 extern crate toml;
@@ -29,11 +27,11 @@ mod config;
 mod create;
 mod fs;
 mod load;
-mod utils;
 mod userstore;
+mod utils;
 
 pub use config::{ConfigError, VaultConfig};
-use fs::{FileType, Filesystem};
+use fs::Filesystem;
 
 /// Persistence mapper to a folder and file structure
 ///
@@ -127,100 +125,115 @@ impl<T: Body> Vault<T> for FileVault<T> {
 
     /// Caches all files from disk to memory
     fn fetch(&mut self) {
-        self.records.clear();
-        self.metadata.clear();
+        // self.records.clear();
+        // self.metadata.clear();
 
-        self.fs
-            .fetch::<Record<T>>(FileType::Record)
-            .unwrap()
-            .into_iter()
-            .map(|rec| (rec.header.name.clone(), rec))
-            .for_each(|x| {
-                self.records.insert(x.0, x.1);
-            });
+        // self.fs
+        //     .fetch::<Record<T>>(FileType::Record)
+        //     .unwrap()
+        //     .into_iter()
+        //     .map(|rec| (rec.header.name.clone(), rec))
+        //     .for_each(|x| {
+        //         self.records.insert(x.0, x.1);
+        //     });
 
-        self.fs
-            .fetch::<MetaDomain>(FileType::Metadata)
-            .unwrap()
-            .into_iter()
-            .map(|rec| (rec.name().into(), rec))
-            .for_each(|x| {
-                self.metadata.insert(x.0, x.1);
-            });
+        // self.fs
+        //     .fetch::<MetaDomain>(FileType::Metadata)
+        //     .unwrap()
+        //     .into_iter()
+        //     .map(|rec| (rec.name().into(), rec))
+        //     .for_each(|x| {
+        //         self.metadata.insert(x.0, x.1);
+        //     });
+        unimplemented!()
     }
 
     /// Make sure a single record is loaded
     fn pull(&mut self, name: &str) {
-        self.records.remove(name);
-        self.records.insert(
-            name.to_owned(),
-            self.fs.pull::<Record<T>>(FileType::Record, name).unwrap(),
-        );
+        // self.records.remove(name);
+        // self.records.insert(
+        //     name.to_owned(),
+        //     self.fs.pull::<Record<T>>(FileType::Record, name).unwrap(),
+        // );
+        unimplemented!()
     }
 
     fn sync(&mut self) {
-        self.fs
-            .sync::<Record<T>>(&self.records, FileType::Record)
-            .unwrap();
-        self.fs
-            .sync::<MetaDomain>(&self.metadata, FileType::Metadata)
-            .unwrap();
+        // self.fs
+        //     .sync::<Record<T>>(&self.records, FileType::Record)
+        //     .unwrap();
+        // self.fs
+        //     .sync::<MetaDomain>(&self.metadata, FileType::Metadata)
+        //     .unwrap();
+        unimplemented!()
     }
 
     fn get_record(&self, name: &str) -> Option<&Record<T>> {
-        self.records.get(name)
+        // self.records.get(name)
+        unimplemented!()
     }
 
     fn contains(&self, name: &str) -> bool {
-        self.records.contains_key(name)
+        // self.records.contains_key(name)
+        unimplemented!()
     }
 
     fn add_record(&mut self, key: &str, category: &str, tags: Vec<&str>) {
-        self.records
-            .insert(key.to_owned(), Record::new(key, category, tags));
+        // self.records
+        //     .insert(key.to_owned(), Record::new(key, category, tags));
+        unimplemented!()
     }
 
     fn delete_record(&mut self, record: &str) -> Option<Record<T>> {
-        self.records.remove(record)
+        // self.records.remove(record)
+        unimplemented!()
     }
 
     fn add_data(&mut self, record: &str, key: &str, data: Payload) -> Option<()> {
-        self.records.get_mut(record)?.add_data(key, data)
+        // self.records.get_mut(record)?.add_data(key, data)
+        unimplemented!()
     }
 
     fn get_data(&self, record: &str, key: &str) -> Option<&Payload> {
-        self.records.get(record)?.get_data(key)
+        // self.records.get(record)?.get_data(key)
+        unimplemented!()
     }
 
     fn meta_add_domain(&mut self, domain: &str) -> Option<()> {
-        if self.metadata.contains_key(domain) {
-            None
-        } else {
-            self.metadata.insert(domain.into(), MetaDomain::new(domain));
-            Some(())
-        }
+        // if self.metadata.contains_key(domain) {
+        //     None
+        // } else {
+        //     self.metadata.insert(domain.into(), MetaDomain::new(domain));
+        //     Some(())
+        // }
+        unimplemented!()
     }
 
     fn meta_pull_domain(&self, domain: &str) -> Option<&MetaDomain> {
-        self.metadata.get(domain)
+        // self.metadata.get(domain)
+        unimplemented!()
     }
 
     fn meta_push_domain(&mut self, domain: MetaDomain) -> Option<()> {
-        self.metadata
-            .insert(domain.name().into(), domain)
-            .map_or((), |_| ()) // We don't care about `None`
-            .into()
+        // self.metadata
+        //     .insert(domain.name().into(), domain)
+        //     .map_or((), |_| ()) // We don't care about `None`
+        //     .into()
+        unimplemented!()
     }
 
     fn meta_set(&mut self, domain: &str, name: &str, data: Payload) -> Option<()> {
-        self.metadata.get_mut(domain)?.set_field(name, data)
+        // self.metadata.get_mut(domain)?.set_field(name, data)
+        unimplemented!()
     }
 
     fn meta_get(&mut self, domain: &str, name: &str) -> Option<Payload> {
-        Some(self.metadata.get(domain)?.get_field(name)?.clone())
+        // Some(self.metadata.get(domain)?.get_field(name)?.clone())
+        unimplemented!()
     }
 
     fn meta_exists(&self, domain: &str) -> bool {
-        self.metadata.contains_key(domain)
+        // self.metadata.contains_key(domain)
+        unimplemented!()
     }
 }
