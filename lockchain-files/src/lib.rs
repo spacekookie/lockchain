@@ -67,7 +67,7 @@ pub struct FileVault<T: Body> {
     /// Filesystem wrapper utility
     fs: Filesystem,
     /// A userstore utility derived from Metadata
-    users: UserStoreMapper,
+    users: UserStore,
     /// A mapping of loaded records
     records: HashMap<String, Record<T>>,
     /// An index of all existing headers

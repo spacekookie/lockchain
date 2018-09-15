@@ -3,9 +3,10 @@
 
 use lcc::errors::VaultError;
 use lcc::{
+    crypto::{Key, KeyType},
     traits::{Body, Vault},
     users::UserStore,
-    Generator, Key, VaultType,
+    Generator, VaultType,
 };
 use std::collections::HashMap;
 
@@ -26,9 +27,15 @@ impl<T: Body> FileVault<T> {
 
         /* At this point we'll have to create some user */
         use self::VaultType::*;
-        match config.vault_type {
-            SoloUser { username, secret } => users.add_user(username, Key::from(secret)),
-            Administrated { secret } => users.add_user("Admin".into(), Key::from(secret)),
+        match &config.vault_type {
+            SoloUser { username, secret } => users.add_user(
+                username.clone(),
+                Key::from_pw(KeyType::Aes256, &secret, &username),
+            ),
+            Administrated { secret } => users.add_user(
+                "Admin".into(),
+                Key::from_pw(KeyType::Aes256, &secret, "admin"),
+            ),
         }
 
         let mut me = Self {

@@ -1,4 +1,5 @@
-use crypto::{random, Key, KeyType};
+use crypto::{Key, KeyType};
+use std::borrow::Cow;
 
 /// An authentication token that can be compared in constant time
 ///
@@ -10,7 +11,7 @@ use crypto::{random, Key, KeyType};
 /// // Will fail, but no expose failure length
 /// assert_eq!(t1, t2);
 /// ```
-#[derive(PartialEq, Eq, Serialize, Deserialize)]
+#[derive(PartialEq, Eq, Serialize, Deserialize, Clone)]
 pub struct Token {
     inner: Key,
 }
@@ -34,5 +35,5 @@ impl Token {
 #[derive(PartialEq, Eq, Serialize, Deserialize)]
 pub struct Request<'outer> {
     username: &'outer str,
-    token: Token,
+    token: Cow<'outer, Token>,
 }
