@@ -4,46 +4,8 @@
 //! which relies on keeping records in discrete files
 //! and folder structures.
 //!
-//! This is great if a vault needs to be easily syncable
-//! or indexable by another tool.
-//! No clear-text secrets are ever written to disk.
-//! But might be held in memory cache
-//! for a period of time.
-//!
-//! This backend is comparibly slow
-//! and should be avoided
-//! for performance critical applications.
-//! For such applications
-//! the blockstore is much more suited
-//! which represents a vault
-//! in a binary blob
-//! independant of the used filesystem.
-//!
-//! Part of the performance problems
-//! comes from locking the entire vault
-//! when doing operations,
-//! meaning that only
-//! one instance
-//! of a lockchain library
-//! can operate on it
-//! at the time
-//!
-//! ```
-//! my_vault/
-//!   config.toml
-//!   Lockfile
-//!   metadata/
-//!     userstore.meta
-//!     registry.meta
-//!   records/
-//!     <base64 hash 1>.rec
-//!     <base64 hash 2>.rec
-//!     <base64 hash 3>.rec
-//!   hashsums/
-//!     <base64 hash 1>.sum
-//!     <base64 hash 2>.sum
-//!     <base64 hash 3>.sum
-//! ```
+//! All further documentation can be found in `FileVault`
+
 #![feature(non_modrs_mods)]
 
 extern crate lockchain_core as lcc;
@@ -75,9 +37,18 @@ use userstore::UserStoreMapper;
 
 /// Persistence mapper to a folder and file structure
 ///
+/// This implementation tries  to be as efficient
+/// as possible, however please note that it is
+/// dependant on filesystem operations and is
+/// not suited for high-performance applications! 
+/// 
+/// ---
+/// 
 /// Implements the `Vault` API in full,
 /// replicating all functionality in memory
-/// and never writing clear text data to disk.
+/// while providing async operations on-disk.
+/// 
+/// Requests on files are debounced!
 ///
 /// The internal layout should not be assumed
 /// and isn't stabilised with the crate version
@@ -85,7 +56,8 @@ use userstore::UserStoreMapper;
 /// as long as they remain API compatible).
 ///
 /// The version of a vault is written in it's coniguration
-/// (which won't change – ever).
+/// which can be read via `json-compat` shims,
+/// in case the layout and scheme ever changes.
 ///
 /// The vault folder is safe to copy around –
 /// all vault metadata is kept inside it.
@@ -138,11 +110,7 @@ impl<T: Body> Vault<T> for FileVault<T> {
     }
 
     fn metadata(&self) -> VaultMetadata {
-        VaultMetadata {
-            name: self.meta_info.0.clone(),
-            location: self.meta_info.1.clone(),
-            size: self.records.len(),
-        }
+        unimplemented!()
     }
 
     /// Caches all files from disk to memory

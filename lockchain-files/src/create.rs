@@ -5,10 +5,9 @@ use lcc::errors::VaultError;
 use lcc::{traits::Body, Generator};
 use std::collections::HashMap;
 
-use ::FileVault;
-use ::config::{VaultConfig, ConfigError};
-use ::fs::{Filesystem, FileType};
-
+use config::{ConfigError, VaultConfig};
+use fs::{FileType, Filesystem};
+use FileVault;
 
 impl<T: Body> FileVault<T> {
     /// A small utility to create a new file vault
@@ -17,7 +16,7 @@ impl<T: Body> FileVault<T> {
 
         let fs = Filesystem::new(location, name);
         fs.scaffold().map_err(|_| VaultError::FailedCreation)?;
-        
+
         let cfg = VaultConfig::new(&gen);
 
         // Ok(Box::new(
@@ -37,8 +36,6 @@ impl<T: Body> FileVault<T> {
     }
 
     fn get_path(gen: &Generator) -> Result<(&str, &str), VaultError> {
-        
-
         Err(VaultError::IncompleteGenerator)
     }
 }
