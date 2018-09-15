@@ -11,6 +11,8 @@ use semver::Version;
 use toml;
 use utils::FileToString;
 
+use lcc::Generator;
+
 /// A set of errors around `lockchain-files` configs
 #[derive(Debug)]
 pub enum ConfigError {
@@ -46,7 +48,7 @@ pub struct VaultConfig {
 }
 
 impl VaultConfig {
-    pub fn new() -> Self {
+    pub fn new(_: &Generator) -> Self {
         Self {
             version: "0.1".into(),
             created_at: SystemTime::now(),

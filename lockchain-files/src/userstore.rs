@@ -3,13 +3,18 @@
 
 use lcc::users::UserStore;
 
-#[derive(Debug)]
 pub struct UserStoreMapper {
     inner: UserStore,
 }
 
 impl UserStoreMapper {
-    pub fn new(store: UserStore) -> Store {
+    pub fn new() -> Self {
+        Self {
+            inner: UserStore::new(),
+        }
+    }
+
+    pub fn load(store: UserStore) -> Self {
         Self { inner: store }
     }
 }

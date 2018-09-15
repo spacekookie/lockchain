@@ -50,12 +50,12 @@ pub type HttpApi<V> = server::HttpServer<App<Arc<Mutex<V>>>>;
 /// ```norun
 /// use lockchain_core::{traits::*, EncryptedBody};
 /// use lockchain_http::create_server;
-/// use lockchain_files::DataVault;
+/// use lockchain_files::FileVault;
 ///
 /// let server = create_server(
 ///     "localhost",
 ///     "8080",
-///     DataVault::<EncryptedBody>::new("name", "some-location"),
+///     FileVault::<EncryptedBody>::new("name", "some-location"),
 /// ).run();
 /// ```
 pub fn create_server<B, V>(

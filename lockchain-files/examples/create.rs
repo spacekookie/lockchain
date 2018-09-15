@@ -1,7 +1,7 @@
 extern crate lockchain_core as lcc;
 extern crate lockchain_files as files;
 
-use files::DataVault;
+use files::FileVault;
 use lcc::traits::Vault;
 use lcc::users::User;
 use lcc::{EncryptedBody, Generator, Payload, Record, VaultType};
@@ -12,7 +12,7 @@ fn main() {
         let path = env::args().nth(1).unwrap();
         let name = env::args().nth(2).unwrap();
 
-        let mut vault: DataVault<EncryptedBody> = Generator::new()
+        let mut vault: FileVault<EncryptedBody> = Generator::new()
             .path(name, path)
             .user_type(VaultType::SoloUser {
                 username: "spacekookie".into(),
@@ -21,7 +21,7 @@ fn main() {
             .unwrap();
         vault.sync();
 
-    // let vault: DataVault<EncryptedBody> = DataVault::new(&name, &path);
+    // let vault: FileVault<EncryptedBody> = FileVault::new(&name, &path);
 
     // let mut store = match (
     //     vault.meta_pull_domain("userstore"),

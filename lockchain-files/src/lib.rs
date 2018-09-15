@@ -58,12 +58,14 @@ use lcc::traits::{Body, LoadRecord, Vault};
 use lcc::{
     errors::VaultError,
     users::{Access, Token, UserStore},
-    Generator, MetaDomain, Payload, Record, VaultMetadata,
+    Generator, Header, MetaDomain, Payload, Record, VaultMetadata,
 };
 use std::collections::HashMap;
 
 mod config;
+mod create;
 mod fs;
+mod load;
 mod userstore;
 mod utils;
 
@@ -87,50 +89,30 @@ use userstore::UserStoreMapper;
 ///
 /// The vault folder is safe to copy around –
 /// all vault metadata is kept inside it.
-pub struct DataVault<T: Body> {
-    meta_info: (String, String),
+pub struct FileVault<T: Body> {
+    /// A representation of the cached vault config
     config: VaultConfig,
-    records: HashMap<String, Record<T>>,
-    metadata: HashMap<String, MetaDomain>,
+    /// Filesystem wrapper utility
     fs: Filesystem,
+    /// A userstore utility derived from Metadata
     users: UserStoreMapper,
+    /// A mapping of loaded records
+    records: HashMap<String, Record<T>>,
+    /// An index of all existing headers
+    headers: HashMap<String, Header>,
+    /// A map of all metadata files
+    metadata: HashMap<String, MetaDomain>,
 }
 
-impl<T: Body> DataVault<T> {
-    /// Small utility function to setup file structure
-    fn initialize(self) -> Self {
-        self.fs.scaffold();
-        self.config.save(&self.fs.root).unwrap();
-        self
+impl<T: Body> LoadRecord<T> for FileVault<T> {}
+
+impl<T: Body> Vault<T> for FileVault<T> {
+    fn new(gen: Generator) -> Result<Box<FileVault<T>>, VaultError> {
+        Self::create(gen).map(|s| Box::new(s))
     }
 
-    fn load(mut self) -> Result<Box<Self>, VaultError> {
-        self.config = match VaultConfig::load(&self.fs.root) {
-            Ok(cfg) => cfg,
-            _ => return Err(VaultError::FailedLoading),
-        };
-
-        Ok(Box::new(self))
-    }
-}
-
-impl<T: Body> LoadRecord<T> for DataVault<T> {}
-
-impl<T: Body> Vault<T> for DataVault<T> {
-    fn new(gen: Generator) -> Result<Box<DataVault<T>>, VaultError> {
-        Ok(Box::new(
-            Self {
-                meta_info: (
-                    gen.name.clone().unwrap().into(),
-                    gen.location.clone().unwrap().into(),
-                ),
-                records: HashMap::new(),
-                config: VaultConfig::new(),
-                metadata: HashMap::new(),
-                fs: Filesystem::new(&gen.location.unwrap(), &gen.name.unwrap()),
-                users: UserStoreMapper::new(UserStore::new()),
-            }.initialize(),
-        ))
+    fn load(name: &str, location: &str) -> Result<Box<Self>, VaultError> {
+        Self::load(name, location).map(|s| Box::new(s))
     }
 
     fn create_user(
@@ -143,22 +125,8 @@ impl<T: Body> Vault<T> for DataVault<T> {
         unimplemented!()
     }
 
-    fn delete_user(&mut self, token: Token, username: &str) {}
-
-    // Checking if a vault exists is basically checking it's config
-    // against the compatible version of this library.
-    //
-    // If it's compatible we can open the vault into memory
-    // (loading all required paths into the struct), then return it
-    fn load(name: &str, location: &str) -> Result<Box<Self>, VaultError> {
-        Self {
-            meta_info: (name.into(), location.into()),
-            records: HashMap::new(),
-            config: VaultConfig::new(),
-            metadata: HashMap::new(),
-            fs: Filesystem::new(location, name),
-            users: UserStoreMapper::new(UserStore::new()),
-        }.load()
+    fn delete_user(&mut self, token: Token, username: &str) {
+        unimplemented!()
     }
 
     fn authenticate(&mut self, username: &str, secret: &str) -> Token {

@@ -7,11 +7,11 @@ extern crate lockchain_files as files;
 extern crate lockchain_http as http;
 
 use core::EncryptedBody;
-use files::DataVault;
+use files::FileVault;
 use http::{create_server, state::ApiState};
 
 fn main() {
-    let state = ApiState::<EncryptedBody, DataVault<EncryptedBody>> {
+    let state = ApiState::<EncryptedBody, FileVault<EncryptedBody>> {
         bound_scope: true,
         working_dir: ".".into(),
 

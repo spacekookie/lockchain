@@ -13,7 +13,7 @@ use lcc::traits::AutoEncoder;
 
 use std::collections::HashMap;
 use std::error::Error;
-use std::io::Write;
+use std::io::{self, Write};
 use std::{
     fs::{self, File, OpenOptions as OO},
     path::PathBuf,
@@ -70,12 +70,12 @@ impl Filesystem {
     }
 
     /// Create required directories
-    pub fn scaffold(&self) -> Option<()> {
-        fs::create_dir_all(&self.root).ok()?;
-        fs::create_dir(&self.root.join("records")).ok()?;
-        fs::create_dir(&self.root.join("metadata")).ok()?;
-        fs::create_dir(&self.root.join("checksums")).ok()?;
-        Some(())
+    pub fn scaffold(&self) -> Result<(), io::Error> {
+        fs::create_dir_all(&self.root)?;
+        fs::create_dir(&self.root.join("records"))?;
+        fs::create_dir(&self.root.join("metadata"))?;
+        fs::create_dir(&self.root.join("checksums"))?;
+        Ok(())
     }
 
     /// Load all files of a certain type into a Vec<String>
