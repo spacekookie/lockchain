@@ -1,7 +1,8 @@
-use traits::{Body, Vault};
 use errors::VaultError;
+use traits::{Body, Vault};
 
 /// Describes the internal permission layout of a vault
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub enum VaultType {
     /// Create an all-powerful root user which can access everything
     Administrated {

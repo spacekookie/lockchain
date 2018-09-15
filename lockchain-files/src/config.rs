@@ -11,7 +11,7 @@ use semver::Version;
 use toml;
 use utils::FileToString;
 
-use lcc::Generator;
+use lcc::{errors::VaultError, Generator, VaultType};
 
 /// A set of errors around `lockchain-files` configs
 #[derive(Debug)]
@@ -39,21 +39,28 @@ impl fmt::Display for ConfigError {
 impl Error for ConfigError {}
 
 /// The configuration describing a file vault
-#[derive(Serialize, Deserialize, Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct VaultConfig {
     /// A semver conforming version string
     pub version: String,
+    pub vault_type: VaultType,
     pub created_at: SystemTime,
     pub modified_at: SystemTime,
 }
 
 impl VaultConfig {
-    pub fn new(_: &Generator) -> Self {
-        Self {
+    pub fn new(gen: &Generator) -> Result<Self, VaultError> {
+        let vt = gen
+            .user_type
+            .as_ref()
+            .ok_or(VaultError::IncompleteGenerator)?;
+
+        Ok(Self {
             version: "0.1".into(),
+            vault_type: vt.clone(),
             created_at: SystemTime::now(),
             modified_at: SystemTime::now(),
-        }
+        })
     }
 
     pub fn save(&self, vault: &PathBuf) -> Result<(), io::Error> {

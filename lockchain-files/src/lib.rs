@@ -23,31 +23,31 @@ use lcc::{
     Generator, Header, MetaDomain, Payload, Record, VaultMetadata,
 };
 use std::collections::HashMap;
+use std::default::Default;
 
 mod config;
 mod create;
 mod fs;
 mod load;
-mod userstore;
 mod utils;
+mod userstore;
 
 pub use config::{ConfigError, VaultConfig};
 use fs::{FileType, Filesystem};
-use userstore::UserStoreMapper;
 
 /// Persistence mapper to a folder and file structure
 ///
 /// This implementation tries  to be as efficient
 /// as possible, however please note that it is
 /// dependant on filesystem operations and is
-/// not suited for high-performance applications! 
-/// 
+/// not suited for high-performance applications!
+///
 /// ---
-/// 
+///
 /// Implements the `Vault` API in full,
 /// replicating all functionality in memory
 /// while providing async operations on-disk.
-/// 
+///
 /// Requests on files are debounced!
 ///
 /// The internal layout should not be assumed
@@ -74,6 +74,18 @@ pub struct FileVault<T: Body> {
     headers: HashMap<String, Header>,
     /// A map of all metadata files
     metadata: HashMap<String, MetaDomain>,
+}
+
+impl<T: Body> Default for FileVault<T> {
+    #[allow(unconditional_recursion)]
+    fn default() -> Self {
+        Self {
+            records: HashMap::new(),
+            headers: HashMap::new(),
+            metadata: HashMap::new(),
+            ..Default::default()
+        }
+    }
 }
 
 impl<T: Body> LoadRecord<T> for FileVault<T> {}

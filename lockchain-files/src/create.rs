@@ -2,7 +2,11 @@
 #![allow(unused_imports)]
 
 use lcc::errors::VaultError;
-use lcc::{traits::Body, Generator};
+use lcc::{
+    traits::{Body, Vault},
+    users::UserStore,
+    Generator, Key, VaultType,
+};
 use std::collections::HashMap;
 
 use config::{ConfigError, VaultConfig};
@@ -17,22 +21,27 @@ impl<T: Body> FileVault<T> {
         let fs = Filesystem::new(location, name);
         fs.scaffold().map_err(|_| VaultError::FailedCreation)?;
 
-        let cfg = VaultConfig::new(&gen);
+        let config = VaultConfig::new(&gen)?;
+        let mut users = UserStore::new();
 
-        // Ok(Box::new(
-        //     Self {
-        //         meta_info: (
-        //             gen.name.clone().unwrap().into(),
-        //             gen.location.clone().unwrap().into(),
-        //         ),
-        //         records: HashMap::new(),
-        //         config: VaultConfig::new(),
-        //         metadata: HashMap::new(),
-        //         fs: Filesystem::new(&gen.location.unwrap(), &gen.name.unwrap()),
-        //         users: UserStoreMapper::new(),
-        //     }.initialize(),
-        // ))
-        unimplemented!()
+        /* At this point we'll have to create some user */
+        use self::VaultType::*;
+        match config.vault_type {
+            SoloUser { username, secret } => users.add_user(username, Key::from(secret)),
+            Administrated { secret } => users.add_user("Admin".into(), Key::from(secret)),
+        }
+
+        let mut me = Self {
+            config,
+            fs,
+            users,
+            ..Default::default()
+        };
+
+        /* Make sure to sync all made changes after the scaffold */
+        me.sync();
+
+        Ok(me)
     }
 
     fn get_path(gen: &Generator) -> Result<(&str, &str), VaultError> {

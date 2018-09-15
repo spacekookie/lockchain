@@ -14,17 +14,17 @@
 //! data to load and store them into a metadata store.
 
 mod auth;
-mod user;
 mod rights;
 mod tokens;
+mod user;
 
 mod secrets;
 mod userstore;
 
 pub use self::auth::pam_authenticate;
-pub use self::tokens::Token;
+pub use self::tokens::{Request, Token};
 pub use self::user::User;
 pub use self::userstore::UserStore;
 
-pub use errors::AuthError;
 pub use self::rights::{Access, Role};
+pub use errors::AuthError;
