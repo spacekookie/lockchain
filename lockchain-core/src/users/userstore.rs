@@ -3,19 +3,25 @@
 use super::rights::Access;
 use crypto::Key;
 use std::collections::HashMap;
+use traits::AutoEncoder;
 
 /// A thin user UserStore
 ///
 /// It's implementation can manage multiple keys per user, of various
 /// types and constrained for limited access rights.
+#[derive(Serialize, Deserialize)]
 pub struct UserStore {
     store: HashMap<String, StoreUser>,
 }
 
-struct StoreUser {
+/// Internal store user structure
+#[derive(Serialize, Deserialize)]
+pub struct StoreUser {
     name: String,
     keys: HashMap<Access, Key>,
 }
+
+impl AutoEncoder for UserStore {}
 
 impl UserStore {
     /// Create a new, empty UserStore

@@ -47,7 +47,7 @@ fn type_path(tt: FileType, root: &PathBuf) -> PathBuf {
     path
 }
 
-pub fn write_file(tt: FileType, root: PathBuf, name: &str, contents: Vec<u8>) -> Result<()> {
+pub(crate) fn write_file(tt: FileType, root: PathBuf, name: &str, contents: Vec<u8>) -> Result<()> {
     let file_name = format!("{}.{}", name, file_ending!(&tt));
     let mut path = type_path(tt, &root);
     path.push(file_name);

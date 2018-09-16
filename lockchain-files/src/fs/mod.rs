@@ -88,11 +88,11 @@ impl Filesystem {
     pub fn sync_vault<T: Body>(&self, vault: &FileVault<T>) -> Result<(), io::Error> {
         vault.config.save(&self.root)?;
 
-
         unimplemented!()
     }
 
     /// Respond to a sync request
+    #[deprecated]
     pub fn sync<T>(&self, data: &HashMap<String, T>, types: FileType) -> Result<(), Box<Error>>
     where
         T: AutoEncoder,
@@ -122,4 +122,6 @@ impl Filesystem {
 
         // Ok(())
     }
+
+    /************* Private utility functions*************/
 }

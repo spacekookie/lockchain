@@ -59,6 +59,11 @@ impl MetaDomain {
         }
     }
 
+    /// Insert a single value into the body
+    pub fn insert<S: Into<String>>(&mut self, key: S, value: Payload) -> &mut Self {
+        unimplemented!()
+    }
+
     /// Return a read-only reference to the entire body
     pub fn all(&self) -> &HashMap<String, Payload> {
         &self.body

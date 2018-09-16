@@ -5,7 +5,10 @@ use std::fmt::{Display, Formatter, Result};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Error {
-
+    FailedRead,
+    FailedWrite,
+    FailedEncode,
+    FailedDecode,
 }
 
 impl StdError for Error {}
