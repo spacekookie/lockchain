@@ -4,14 +4,14 @@ use std::borrow::Cow;
 /// An authentication token that can be compared in constant time
 ///
 /// ```
-/// use lockchain_core::users::auth::Token;
+/// use lockchain_core::users::Token;
 /// let t1 = Token::new();
 /// let t2 = Token::new();
 ///
 /// // Will fail, but no expose failure length
-/// assert_eq!(t1, t2);
+/// assert!(t1 != t2);
 /// ```
-#[derive(PartialEq, Eq, Serialize, Deserialize, Clone)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone)]
 pub struct Token {
     inner: Key,
 }

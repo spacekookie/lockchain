@@ -88,7 +88,7 @@ impl<T: Body> Vault<T> for FileVault<T> {
         &mut self,
         token: Token,
         username: &str,
-        secret: &str,
+        secret: Vec<u8>,
         access: Vec<Access>,
     ) -> Result<(), ()> {
         unimplemented!()

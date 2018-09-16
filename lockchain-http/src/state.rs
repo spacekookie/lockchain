@@ -16,7 +16,7 @@ use std::path::PathBuf;
 /// It provides some simple query functions for handlers to work on,
 /// as well as expose raw configuration fields to be written
 ///
-/// ```
+/// ```norun
 /// let state: ApiState<B, V> = ApiState {
 ///     bound_scope: false,
 ///     working_dir: ".".into(),

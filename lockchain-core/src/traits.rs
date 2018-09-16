@@ -55,10 +55,8 @@ pub trait LoadRecord<T: Body> {
 /// Additional functions might be added to this trait further down
 /// the road but for now, it's really just a marker that you can easily
 /// implement for any type that's also `AutoEncoder`
-///
-/// ```rust, norun
-/// impl Encryptable for YourSpecialType {}
-/// ```
+/// 
+// TODO: Add documentation test code in again
 pub trait Encryptable: AutoEncoder {}
 
 /// A base trait that describes the basic functionality of
@@ -132,15 +130,22 @@ where
     /// End a specific user session
     fn deauthenticate(&mut self, username: &str, _: Token);
     /// Create a new user with a list of initial access rights
+    /// 
+    /// **Important Note** A backend can make no guarantee for the safety
+    /// of it's persistence. This means that a client library author is
+    /// responsible for encrypting all required secrets **before** submitting
+    /// them to a vault backend!
     fn create_user(
         &mut self,
         token: Token,
         username: &str,
-        secret: &str,
+        secret: Vec<u8>,
         access: Vec<Access>,
     ) -> Result<(), ()>;
     /// Delete a user
     fn delete_user(&mut self, token: Token, username: &str);
+    // / Modify user data, if authenticated as said user
+    // fn modify_user(&mut self, token: Token, username: &str) -> Option<&mut User>;
 
     /// Get basic vault metadata
     fn metadata(&self) -> VaultMetadata;
