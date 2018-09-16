@@ -17,53 +17,71 @@ impl Encryptable for DataBody {}
 
 pub struct AesEngine {
     ctx: Aes256Siv,
-    _key: Key,
+    _key: Option<Key>,
     iv: Vec<u8>,
 }
 
 impl AesEngine {
+    /// Initialise an AesEngine and take ownership of a raw key
+    pub fn new(key: Key) -> Self {
+        assert!(key.len() == 64);
+
+        Self {
+            ctx: Aes256Siv::new(&key.as_slice()),
+            _key: Some(key),
+            iv: random::bytes(64),
+        }
+    }
+
     /// Generate new key and encryption engine
     #[deprecated]
     pub fn generate() -> Self {
-        let key = Key::new(KeyType::Aes256);
-        let len = key.len();
-        Self {
-            ctx: Aes256Siv::new(&key.as_slice()),
-            _key: key,
-            iv: random::bytes(len),
-        }
+        // let key = Key::new(KeyType::Aes256);
+        // let len = key.len();
+        // Self {
+        //     ctx: Aes256Siv::new(&key.as_slice()),
+        //     _key: key,
+        //     new_key: None,
+        //     iv: random::bytes(len),
+        // }
+        unimplemented!()
     }
 
     /// Generate an Aes context from password
     #[deprecated]
     pub fn from_pw(pw: &str, salt: &str) -> Self {
-        let key = Key::from_pw(KeyType::Aes256, pw, salt);
-        let len = key.len();
-        Self {
-            ctx: Aes256Siv::new(&key.as_slice()),
-            _key: key,
-            iv: random::bytes(len),
-        }
+        // let key = Key::from_pw(KeyType::Aes256, pw, salt);
+        // let len = key.len();
+        // Self {
+        //     ctx: Aes256Siv::new(&key.as_slice()),
+        //     _key: key,
+        //     new_key: None,
+        //     iv: random::bytes(len),
+        // }
+        unimplemented!()
     }
 
     /// Load a packed data object which contains an Aes context
     #[deprecated]
     pub fn load(packed: PackedData, pw: &str, salt: &str) -> Option<Self> {
-        let mut temp = Self::from_pw(pw, salt);
-        let k: Key = Key::decode(&String::from_utf8(temp.decrypt_primitive(&packed)?).ok()?).ok()?;
+        // let mut temp = Self::from_pw(pw, salt);
+        // let k: Key = Key::decode(&String::from_utf8(temp.decrypt_primitive(&packed)?).ok()?).ok()?;
 
-        Some(Self {
-            ctx: Aes256Siv::new(&k.as_slice()),
-            _key: k,
-            iv: packed.iv,
-        })
+        // Some(Self {
+        //     ctx: Aes256Siv::new(&k.as_slice()),
+        //     _key: k,
+        //     new_key: None,
+        //     iv: packed.iv,
+        // })
+        unimplemented!()
     }
 
     /// Serialise the current context to save it somewhere
     #[deprecated]
     pub fn save(&mut self) -> PackedData {
-        let k = self._key.as_slice().into();
-        self.encrypt_primitive(&k)
+        // let k = self._key.as_slice().into();
+        // self.encrypt_primitive(&k)
+        unimplemented!()
     }
 
     fn encrypt_primitive(&mut self, data: &Vec<u8>) -> PackedData {
