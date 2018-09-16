@@ -9,21 +9,22 @@
 //! which will return either `Ok(())` or the first error in the list
 //! of operations.
 
-use lcc::traits::{Body, AutoEncoder};
+use lcc::traits::{AutoEncoder, Body};
 
 use std::collections::HashMap;
 use std::error::Error;
 use std::io::{self, Write};
 use std::{
-    fs::{self, File, OpenOptions as OO},
+    fs::{self, File, OpenOptions},
     path::PathBuf,
 };
 
 use utils::FileToString;
 use FileVault;
 
-pub mod primitive;
+mod primitive;
 use self::primitive::*;
+use userstore::DiskMirror;
 
 #[derive(Debug)]
 pub struct Filesystem {
@@ -87,8 +88,14 @@ impl Filesystem {
 
     pub fn sync_vault<T: Body>(&self, vault: &FileVault<T>) -> Result<(), io::Error> {
         vault.config.save(&self.root)?;
+        primitive::write_file(
+            FileType::Metadata,
+            &self.root,
+            "userstore",
+            vault.users.to_disk(),
+        )?;
 
-        unimplemented!()
+        Ok(())
     }
 
     /// Respond to a sync request

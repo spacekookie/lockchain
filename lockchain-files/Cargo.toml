@@ -15,6 +15,6 @@ vault-version = "0.1"
 [dependencies]
 lockchain-core = { version = "0.9.1-alpha.0", path = "../lockchain-core" }
 semver = "0.9.0"
-toml = "0.4"
+serde_yaml = "0.8"
 serde = "1.0"
 serde_derive = "1.0"

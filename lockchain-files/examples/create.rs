@@ -4,23 +4,27 @@ extern crate lockchain_files as files;
 use files::FileVault;
 use lcc::traits::Vault;
 use lcc::users::User;
-use lcc::{EncryptedBody, Generator, Payload, Record, VaultType};
+use lcc::{
+    crypto::{Key, KeyType},
+    EncryptedBody, Generator, Payload, Record, VaultType,
+};
 use std::env;
 
 fn main() {
+    if env::args().len() == 3 {
+        let path = env::args().nth(1).unwrap();
+        let name = env::args().nth(2).unwrap();
 
-    // if env::args().len() == 3 {
-    //     let path = env::args().nth(1).unwrap();
-    //     let name = env::args().nth(2).unwrap();
+        let key = Key::from_pw(KeyType::Aes256, "foobar3264", "spacekookie");
 
-    //     let mut vault: FileVault<EncryptedBody> = Generator::new()
-    //         .path(name, path)
-    //         .user_type(VaultType::SoloUser {
-    //             username: "spacekookie".into(),
-    //             secret: "foobar3264".into(),
-    //         }).finalise()
-    //         .unwrap();
-    //     vault.sync();
+        let mut vault: FileVault<EncryptedBody> = Generator::new()
+            .path(name, path)
+            .user_type(VaultType::SoloUser {
+                username: "spacekookie".into(),
+                secret: key.as_slice().to_vec(),
+            }).finalise()
+            .unwrap();
+    }
 
     // let vault: FileVault<EncryptedBody> = FileVault::new(&name, &path);
 

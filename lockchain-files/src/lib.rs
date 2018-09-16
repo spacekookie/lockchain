@@ -8,10 +8,10 @@
 
 extern crate lockchain_core as lcc;
 extern crate semver;
-extern crate toml;
 
 #[macro_use]
 extern crate serde_derive;
+extern crate serde_yaml;
 extern crate serde;
 
 use lcc::traits::{Body, LoadRecord, Vault};
@@ -21,7 +21,6 @@ use lcc::{
     Generator, Header, MetaDomain, Payload, Record, VaultMetadata,
 };
 use std::collections::HashMap;
-use std::default::Default;
 
 mod config;
 mod create;
@@ -72,18 +71,6 @@ pub struct FileVault<T: Body> {
     headers: HashMap<String, Header>,
     /// A map of all metadata files
     metadata: HashMap<String, MetaDomain>,
-}
-
-impl<T: Body> Default for FileVault<T> {
-    #[allow(unconditional_recursion)]
-    fn default() -> Self {
-        Self {
-            records: HashMap::new(),
-            headers: HashMap::new(),
-            metadata: HashMap::new(),
-            ..Default::default()
-        }
-    }
 }
 
 impl<T: Body> LoadRecord<T> for FileVault<T> {}
@@ -159,13 +146,15 @@ impl<T: Body> Vault<T> for FileVault<T> {
     }
 
     fn sync(&mut self) {
+        self.fs.sync_vault(&self).unwrap();
+
         // self.fs
         //     .sync::<Record<T>>(&self.records, FileType::Record)
         //     .unwrap();
         // self.fs
         //     .sync::<MetaDomain>(&self.metadata, FileType::Metadata)
         //     .unwrap();
-        unimplemented!()
+        // unimplemented!()
     }
 
     fn get_record(&self, name: &str) -> Option<&Record<T>> {

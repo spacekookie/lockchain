@@ -8,10 +8,10 @@ use std::{
 };
 
 use semver::Version;
-use toml;
+use serde_yaml;
 use utils::FileToString;
 
-use lcc::{errors::VaultError, Generator, VaultType};
+use lcc::{errors::VaultError, VaultType};
 
 /// A set of errors around `lockchain-files` configs
 #[derive(Debug)]
@@ -43,21 +43,27 @@ impl Error for ConfigError {}
 pub struct VaultConfig {
     /// A semver conforming version string
     pub version: String,
-    pub vault_type: VaultType,
+    pub vault_type: ConfigType,
     pub created_at: SystemTime,
     pub modified_at: SystemTime,
 }
 
-impl VaultConfig {
-    pub fn new(gen: &Generator) -> Result<Self, VaultError> {
-        let vt = gen
-            .user_type
-            .as_ref()
-            .ok_or(VaultError::IncompleteGenerator)?;
+#[derive(Debug, Serialize, Deserialize)]
+pub enum ConfigType {
+    SoloUser,
+    Administrated,
+    Unmanaged,
+}
 
+impl VaultConfig {
+    pub fn new(vt: &VaultType) -> Result<Self, VaultError> {
         Ok(Self {
             version: "0.1".into(),
-            vault_type: vt.clone(),
+            vault_type: match vt {
+                &VaultType::SoloUser { .. } => ConfigType::SoloUser,
+                &VaultType::Administrated { .. } => ConfigType::Administrated,
+                _ => ConfigType::Unmanaged,
+            },
             created_at: SystemTime::now(),
             modified_at: SystemTime::now(),
         })
@@ -65,9 +71,9 @@ impl VaultConfig {
 
     pub fn save(&self, vault: &PathBuf) -> Result<(), io::Error> {
         let mut cfg_path = vault.clone();
-        cfg_path.push("config.toml");
+        cfg_path.push("vault.cfg");
 
-        let t = toml::to_string(self).unwrap();
+        let t = serde_yaml::to_string(self).unwrap();
         let mut f = OO::new().create(true).write(true).open(cfg_path)?;
         f.write_all(t.as_bytes())?;
         Ok(())
@@ -76,11 +82,11 @@ impl VaultConfig {
     /// Attempts to load a configuration – returning detailed errors
     pub fn load(vault: &PathBuf) -> Result<Self, ConfigError> {
         let mut cfg_path = vault.clone();
-        cfg_path.push("config.toml");
+        cfg_path.push("vault.cfg");
 
         let cfg: VaultConfig = match File::open(cfg_path.as_path()) {
             Ok(mut f) => match f.get_string() {
-                Ok(s) => match toml::from_str(&s) {
+                Ok(s) => match serde_yaml::from_str(&s) {
                     Ok(c) => c,
                     Err(_) => return Err(ConfigError::ConfigCorrupted),
                 },

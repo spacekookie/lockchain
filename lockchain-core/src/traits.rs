@@ -188,7 +188,7 @@ where
 /// Auto-implement this trait to serialise types to json
 pub trait AutoEncoder: Serialize + DeserializeOwned {
     fn encode(&self) -> Result<String, SerdeError> {
-        serde_json::to_string_pretty(self)
+        serde_json::to_string(self)
     }
 
     fn decode(s: &str) -> Result<Self, SerdeError> {
