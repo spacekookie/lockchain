@@ -55,7 +55,7 @@ pub trait LoadRecord<T: Body> {
 /// Additional functions might be added to this trait further down
 /// the road but for now, it's really just a marker that you can easily
 /// implement for any type that's also `AutoEncoder`
-/// 
+///
 // TODO: Add documentation test code in again
 pub trait Encryptable: AutoEncoder {}
 
@@ -64,11 +64,7 @@ pub trait Encryptable: AutoEncoder {}
 ///
 /// Encryption is never done directly on the bodies, only via
 /// this scheduler type with the help of the [[Encryptable]] trait.
-#[deprecated]
-pub trait EncryptionHandler<T>
-where
-    T: Encryptable + AutoEncoder + Body,
-{
+pub trait EncryptionHandler<T: Encryptable> {
     fn encrypt(&mut self, item: T) -> EncryptedBody;
     fn decrypt(&mut self, item: EncryptedBody) -> Option<T>;
 }
@@ -130,7 +126,7 @@ where
     /// End a specific user session
     fn deauthenticate(&mut self, username: &str, _: Token);
     /// Create a new user with a list of initial access rights
-    /// 
+    ///
     /// **Important Note** A backend can make no guarantee for the safety
     /// of it's persistence. This means that a client library author is
     /// responsible for encrypting all required secrets **before** submitting

@@ -1,4 +1,9 @@
-//!
+//! A clear-text representation of a record body in memory
+//! 
+//! This form is created by the `lockchain-crypto` crate and
+//! should only exist in ephemeral form. All actions are first
+//! encrypted before being written back to a persistence
+//! medium.
 
 use lcc::traits::{AutoEncoder, Body};
 use lcc::Payload;

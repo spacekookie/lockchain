@@ -13,6 +13,8 @@ extern crate lockchain_core as lcc;
 
 mod databody;
 mod engine;
+mod keyfold;
 
-pub use databody::*;
+pub use databody::DataBody;
 pub use engine::AesEngine;
+pub use keyfold::Keyfold;

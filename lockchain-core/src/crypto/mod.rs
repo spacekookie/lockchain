@@ -6,10 +6,13 @@
 /// We re-export keybob's API here
 mod keys {
     pub use keybob::{Key, KeyType};
-    use traits::AutoEncoder;
+    use traits::{AutoEncoder, Encryptable};
 
     impl AutoEncoder for Key {}
     impl AutoEncoder for KeyType {}
+    
+    impl Encryptable for Key {}
+    impl Encryptable for KeyType {}
 }
 
 mod data;

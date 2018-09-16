@@ -2,8 +2,6 @@
 //!
 //! Can be initialised from scratch or with a pw/salt
 //! combintaion which derives a key via the `keybob` crate.
-//!
-//! Implements
 
 use lcc::traits::{AutoEncoder, Encryptable, EncryptionHandler};
 use lcc::{EncryptedBody, PackedData};
@@ -25,6 +23,7 @@ pub struct AesEngine {
 
 impl AesEngine {
     /// Generate new key and encryption engine
+    #[deprecated]
     pub fn generate() -> Self {
         let key = Key::new(KeyType::Aes256);
         let len = key.len();
@@ -36,6 +35,7 @@ impl AesEngine {
     }
 
     /// Generate an Aes context from password
+    #[deprecated]
     pub fn from_pw(pw: &str, salt: &str) -> Self {
         let key = Key::from_pw(KeyType::Aes256, pw, salt);
         let len = key.len();
@@ -47,6 +47,7 @@ impl AesEngine {
     }
 
     /// Load a packed data object which contains an Aes context
+    #[deprecated]
     pub fn load(packed: PackedData, pw: &str, salt: &str) -> Option<Self> {
         let mut temp = Self::from_pw(pw, salt);
         let k: Key = Key::decode(&String::from_utf8(temp.decrypt_primitive(&packed)?).ok()?).ok()?;
@@ -59,6 +60,7 @@ impl AesEngine {
     }
 
     /// Serialise the current context to save it somewhere
+    #[deprecated]
     pub fn save(&mut self) -> PackedData {
         let k = self._key.as_slice().into();
         self.encrypt_primitive(&k)
