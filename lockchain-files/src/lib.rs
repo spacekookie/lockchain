@@ -25,7 +25,7 @@ use std::default::Default;
 
 mod config;
 mod create;
-mod fs;
+pub mod fs;
 mod load;
 mod userstore;
 mod utils;

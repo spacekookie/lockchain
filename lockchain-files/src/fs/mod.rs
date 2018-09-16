@@ -22,7 +22,7 @@ use std::{
 use utils::FileToString;
 use FileVault;
 
-mod primitive;
+pub mod primitive;
 use self::primitive::*;
 
 #[derive(Debug)]
@@ -78,10 +78,11 @@ impl Filesystem {
 
     /// Retrieve a single record from the cached vault
     pub fn pull<T: AutoEncoder>(&self, types: FileType, id: &str) -> Result<T, Box<Error>> {
-        Ok(T::decode(
-            &File::open(self.root.join(&format!("{}.{}", id, file_ending!(types))))?
-                .get_string()?,
-        )?)
+        // Ok(T::decode(
+        //     &File::open(self.root.join(&format!("{}.{}", id, file_ending!(types))))?
+        //         .get_string()?,
+        // )?)
+        unimplemented!()
     }
 
     pub fn sync_vault<T: Body>(&self, vault: &FileVault<T>) -> Result<(), io::Error> {
@@ -96,28 +97,29 @@ impl Filesystem {
     where
         T: AutoEncoder,
     {
-        data.into_iter()
-            .map(|(k, v)| (k, v.encode().ok()))
-            .map(|(k, v)| {
-                (
-                    match types {
-                        FileType::Record => self.root.join("records"),
-                        FileType::Metadata => self.root.join("metadata"),
-                        _ => self.root.join("."),
-                    }.join(format!("{}.{}", k, file_ending!(types))),
-                    v,
-                )
-            }).filter(|(_, v)| v.is_some())
-            .map(|(k, v)| (k, v.unwrap()))
-            .map(|(path, data): (PathBuf, String)| {
-                (OO::new().create(true).write(true).open(path), data)
-            }).filter(|(path, _)| path.is_ok())
-            .map(|(file, data)| (file.unwrap(), data))
-            .for_each(|(mut file, data)| {
-                file.write_all(data.as_bytes())
-                    .expect("Failed to write file!")
-            });
+        unimplemented!()
+        // data.into_iter()
+        //     .map(|(k, v)| (k, v.encode().ok()))
+        //     .map(|(k, v)| {
+        //         (
+        //             match types {
+        //                 FileType::Record => self.root.join("records"),
+        //                 FileType::Metadata => self.root.join("metadata"),
+        //                 _ => self.root.join("."),
+        //             }.join(format!("{}.{}", k, file_ending!(types))),
+        //             v,
+        //         )
+        //     }).filter(|(_, v)| v.is_some())
+        //     .map(|(k, v)| (k, v.unwrap()))
+        //     .map(|(path, data): (PathBuf, String)| {
+        //         (OO::new().create(true).write(true).open(path), data)
+        //     }).filter(|(path, _)| path.is_ok())
+        //     .map(|(file, data)| (file.unwrap(), data))
+        //     .for_each(|(mut file, data)| {
+        //         file.write_all(data.as_bytes())
+        //             .expect("Failed to write file!")
+        //     });
 
-        Ok(())
+        // Ok(())
     }
 }

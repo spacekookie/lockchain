@@ -8,18 +8,19 @@ use lcc::{EncryptedBody, Generator, Payload, Record, VaultType};
 use std::env;
 
 fn main() {
-    if env::args().len() == 3 {
-        let path = env::args().nth(1).unwrap();
-        let name = env::args().nth(2).unwrap();
 
-        let mut vault: FileVault<EncryptedBody> = Generator::new()
-            .path(name, path)
-            .user_type(VaultType::SoloUser {
-                username: "spacekookie".into(),
-                secret: "foobar3264".into(),
-            }).finalise()
-            .unwrap();
-        vault.sync();
+    // if env::args().len() == 3 {
+    //     let path = env::args().nth(1).unwrap();
+    //     let name = env::args().nth(2).unwrap();
+
+    //     let mut vault: FileVault<EncryptedBody> = Generator::new()
+    //         .path(name, path)
+    //         .user_type(VaultType::SoloUser {
+    //             username: "spacekookie".into(),
+    //             secret: "foobar3264".into(),
+    //         }).finalise()
+    //         .unwrap();
+    //     vault.sync();
 
     // let vault: FileVault<EncryptedBody> = FileVault::new(&name, &path);
 
@@ -40,7 +41,7 @@ fn main() {
     // vault.meta_push_domain(users);
     // vault.meta_push_domain(registry);
     // vault.sync();
-    } else {
-        eprintln!("Usage: create <path> <name> [FLAGS] (there are no flags)")
-    }
+    // } else {
+    //     eprintln!("Usage: create <path> <name> [FLAGS] (there are no flags)")
+    // }
 }
