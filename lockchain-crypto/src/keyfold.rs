@@ -29,7 +29,7 @@ impl Keyfold {
         self.engine = Some(engine);
     }
 
-    /// Return ownership o the AesEngine
+    /// Return ownership of the AesEngine
     pub fn end(mut self) -> AesEngine {
         let engine = self.engine.unwrap();
         self.engine = None;

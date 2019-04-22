@@ -10,6 +10,7 @@ use crate::lcc::Payload;
 use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
+/// A clear-text representation of a record
 #[derive(Serialize, Deserialize)]
 pub struct DataBody {
     tree: BTreeMap<String, Payload>,

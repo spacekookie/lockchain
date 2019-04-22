@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 ///
 /// ---
 ///
-/// **Important Note** Because lockchain-core doesn't make assumptions about
+/// **Important Note** Because lockchain-core doesn't make assumptions
 /// about the existence of a cryptographic layer, the `UserStore` that
 /// handles these secrets assumes they are **not** secret!
 ///

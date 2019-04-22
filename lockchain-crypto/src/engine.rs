@@ -14,7 +14,7 @@ impl Encryptable for DataBody {}
 
 pub struct AesEngine {
     ctx: Aes256SivAead,
-    _key: Option<Key>,
+    key: Key,
     iv: Vec<u8>,
 }
 
@@ -25,60 +25,9 @@ impl AesEngine {
 
         Self {
             ctx: Aes256SivAead::new(&key.as_slice()),
-            _key: Some(key),
             iv: random::bytes(64),
+            key,
         }
-    }
-
-    /// Generate new key and encryption engine
-    #[deprecated]
-    pub fn generate() -> Self {
-        // let key = Key::new(KeyType::Aes256);
-        // let len = key.len();
-        // Self {
-        //     ctx: Aes256Siv::new(&key.as_slice()),
-        //     _key: key,
-        //     new_key: None,
-        //     iv: random::bytes(len),
-        // }
-        unimplemented!()
-    }
-
-    /// Generate an Aes context from password
-    #[deprecated]
-    pub fn from_pw(_pw: &str, _salt: &str) -> Self {
-        // let key = Key::from_pw(KeyType::Aes256, pw, salt);
-        // let len = key.len();
-        // Self {
-        //     ctx: Aes256Siv::new(&key.as_slice()),
-        //     _key: key,
-        //     new_key: None,
-        //     iv: random::bytes(len),
-        // }
-        unimplemented!()
-    }
-
-    /// Load a packed data object which contains an Aes context
-    #[deprecated]
-    pub fn load(_packed: PackedData, _pw: &str, _salt: &str) -> Option<Self> {
-        // let mut temp = Self::from_pw(pw, salt);
-        // let k: Key = Key::decode(&String::from_utf8(temp.decrypt_primitive(&packed)?).ok()?).ok()?;
-
-        // Some(Self {
-        //     ctx: Aes256Siv::new(&k.as_slice()),
-        //     _key: k,
-        //     new_key: None,
-        //     iv: packed.iv,
-        // })
-        unimplemented!()
-    }
-
-    /// Serialise the current context to save it somewhere
-    #[deprecated]
-    pub fn save(&mut self) -> PackedData {
-        // let k = self._key.as_slice().into();
-        // self.encrypt_primitive(&k)
-        unimplemented!()
     }
 
     fn encrypt_primitive(&mut self, data: &Vec<u8>) -> PackedData {
