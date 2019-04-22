@@ -9,9 +9,9 @@ use std::{
 
 use semver::Version;
 use serde_yaml;
-use utils::FileToString;
+use crate::utils::FileToString;
 
-use lcc::{errors::VaultError, VaultType};
+use crate::lcc::{errors::VaultError, VaultType};
 
 /// A set of errors around `lockchain-files` configs
 #[derive(Debug)]

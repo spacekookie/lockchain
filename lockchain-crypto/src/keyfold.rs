@@ -1,10 +1,10 @@
 //! Keyfolds map keys to encrypted keys
 
-use lcc::crypto::{Key, KeyType};
-use lcc::traits::EncryptionHandler;
-use lcc::EncryptedBody;
+use crate::lcc::crypto::{Key, KeyType};
+use crate::lcc::traits::EncryptionHandler;
+use crate::lcc::EncryptedBody;
 
-use AesEngine;
+use crate::AesEngine;
 
 /// Transparent key-encrypter utility
 ///
@@ -38,11 +38,11 @@ impl Keyfold {
 }
 
 impl EncryptionHandler<Key> for Keyfold {
-    fn encrypt(&mut self, item: Key) -> EncryptedBody {
+    fn encrypt(&mut self, _item: Key) -> EncryptedBody {
         unimplemented!()
     }
 
-    fn decrypt(&mut self, item: EncryptedBody) -> Option<Key> {
+    fn decrypt(&mut self, _item: EncryptedBody) -> Option<Key> {
         unimplemented!()
     }
 }

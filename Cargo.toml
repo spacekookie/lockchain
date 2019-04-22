@@ -4,8 +4,8 @@ members = [
     "lockchain-files",
     "lockchain-crypto",
 
-    "lockchain-server",
-    "lockchain-client",
+    # "lockchain-http",
 
-    "lockchain-http",
+    # "lockchain-server",
+    # "lockchain-client",
 ]

@@ -56,19 +56,6 @@
 //!
 //! If we missed something, please let us know!
 
-#[macro_use]
-extern crate serde_derive;
-extern crate base64;
-extern crate bcrypt;
-extern crate blake2;
-extern crate chrono;
-extern crate keybob;
-extern crate nix;
-extern crate pam_auth;
-extern crate rand;
-extern crate serde;
-extern crate serde_json;
-
 pub mod crypto;
 pub mod errors;
 mod meta;

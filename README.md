@@ -2,31 +2,22 @@
 
 A modern, cross-platform and extendable secrets manager toolchain.
 
-`lockchain` is a series of interconnecting libraries, 
-that provide common functionality
-for secrets, key and password managers.
-They are written in Rust, 
-a fast and low-level, 
-memory-safe systems language
-created by Mozilla.
+Lockchain is a series of interconnected libraries that provide
+utilities and abstraction layers to build distributed secret
+managers. It's primary application is the [`pwchain`] password manager.
 
-At it's centre, 
-`lockchain-core` provides common interfaces, utilities and modules
-that can be used by both central `lockchain` libraries
-as well as external user code
-to build robust systems
-and extend on existing ones.
+| Component Crate    | Description                               |
+|--------------------|-------------------------------------------|
+| [lockchain-core]   | Core ecosystem interface and utilities    |
+| [lockchain-crypto] | Crypto engine handler                     |
+| [lockchain-files]  | File-based storage backend                |
+| [lockchain-http]   | Slim http-layer API on top of Vault API   |
 
-**There are some graphical representations below**
-
-![](./assets/lockchain-simple.png)
-
----
-
-**A full application stack**
-
-![](./assets/lockchain-complete.png)
-
+[lockchain-core]: lockchain-core/
+[lockchain-crypto]: lockchain-crypto/
+[lockchain-files]: lockchain-files/
+[lockchain-http]: lockchain-http/
+[`pwchain`]: https://github.com/spacekookie/pwchain
 
 ## Security notice
 

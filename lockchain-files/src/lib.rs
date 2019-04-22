@@ -14,8 +14,8 @@ extern crate serde_derive;
 extern crate serde_yaml;
 extern crate serde;
 
-use lcc::traits::{Body, LoadRecord, Vault};
-use lcc::{
+use crate::lcc::traits::{Body, LoadRecord, Vault};
+use crate::lcc::{
     errors::VaultError,
     users::{Access, Token, UserStore},
     Generator, Header, MetaDomain, Payload, Record, VaultMetadata,
@@ -29,8 +29,8 @@ mod load;
 mod userstore;
 mod utils;
 
-pub use config::{ConfigError, VaultConfig};
-use fs::Filesystem;
+pub use crate::config::{ConfigError, VaultConfig};
+use crate::fs::Filesystem;
 
 /// Persistence mapper to a folder and file structure
 ///
@@ -86,23 +86,23 @@ impl<T: Body> Vault<T> for FileVault<T> {
 
     fn create_user(
         &mut self,
-        token: Token,
-        username: &str,
-        secret: Vec<u8>,
-        access: Vec<Access>,
+        _token: Token,
+        _username: &str,
+        _secret: Vec<u8>,
+        _access: Vec<Access>,
     ) -> Result<(), ()> {
         unimplemented!()
     }
 
-    fn delete_user(&mut self, token: Token, username: &str) {
+    fn delete_user(&mut self, _token: Token, _username: &str) {
         unimplemented!()
     }
 
-    fn authenticate(&mut self, username: &str, secret: &str) -> Token {
+    fn authenticate(&mut self, _username: &str, _secret: &str) -> Token {
         unimplemented!()
     }
 
-    fn deauthenticate(&mut self, username: &str, _: Token) {
+    fn deauthenticate(&mut self, _username: &str, _: Token) {
         unimplemented!()
     }
 
@@ -136,7 +136,7 @@ impl<T: Body> Vault<T> for FileVault<T> {
     }
 
     /// Make sure a single record is loaded
-    fn pull(&mut self, name: &str) {
+    fn pull(&mut self, _name: &str) {
         // self.records.remove(name);
         // self.records.insert(
         //     name.to_owned(),
@@ -157,38 +157,38 @@ impl<T: Body> Vault<T> for FileVault<T> {
         // unimplemented!()
     }
 
-    fn get_record(&self, name: &str) -> Option<&Record<T>> {
+    fn get_record(&self, _name: &str) -> Option<&Record<T>> {
         // self.records.get(name)
         unimplemented!()
     }
 
-    fn contains(&self, name: &str) -> bool {
+    fn contains(&self, _name: &str) -> bool {
         // self.records.contains_key(name)
         unimplemented!()
     }
 
-    fn add_record(&mut self, key: &str, category: &str, tags: Vec<&str>) {
+    fn add_record(&mut self, _key: &str, _category: &str, _tags: Vec<&str>) {
         // self.records
         //     .insert(key.to_owned(), Record::new(key, category, tags));
         unimplemented!()
     }
 
-    fn delete_record(&mut self, record: &str) -> Option<Record<T>> {
+    fn delete_record(&mut self, _record: &str) -> Option<Record<T>> {
         // self.records.remove(record)
         unimplemented!()
     }
 
-    fn add_data(&mut self, record: &str, key: &str, data: Payload) -> Option<()> {
+    fn add_data(&mut self, _record: &str, _key: &str, _data: Payload) -> Option<()> {
         // self.records.get_mut(record)?.add_data(key, data)
         unimplemented!()
     }
 
-    fn get_data(&self, record: &str, key: &str) -> Option<&Payload> {
+    fn get_data(&self, _record: &str, _key: &str) -> Option<&Payload> {
         // self.records.get(record)?.get_data(key)
         unimplemented!()
     }
 
-    fn meta_add_domain(&mut self, domain: &str) -> Option<()> {
+    fn meta_add_domain(&mut self, _domain: &str) -> Option<()> {
         // if self.metadata.contains_key(domain) {
         //     None
         // } else {
@@ -198,12 +198,12 @@ impl<T: Body> Vault<T> for FileVault<T> {
         unimplemented!()
     }
 
-    fn meta_pull_domain(&self, domain: &str) -> Option<&MetaDomain> {
+    fn meta_pull_domain(&self, _domain: &str) -> Option<&MetaDomain> {
         // self.metadata.get(domain)
         unimplemented!()
     }
 
-    fn meta_push_domain(&mut self, domain: MetaDomain) -> Option<()> {
+    fn meta_push_domain(&mut self, _domain: MetaDomain) -> Option<()> {
         // self.metadata
         //     .insert(domain.name().into(), domain)
         //     .map_or((), |_| ()) // We don't care about `None`
@@ -211,17 +211,17 @@ impl<T: Body> Vault<T> for FileVault<T> {
         unimplemented!()
     }
 
-    fn meta_set(&mut self, domain: &str, name: &str, data: Payload) -> Option<()> {
+    fn meta_set(&mut self, _domain: &str, _name: &str, _data: Payload) -> Option<()> {
         // self.metadata.get_mut(domain)?.set_field(name, data)
         unimplemented!()
     }
 
-    fn meta_get(&mut self, domain: &str, name: &str) -> Option<Payload> {
+    fn meta_get(&mut self, _domain: &str, _name: &str) -> Option<Payload> {
         // Some(self.metadata.get(domain)?.get_field(name)?.clone())
         unimplemented!()
     }
 
-    fn meta_exists(&self, domain: &str) -> bool {
+    fn meta_exists(&self, _domain: &str) -> bool {
         // self.metadata.contains_key(domain)
         unimplemented!()
     }

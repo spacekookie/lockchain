@@ -4,9 +4,10 @@
 //! as the normal Vault Record, without having to rely on encryption
 //! or trait base security.
 
-use record::Payload;
+use crate::record::Payload;
 use std::collections::HashMap;
-use traits::{AutoEncoder, Body};
+use crate::traits::{AutoEncoder, Body};
+use serde::{Serialize, Deserialize};
 
 /// A simple representation of metadata for a vault or vault section
 pub struct VaultMetadata {
@@ -60,7 +61,7 @@ impl MetaDomain {
     }
 
     /// Insert a single value into the body
-    pub fn insert<S: Into<String>>(&mut self, key: S, value: Payload) -> &mut Self {
+    pub fn insert<S: Into<String>>(&mut self, _key: S, _value: Payload) -> &mut Self {
         unimplemented!()
     }
 

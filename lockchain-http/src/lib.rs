@@ -29,8 +29,8 @@ pub mod models;
 pub mod state;
 
 use actix_web::{http, server, App};
-use lockchain::traits::{Body, Vault};
-use state::ApiState;
+use crate::lockchain::traits::{Body, Vault};
+use crate::state::ApiState;
 use std::error::Error;
 use std::sync::{Arc, Mutex};
 

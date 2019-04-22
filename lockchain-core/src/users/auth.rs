@@ -3,7 +3,7 @@
 //! The way a user is authenticated is via the `lockchain` group
 //! and a simple writing/ deleting of a lock file.
 
-use errors::AuthError;
+use crate::errors::AuthError;
 
 /// Simple way to authenticate a user for administrative actions
 ///

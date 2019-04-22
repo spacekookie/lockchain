@@ -1,4 +1,4 @@
-use lockchain::traits::{AutoEncoder, Body, FileIO, Vault};
+use crate::lockchain::traits::{AutoEncoder, Body, FileIO, Vault};
 
 use std::collections::{HashMap, HashSet};
 use std::marker::PhantomData;

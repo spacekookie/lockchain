@@ -1,4 +1,4 @@
-use lockchain::errors::Error as LockError;
+use crate::lockchain::errors::Error as LockError;
 use serde::{de::DeserializeOwned, Serialize};
 
 /// A generic container that json/error wraps lockchain-types

@@ -1,6 +1,7 @@
 //! Permission and access system for lockchain
 
-use traits::AutoEncoder;
+use crate::traits::AutoEncoder;
+use serde::{Serialize, Deserialize};
 
 /// Specifies access to a resource
 #[derive(Hash, Serialize, Deserialize, Clone, PartialEq, Eq)]

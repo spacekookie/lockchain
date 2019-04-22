@@ -1,18 +1,19 @@
-use errors::VaultError;
-use traits::{Body, Vault};
+use crate::errors::VaultError;
+use crate::traits::{Body, Vault};
+use serde::{Serialize, Deserialize};
 
 /// Describes the internal permission layout of a vault
-/// 
+///
 /// ---
-/// 
+///
 /// **Important Note** Because lockchain-core doesn't make assumptions about
 /// about the existence of a cryptographic layer, the `UserStore` that
 /// handles these secrets assumes they are **not** secret!
-/// 
+///
 /// This means that only already encrypted keys should be given to the
 /// generator type, because they will be written to disk **as is** by
 /// certain backends!
-/// 
+///
 /// It is in the responsibility of the library user to make sure that all
 /// cryptographic operations are handled on the client side. Clear-text
 /// keys that are given to a generator
@@ -21,7 +22,7 @@ use traits::{Body, Vault};
 pub enum VaultType {
     /// Create an all-powerful root user which can access everything
     Administrated {
-        /// 
+        ///
         secret: Vec<u8>,
     },
     /// Similar to `Administrated`

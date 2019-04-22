@@ -10,8 +10,9 @@
 //! **No secret information should ever be stored in the header**
 
 use chrono::{DateTime, Local};
+use serde::{Serialize, Deserialize};
 use std::collections::BTreeMap;
-use traits::{AutoEncoder, Body};
+use crate::traits::{AutoEncoder, Body};
 
 /// An enum that wraps around all possible data types to store
 /// as the value of a vault record.

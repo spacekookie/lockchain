@@ -9,7 +9,7 @@
 //! which will return either `Ok(())` or the first error in the list
 //! of operations.
 
-use lcc::traits::{AutoEncoder, Body};
+use crate::lcc::traits::{AutoEncoder, Body};
 
 use std::collections::HashMap;
 use std::error::Error;
@@ -19,12 +19,12 @@ use std::{
     path::PathBuf,
 };
 
-use utils::FileToString;
-use FileVault;
+use crate::utils::FileToString;
+use crate::FileVault;
 
 mod primitive;
 use self::primitive::*;
-use userstore::DiskMirror;
+use crate::userstore::DiskMirror;
 
 #[derive(Debug)]
 pub struct Filesystem {
@@ -78,7 +78,7 @@ impl Filesystem {
     }
 
     /// Retrieve a single record from the cached vault
-    pub fn pull<T: AutoEncoder>(&self, types: FileType, id: &str) -> Result<T, Box<Error>> {
+    pub fn pull<T: AutoEncoder>(&self, _types: FileType, _id: &str) -> Result<T, Box<Error>> {
         // Ok(T::decode(
         //     &File::open(self.root.join(&format!("{}.{}", id, file_ending!(types))))?
         //         .get_string()?,
@@ -100,7 +100,7 @@ impl Filesystem {
 
     /// Respond to a sync request
     #[deprecated]
-    pub fn sync<T>(&self, data: &HashMap<String, T>, types: FileType) -> Result<(), Box<Error>>
+    pub fn sync<T>(&self, _data: &HashMap<String, T>, _types: FileType) -> Result<(), Box<Error>>
     where
         T: AutoEncoder,
     {

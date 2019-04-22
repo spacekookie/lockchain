@@ -1,9 +1,10 @@
 //! User representation module
 
 use super::rights::{Access, Role};
-use crypto::{encoding, hashing, random};
+use crate::crypto::{encoding, hashing, random};
 use std::collections::HashMap;
-use traits::AutoEncoder;
+use crate::traits::AutoEncoder;
+use serde::{Serialize, Deserialize};
 
 /// A generic user representation
 ///

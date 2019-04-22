@@ -2,7 +2,8 @@
 
 use super::rights::Access;
 use std::collections::HashMap;
-use traits::AutoEncoder;
+use crate::traits::AutoEncoder;
+use serde::{Serialize, Deserialize};
 
 /// A thin user UserStore
 ///

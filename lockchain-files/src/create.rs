@@ -1,8 +1,8 @@
 //! A small submodule which handles all aspects of vault creation
 #![allow(unused_imports)]
 
-use lcc::errors::VaultError;
-use lcc::{
+use crate::lcc::errors::VaultError;
+use crate::lcc::{
     crypto::{Key, KeyType},
     traits::{Body, Vault},
     users::UserStore,
@@ -10,9 +10,9 @@ use lcc::{
 };
 use std::collections::HashMap;
 
-use config::{ConfigError, VaultConfig};
-use fs::Filesystem;
-use FileVault;
+use crate::config::{ConfigError, VaultConfig};
+use crate::fs::Filesystem;
+use crate::FileVault;
 
 impl<T: Body> FileVault<T> {
     /// A small utility to create a new file vault

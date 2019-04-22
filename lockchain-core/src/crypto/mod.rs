@@ -6,7 +6,7 @@
 /// We re-export keybob's API here
 mod keys {
     pub use keybob::{Key, KeyType};
-    use traits::{AutoEncoder, Encryptable};
+    use crate::traits::{AutoEncoder, Encryptable};
 
     impl AutoEncoder for Key {}
     impl AutoEncoder for KeyType {}

@@ -2,12 +2,12 @@
 
 use actix_web::{HttpRequest, Json, Responder};
 
-use lockchain::errors::{Error as LockError, *};
-use lockchain::traits::{Body, Vault};
-use lockchain::Record;
+use crate::lockchain::errors::{Error as LockError, *};
+use crate::lockchain::traits::{Body, Vault};
+use crate::lockchain::Record;
 
-use models::{inputs::*, responses::*, Response};
-use state::ApiState;
+use crate::models::{inputs::*, responses::*, Response};
+use crate::state::ApiState;
 
 use std::intrinsics;
 use std::sync::{Arc, Mutex};
@@ -39,8 +39,8 @@ where
     B: Body,
     V: Vault<B>,
 {
-    let mut state = req.state().lock().unwrap();
-    let location = if state.bound_scope {
+    let state = req.state().lock().unwrap();
+    let _location = if state.bound_scope {
         state.working_dir.clone().join(&item.location)
     } else {
         (&item.location).into()
@@ -51,7 +51,7 @@ where
 }
 
 pub fn delete_vault<B, V>(
-    (item, req): (Json<VaultCreate>, HttpRequestState<ApiState<B, V>>),
+    (_item, _req): (Json<VaultCreate>, HttpRequestState<ApiState<B, V>>),
 ) -> impl Responder
 where
     B: Body,
@@ -64,7 +64,7 @@ where
 }
 
 pub fn scope_vault<B, V>(
-    (item, req): (Json<VaultCreate>, HttpRequestState<ApiState<B, V>>),
+    (_item, _req): (Json<VaultCreate>, HttpRequestState<ApiState<B, V>>),
 ) -> impl Responder
 where
     B: Body,
@@ -77,7 +77,7 @@ where
 }
 
 pub fn unscope_vault<B, V>(
-    (item, req): (Json<VaultCreate>, HttpRequestState<ApiState<B, V>>),
+    (_item, _req): (Json<VaultCreate>, HttpRequestState<ApiState<B, V>>),
 ) -> impl Responder
 where
     B: Body,
@@ -126,14 +126,14 @@ where
 
 /// GET /vault/{vault-id}/records/{record-id}
 pub fn get_record<B, V>(
-    (item, req): (Json<VaultCreate>, HttpRequestState<ApiState<B, V>>),
+    (_item, req): (Json<VaultCreate>, HttpRequestState<ApiState<B, V>>),
 ) -> impl Responder
 where
     B: Body,
     V: Vault<B>,
 {
     let mut state = req.state().lock().unwrap();
-    let vault = state.get_vault("");
+    let _vault = state.get_vault("");
 
     Json(OperationFailed {
         explain: "Not implemented".into(),
@@ -250,7 +250,7 @@ where
     B: Body,
     V: Vault<B>,
 {
-    use lockchain::users::*;
+    use crate::lockchain::users::*;
     let Authenticate { username, password } = item.into_inner();
 
     Json(match pam_authenticate(&username, &password) {
@@ -265,7 +265,7 @@ where
                 token: token,
             })
         }
-        Err(e) => Response::Failure(OperationFailed {
+        Err(_e) => Response::Failure(OperationFailed {
             explain: "Failed to authenticate user".into(),
             error: LockError::Auth(AuthError::UserNotAuthorised),
         }),
@@ -274,7 +274,7 @@ where
 
 /// PUT /de-authenticate
 pub fn logout<B, V>(
-    (item, req): (Json<Deauthenticate>, HttpRequestState<ApiState<B, V>>),
+    (_item, _req): (Json<Deauthenticate>, HttpRequestState<ApiState<B, V>>),
 ) -> impl Responder
 where
     B: Body,

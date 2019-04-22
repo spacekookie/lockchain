@@ -19,6 +19,7 @@ pub use self::vault::Error as VaultError;
 
 use std::error::Error as StdError;
 use std::fmt::{Display, Formatter, Result};
+use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Error {
@@ -26,7 +27,7 @@ pub enum Error {
     /// that can't be associated with a type or
     /// simply need to be stubbed until more
     /// information is available.
-    Unknown, 
+    Unknown,
     /// A basic vault operation error
     Vault(VaultError),
     /// Errors occuring during authentication

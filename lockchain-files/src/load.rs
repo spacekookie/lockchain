@@ -1,18 +1,18 @@
 //! A small submodule which handles all aspects of vault creation
 #![allow(unused_imports)]
 
-use lcc::errors::VaultError;
-use lcc::{traits::Body, Generator};
+use crate::lcc::errors::VaultError;
+use crate::lcc::{traits::Body, Generator};
 use std::collections::HashMap;
 
-use ::FileVault;
-use ::config::{VaultConfig, ConfigError};
-use ::fs::Filesystem;
+use crate::FileVault;
+use crate::config::{VaultConfig, ConfigError};
+use crate::fs::Filesystem;
 
 
 impl<T: Body> FileVault<T> {
     /// A small utility to load an existing file vault
-    pub(crate) fn load(name: &str, location: &str) -> Result<Self, VaultError> {
+    pub(crate) fn load(_name: &str, _location: &str) -> Result<Self, VaultError> {
         unimplemented!()
 
         // self.config = match VaultConfig::load(&self.fs.root) {

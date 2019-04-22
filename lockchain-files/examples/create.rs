@@ -1,10 +1,10 @@
 extern crate lockchain_core as lcc;
 extern crate lockchain_files as files;
 
-use files::FileVault;
-use lcc::traits::Vault;
-use lcc::users::User;
-use lcc::{
+use crate::files::FileVault;
+use crate::lcc::traits::Vault;
+use crate::lcc::users::User;
+use crate::lcc::{
     crypto::{Key, KeyType},
     EncryptedBody, Generator, Payload, Record, VaultType,
 };
@@ -17,7 +17,7 @@ fn main() {
 
         let key = Key::from_pw(KeyType::Aes256, "foobar3264", "spacekookie");
 
-        let mut vault: FileVault<EncryptedBody> = Generator::new()
+        let _vault: FileVault<EncryptedBody> = Generator::new()
             .path(name, path)
             .user_type(VaultType::SoloUser {
                 username: "spacekookie".into(),

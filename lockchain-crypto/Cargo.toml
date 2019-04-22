@@ -7,10 +7,10 @@ readme = "README.md"
 license = "MIT/X11 OR Apache-2.0"
 version = "0.8.1-alpha.0"
 authors = ["Katharina Fey <kookie@spacekookie.de>"]
+edition = "2018"
 
 [dependencies]
 lockchain-core = { version = "0.9.1-alpha.0", path = "../lockchain-core" }
-serde_derive = "1.0"
-serde = "1.0"
+serde = { version = "1.0", features = ["derive"] }
 
-miscreant = "0.4.0-beta1"
+miscreant = { version = "0.4", features = ["soft-aes"] }

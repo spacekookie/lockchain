@@ -1,4 +1,4 @@
-use lockchain::users::Role;
+use crate::lockchain::users::Role;
 
 /// Fields provided when creating a new vault
 #[derive(Serialize, Deserialize)]

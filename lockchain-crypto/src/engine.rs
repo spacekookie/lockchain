@@ -3,20 +3,17 @@
 //! Can be initialised from scratch or with a pw/salt
 //! combintaion which derives a key via the `keybob` crate.
 
-use lcc::traits::{AutoEncoder, Encryptable, EncryptionHandler};
-use lcc::{EncryptedBody, PackedData};
+use crate::lcc::traits::{AutoEncoder, Encryptable, EncryptionHandler};
+use crate::lcc::{EncryptedBody, PackedData};
+use crate::lcc::crypto::{random, Key};
 
-use miscreant::aead::{Aes256Siv, Algorithm};
-
+use miscreant::{Aead, Aes256SivAead};
 use super::databody::DataBody;
-
-use lcc::crypto::random;
-use lcc::crypto::{Key, KeyType};
 
 impl Encryptable for DataBody {}
 
 pub struct AesEngine {
-    ctx: Aes256Siv,
+    ctx: Aes256SivAead,
     _key: Option<Key>,
     iv: Vec<u8>,
 }
@@ -27,7 +24,7 @@ impl AesEngine {
         assert!(key.len() == 64);
 
         Self {
-            ctx: Aes256Siv::new(&key.as_slice()),
+            ctx: Aes256SivAead::new(&key.as_slice()),
             _key: Some(key),
             iv: random::bytes(64),
         }
@@ -49,7 +46,7 @@ impl AesEngine {
 
     /// Generate an Aes context from password
     #[deprecated]
-    pub fn from_pw(pw: &str, salt: &str) -> Self {
+    pub fn from_pw(_pw: &str, _salt: &str) -> Self {
         // let key = Key::from_pw(KeyType::Aes256, pw, salt);
         // let len = key.len();
         // Self {
@@ -63,7 +60,7 @@ impl AesEngine {
 
     /// Load a packed data object which contains an Aes context
     #[deprecated]
-    pub fn load(packed: PackedData, pw: &str, salt: &str) -> Option<Self> {
+    pub fn load(_packed: PackedData, _pw: &str, _salt: &str) -> Option<Self> {
         // let mut temp = Self::from_pw(pw, salt);
         // let k: Key = Key::decode(&String::from_utf8(temp.decrypt_primitive(&packed)?).ok()?).ok()?;
 

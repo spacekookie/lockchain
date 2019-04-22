@@ -2,6 +2,7 @@
 
 use std::error::Error as StdError;
 use std::fmt::{Display, Formatter, Result};
+use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Error {
@@ -14,7 +15,7 @@ pub enum Error {
     /// The provided path is invalid
     InvalidPath,
     /// The provided name is invalid
-    /// 
+    ///
     /// This usually means the backing storage doesn't support some
     /// character in the name which can sometimes occur if the name
     /// contains special unicode characters that a filesystem doesn't
@@ -26,7 +27,7 @@ pub enum Error {
         tt: Option<String>,
     },
     /// Vault failed it's checksum self-test
-    /// 
+    ///
     /// This is problematic because it also means the vault was unable to correct
     /// any errors. Either the backing storage has some serious issues or maybe
     /// an external sync process that lockchain can't detect is still working.
@@ -38,7 +39,7 @@ pub enum Error {
     /// Failed to load a vault for an unknown reason
     FailedLoading,
     /// Failed to close the vault properly.
-    /// 
+    ///
     /// This could be because the backing storage is no longer available
     /// or permisions to write have been revoked.
     FailedClosing,

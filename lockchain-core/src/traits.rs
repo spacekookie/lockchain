@@ -11,12 +11,12 @@
 //! compilation work without external crates but not calling
 //! functions at runtime.
 
-use errors::VaultError;
-use init::Generator;
-use meta::{MetaDomain, VaultMetadata};
-use record::{EncryptedBody, Header, Payload, Record};
+use crate::errors::VaultError;
+use crate::init::Generator;
+use crate::meta::{MetaDomain, VaultMetadata};
+use crate::record::{EncryptedBody, Header, Payload, Record};
 use serde::{de::DeserializeOwned, Serialize};
-use users::{Access, Token};
+use crate::users::{Access, Token};
 
 use base64;
 use serde_json::{self, Error as SerdeError};
@@ -118,7 +118,7 @@ where
     T: Body,
 {
     /// Consumes a vault generator to construct a vault
-    fn new(Generator) -> Result<Box<Self>, VaultError>;
+    fn new(_: Generator) -> Result<Box<Self>, VaultError>;
     /// Load and open an existing vault
     fn load(name: &str, location: &str) -> Result<Box<Self>, VaultError>;
     /// Unlock the vault for a specific user

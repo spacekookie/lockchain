@@ -1,7 +1,8 @@
-use traits::AutoEncoder;
+use crate::traits::AutoEncoder;
+use serde::{Serialize, Deserialize};
 
 /// Representation of encrypted data as an enecoded format
-/// 
+///
 /// Includes all cryptographic state primitives that are
 /// required to send the data over a network and decrypt on
 /// the other side of a pipe.

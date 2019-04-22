@@ -1,10 +1,10 @@
 //! Implements serialization, desrialization for UserStore
 
-use lcc::{errors::DataError, traits::AutoEncoder, users::UserStore};
+use crate::lcc::{errors::DataError, traits::AutoEncoder, users::UserStore};
 
 pub trait DiskMirror {
     fn to_disk(&self) -> Vec<u8>;
-    fn from_disk(Vec<u8>) -> Result<Box<Self>, DataError>;
+    fn from_disk(_: Vec<u8>) -> Result<Box<Self>, DataError>;
 }
 
 impl DiskMirror for UserStore {

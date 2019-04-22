@@ -27,4 +27,4 @@ pub use self::user::User;
 pub use self::userstore::UserStore;
 
 pub use self::rights::{Access, Role};
-pub use errors::AuthError;
+pub use crate::errors::AuthError;
