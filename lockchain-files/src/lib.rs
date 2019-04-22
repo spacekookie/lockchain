@@ -11,8 +11,8 @@ extern crate semver;
 
 #[macro_use]
 extern crate serde_derive;
-extern crate serde_yaml;
 extern crate serde;
+extern crate serde_yaml;
 
 use crate::lcc::traits::{Body, LoadRecord, Vault};
 use crate::lcc::{

@@ -1,11 +1,9 @@
 //! Small utility module for file operations
 
-use std::io::{self, Read};
 use std::fs::File;
+use std::io::{self, Read};
 
-pub fn check_config() {
-
-}
+pub fn check_config() {}
 
 /// A utility trait to read the conents from a file in
 /// a single line.

@@ -3,12 +3,12 @@
 //! Can be initialised from scratch or with a pw/salt
 //! combintaion which derives a key via the `keybob` crate.
 
+use crate::lcc::crypto::{random, Key};
 use crate::lcc::traits::{AutoEncoder, Encryptable, EncryptionHandler};
 use crate::lcc::{EncryptedBody, PackedData};
-use crate::lcc::crypto::{random, Key};
 
-use miscreant::{Aead, Aes256SivAead};
 use super::databody::DataBody;
+use miscreant::{Aead, Aes256SivAead};
 
 impl Encryptable for DataBody {}
 

@@ -22,7 +22,8 @@ fn main() {
             .user_type(VaultType::SoloUser {
                 username: "spacekookie".into(),
                 secret: key.as_slice().to_vec(),
-            }).finalise()
+            })
+            .finalise()
             .unwrap();
     }
 

@@ -7,7 +7,7 @@
 
 use crate::lcc::traits::{AutoEncoder, Body};
 use crate::lcc::Payload;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::collections::BTreeMap;
 
 #[derive(Serialize, Deserialize)]

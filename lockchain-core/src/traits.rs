@@ -15,8 +15,8 @@ use crate::errors::VaultError;
 use crate::init::Generator;
 use crate::meta::{MetaDomain, VaultMetadata};
 use crate::record::{EncryptedBody, Header, Payload, Record};
-use serde::{de::DeserializeOwned, Serialize};
 use crate::users::{Access, Token};
+use serde::{de::DeserializeOwned, Serialize};
 
 use base64;
 use serde_json::{self, Error as SerdeError};

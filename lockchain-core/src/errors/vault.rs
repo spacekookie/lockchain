@@ -1,8 +1,8 @@
 //! Vault workflow and I/O errors
 
+use serde::{Deserialize, Serialize};
 use std::error::Error as StdError;
 use std::fmt::{Display, Formatter, Result};
-use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Error {

@@ -1,5 +1,5 @@
 use crate::traits::AutoEncoder;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// Representation of encrypted data as an enecoded format
 ///

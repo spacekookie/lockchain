@@ -5,9 +5,9 @@
 //! or trait base security.
 
 use crate::record::Payload;
-use std::collections::HashMap;
 use crate::traits::{AutoEncoder, Body};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 /// A simple representation of metadata for a vault or vault section
 pub struct VaultMetadata {

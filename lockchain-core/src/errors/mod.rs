@@ -17,9 +17,9 @@ pub use self::crypto::Error as CryptoError;
 pub use self::data::Error as DataError;
 pub use self::vault::Error as VaultError;
 
+use serde::{Deserialize, Serialize};
 use std::error::Error as StdError;
 use std::fmt::{Display, Formatter, Result};
-use serde::{Serialize, Deserialize};
 
 #[derive(Debug, Serialize, Deserialize)]
 pub enum Error {

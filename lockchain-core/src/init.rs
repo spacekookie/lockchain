@@ -1,6 +1,6 @@
 use crate::errors::VaultError;
 use crate::traits::{Body, Vault};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// Describes the internal permission layout of a vault
 ///

@@ -5,10 +5,9 @@ use crate::lcc::errors::VaultError;
 use crate::lcc::{traits::Body, Generator};
 use std::collections::HashMap;
 
-use crate::FileVault;
-use crate::config::{VaultConfig, ConfigError};
+use crate::config::{ConfigError, VaultConfig};
 use crate::fs::Filesystem;
-
+use crate::FileVault;
 
 impl<T: Body> FileVault<T> {
     /// A small utility to load an existing file vault
@@ -30,5 +29,4 @@ impl<T: Body> FileVault<T> {
         //     users: UserStoreMapper::new(),
         // }.load()
     }
-
 }

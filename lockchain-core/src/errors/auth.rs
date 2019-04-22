@@ -1,8 +1,8 @@
 //! Athentication errors
 
+use serde::{Deserialize, Serialize};
 use std::error::Error as StdError;
 use std::fmt::{Display, Formatter, Result};
-use serde::{Serialize, Deserialize};
 
 /// Common errors that can occur when authenticating users
 #[derive(Debug, Serialize, Deserialize)]

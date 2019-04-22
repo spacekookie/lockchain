@@ -2,9 +2,9 @@
 
 use super::rights::{Access, Role};
 use crate::crypto::{encoding, hashing, random};
-use std::collections::HashMap;
 use crate::traits::AutoEncoder;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 /// A generic user representation
 ///

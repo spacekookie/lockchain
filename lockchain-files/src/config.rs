@@ -7,9 +7,9 @@ use std::{
     time::SystemTime,
 };
 
+use crate::utils::FileToString;
 use semver::Version;
 use serde_yaml;
-use crate::utils::FileToString;
 
 use crate::lcc::{errors::VaultError, VaultType};
 

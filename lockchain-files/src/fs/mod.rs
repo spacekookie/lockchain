@@ -64,12 +64,14 @@ impl Filesystem {
             FileType::Record => self.root.join("records"),
             FileType::Metadata => self.root.join("metadata"),
             _ => self.root.clone(),
-        })?.into_iter()
+        })?
+        .into_iter()
         .filter_map(|r| r.ok())
         .filter(|f| match f.file_type() {
             Ok(vf) => vf.is_file(),
             _ => false,
-        }).map(|de| de.path())
+        })
+        .map(|de| de.path())
         .filter_map(|p| p.into_os_string().into_string().ok())
         .filter_map(|s| File::open(s).ok())
         .filter_map(|mut f| f.get_string().ok())

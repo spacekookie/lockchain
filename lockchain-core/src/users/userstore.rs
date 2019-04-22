@@ -1,9 +1,9 @@
 //! Merging `KeyStore` and `Userstore` into the same concept
 
 use super::rights::Access;
-use std::collections::HashMap;
 use crate::traits::AutoEncoder;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 /// A thin user UserStore
 ///

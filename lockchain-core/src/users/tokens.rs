@@ -1,5 +1,5 @@
 use crate::crypto::{Key, KeyType};
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 use std::borrow::Cow;
 
 /// An authentication token that can be compared in constant time

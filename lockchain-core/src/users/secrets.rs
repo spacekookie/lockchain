@@ -1,7 +1,7 @@
 //! A secrets type module that wraps around some user content with metadata
 
 use crate::traits::AutoEncoder;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 /// Specifies the type of secret that's used to derive a vault user secret
 #[derive(Serialize, Deserialize)]
