@@ -7,10 +7,13 @@ authors = ["Katharina Fey <kookie@spacekookie.de>"]
 documentation = "https://docs.rs/lockchain-files"
 homepage = "https://github.com/spacekookie/lockchain/tree/master/lockchain-files"
 readme = "README.md"
-license = "MIT/X11 OR Apache-2.0"
+license = "GPL-3.0"
 
-# Specifies a semver vault version it can open 
+# Specifies a semver vault version it can open
 vault-version = "0.1"
+
+[features]
+git-backend = []
 
 [dependencies]
 lockchain-core = { version = "0.9.1-alpha.0", path = "../lockchain-core" }
