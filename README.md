@@ -22,3 +22,7 @@ managers. It's primary application is the [`pwchain`] password manager.
 ## Security notice
 
 The cryptography in this crate has not undergone any formal review or verification. While stability and data integrity can be thoroughly tested, the security of this crate can not be guaranteed. **Use it at your own risk!**
+
+## License
+
+Lockchain is free, open source software licensed under the GNU General Public License, version 3.0 (or later).
